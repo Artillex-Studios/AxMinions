@@ -1,0 +1,10 @@
+prefix: "<gradient:#00aaff:#00ccff>AxMinions</gradient> <gray>»</gray> "
+
+warnings:
+  no-container: "<#FF3333>⚠ <#FFAAAA>You must link the minion to a container </#FFAAAA>⚠"
+  no-tool: "<#FF3333>⚠ <#FFAAAA>The minion needs a tool </#FFAAAA>⚠"
+  no-water-nearby: "<#FF3333>⚠ <#FFAAAA>The minion needs water nearby </#FFAAAA>⚠"
+  container-full: "<#FF3333>⚠ <#FFAAAA>The container of this minion is full </#FFAAAA>⚠"
+
+# Do not change!
+config-version: 1

@@ -1,0 +1,7 @@
+group = 'com.artillexstudios.axminions'
+version = rootProject.version
+
+
+dependencies {
+    implementation project(':api')
+}

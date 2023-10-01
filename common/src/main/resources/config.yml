@@ -1,0 +1,47 @@
+# How often should the plugin save all minions?
+# The plugin saves changes live, this is only for updating minion stats in the database.
+# For this change to take effect, you need to restart your server!
+auto-save-minutes: 3
+
+# How far the storage chest can be from the minion
+max-linking-distance: 30
+
+# The default amount of minions a player can have.
+# This setting can be overwritten by setting the 'axminions.limit.<amount>' permission!
+default-minion-limit: 5
+
+# If we should allow floating minions to be created
+allow-floating-minions: false
+
+# If true, only the owner of this minion can break it
+# If false, everyone, who can break blocks at said location can break this minion
+# You should enable this, if you aren't using a supported protection plugin!
+only-owner-break: true
+
+# Should minions show holograms if they have an issue?
+# (They won't complain about not having a girlfriend, though!)
+# You can configure these messages in the messages.yml
+display-warnings: true
+
+# If set to true, the minion will not break the tool, it will just stay at 1 durability (and the minion will be stopped)
+# If set to false, the minion can break the tool
+can-break-tools: true
+
+# If the minion should be able to take durability from it's held item
+use-durability: true
+
+database:
+  # Can be H2 and SQLite.
+  # For most setups, H2 is recommended
+  type: "H2"
+
+hooks:
+  # Supported stacker plugins: WildStacker, RoseStacker, none
+  stacker: "none"
+  # Supported economy providers: Vault, PlayerPoints, custom
+  economy: "Vault"
+  # Supported prices providers: ShopGUIPlus, Essentials, EconomyShopGUI, CMI, custom
+  prices: "ShopGUIPlus"
+
+# Do not change!
+config-version: 1
