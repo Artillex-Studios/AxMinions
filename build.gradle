@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     implementation project(path: ":api")
+    implementation project(path: ":common")
 }
 
 allprojects {
@@ -61,11 +62,9 @@ allprojects {
         compileOnly 'dev.rosewood:rosestacker:1.5.11'
         compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
         compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-        compileOnly 'com.h2database:h2:2.2.220'
-        compileOnly 'com.github.NEZNAMY:YamlAssist:1.0.5'
         compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
-        implementation 'com.github.Carleslc.Simple-YAML:Simple-Yaml:1.8.4'
+        compileOnly 'com.h2database:h2:2.2.220'
         implementation files('../libs/AxAPI-1.0-SNAPSHOT.jar')
     }
 

@@ -7,6 +7,6 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResource("minions/slayer.yml")!!) {
 
     override fun run(minion: Minion) {
-        TODO("Not yet implemented")
+
     }
 }

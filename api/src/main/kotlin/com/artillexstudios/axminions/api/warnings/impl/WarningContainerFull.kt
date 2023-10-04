@@ -8,6 +8,6 @@ import net.kyori.adventure.text.Component
 class WarningContainerFull : Warning("container_full") {
 
     override fun getContent(): Component {
-        return StringUtils.format(Messages.CONTAINER_FULL_WARNING)
+        return StringUtils.format(Messages.CONTAINER_FULL_WARNING())
     }
 }

@@ -1,9 +1,13 @@
 package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axapi.config.Config
+import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
+import dev.dejvokep.boostedyaml.block.implementation.Section
 import org.bukkit.Location
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.io.File
 import java.io.InputStream
 
@@ -11,7 +15,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     private lateinit var config: Config
 
     fun load() {
-        config = Config(File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "$name.yml"), defaults)
+        config = Config(File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"), defaults)
         AxMinionsAPI.INSTANCE.getDataHandler().loadMinionsOfType(this)
     }
 
@@ -34,8 +38,49 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         run(minion)
     }
 
+    fun getItem(): ItemStack {
+        val builder = ItemBuilder(config.getSection("item"))
+        val itemStack = builder.clonedGet()
+        val itemMeta = itemStack.itemMeta ?: return itemStack
+
+        itemMeta.persistentDataContainer.set(MinionTypes.getMinionKey(), PersistentDataType.STRING, name)
+        itemStack.setItemMeta(itemMeta)
+
+        return itemStack
+    }
+
     fun getConfig(): Config {
         return this.config
+    }
+
+    fun getString(key: String, level: Int): String {
+        return get(key, level, "---", String::class.java)!!
+    }
+
+    fun getDouble(key: String, level: Int): Double {
+        return get(key, level, -1.0, Double::class.java)!!
+    }
+
+    fun getLong(key: String, level: Int): Long {
+        return get(key, level, -1, Long::class.java)!!
+    }
+
+    fun getSection(key: String, level: Int): Section? {
+        return get(key, level, null, Section::class.java)
+    }
+
+    private fun <T> get(key: String, level: Int, defaultValue: T?, clazz: Class<T>): T? {
+        var n = defaultValue
+
+        config.getSection("upgrades").getRoutesAsStrings(false).forEach {
+            if (it.toInt() > level) return n
+
+            if (config.backingDocument.getAsOptional("upgrades.$it.$key", clazz).isEmpty) return@forEach
+
+            n = config.get("upgrades.$it.$key")
+        }
+
+        return n
     }
 
     abstract fun run(minion: Minion)

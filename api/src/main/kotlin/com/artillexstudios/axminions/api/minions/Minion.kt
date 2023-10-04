@@ -72,4 +72,12 @@ interface Minion {
     fun setDirection(direction: Direction)
 
     fun getDirection(): Direction
+
+    fun remove()
+
+    fun getLinkedInventory(): Inventory?
+
+    fun addToContainerOrDrop(itemStack: ItemStack)
+
+    fun addToContainerOrDrop(itemStack: Iterable<ItemStack>)
 }

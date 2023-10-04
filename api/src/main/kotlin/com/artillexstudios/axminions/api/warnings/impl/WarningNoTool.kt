@@ -8,6 +8,6 @@ import net.kyori.adventure.text.Component
 class WarningNoTool : Warning("no_tool") {
 
     override fun getContent(): Component {
-        return StringUtils.format(Messages.NO_TOOL_WARNING)
+        return StringUtils.format(Messages.NO_TOOL_WARNING())
     }
 }

@@ -5,7 +5,7 @@ import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
-import org.bukkit.block.Container
+import org.bukkit.Material
 import org.bukkit.entity.Item
 
 class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.getResource("minions/collector.yml")!!) {
@@ -21,8 +21,14 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
             return
         }
 
-        val state = minion.getLinkedChest()?.block?.state
-        if (state !is Container) {
+        val type = minion.getLinkedChest()!!.block.type
+        if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL && !type.name.lowercase().contains("shulker_box")) {
+            Warnings.NO_CONTAINER.display(minion)
+            minion.setLinkedChest(null)
+            return
+        }
+
+        if (minion.getLinkedInventory() == null) {
             Warnings.NO_CONTAINER.display(minion)
             minion.setLinkedChest(null)
             return
@@ -38,7 +44,7 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
         )
 
         entities?.filterIsInstance<Item>()?.forEach { item ->
-            if (state.inventory.firstEmpty() == -1) {
+            if (minion.getLinkedInventory()?.firstEmpty() == -1) {
                 Warnings.CONTAINER_FULL.display(minion)
                 return
             }

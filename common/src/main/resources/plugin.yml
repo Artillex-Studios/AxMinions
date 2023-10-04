@@ -1,0 +1,4 @@
+name: "AxMinions"
+main: "com.artillexstudios.axminions.AxMinionsPlugin"
+version: "1.0"
+api-version: 1.19

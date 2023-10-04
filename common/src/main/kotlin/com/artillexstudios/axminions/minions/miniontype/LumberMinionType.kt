@@ -7,6 +7,6 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResource("minions/lumber.yml")!!) {
 
     override fun run(minion: Minion) {
-        TODO("Not yet implemented")
+
     }
 }

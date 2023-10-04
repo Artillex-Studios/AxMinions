@@ -9,9 +9,12 @@ import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.warnings.Warning
+import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.OfflinePlayer
+import org.bukkit.block.Container
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -21,7 +24,7 @@ import org.bukkit.util.EulerAngle
 import java.util.UUID
 import kotlin.math.roundToInt
 
-class MinionImpl(
+class Minion(
     private val location: Location,
     private val ownerUUID: UUID,
     private val owner: OfflinePlayer,
@@ -40,10 +43,13 @@ class MinionImpl(
     private var warning: Warning? = null
     private var hologram: Hologram? = null
     private val extraData = hashMapOf<String, String>()
+    private var linkedInventory: Inventory? = null
 
     init {
         spawn()
         loadExtraData(savedExtraData)
+        Minions.load(this)
+        linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
     }
 
     override fun getType(): MinionType {
@@ -54,14 +60,21 @@ class MinionImpl(
         entity = PacketEntityFactory.get().spawnEntity(location, EntityType.ARMOR_STAND) as PacketArmorStand
         entity.setHasBasePlate(false)
         entity.setSmall(true)
+        entity.onClick { event ->
+            if (event.isAttack) {
+                println("LEFT CLICKED!")
+            } else {
+                println("RIGHT CLICKED!")
+            }
+        }
     }
 
     override fun tick() {
         if (dirty) {
             dirty = false
-            range = type.getConfig().get("range", 0.0)
+            range = type.getDouble("range", level)
             val efficiency = 1.0 - (getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
-            nextAction = (type.getConfig().get("speed", 0L) * efficiency).roundToInt()
+            nextAction = (type.getLong("speed", level) * efficiency).roundToInt()
         }
 
         type.tick(this)
@@ -73,15 +86,15 @@ class MinionImpl(
     }
 
     override fun updateInventory(inventory: Inventory) {
-        TODO("Not yet implemented")
+
     }
 
     override fun openInventory(player: Player) {
-        TODO("Not yet implemented")
+
     }
 
     override fun getAsItem(): ItemStack {
-        TODO("Not yet implemented")
+        return ItemStack(Material.STONE)
     }
 
     override fun getLevel(): Int {
@@ -166,6 +179,7 @@ class MinionImpl(
 
     override fun setLinkedChest(location: Location?) {
         this.linkedChest = location?.clone()
+        linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
     }
 
     override fun getLinkedChest(): Location? {
@@ -192,6 +206,30 @@ class MinionImpl(
 
     override fun getDirection(): Direction {
         return this.direction
+    }
+
+    override fun remove() {
+        Warnings.remove(this)
+        Minions.remove(this)
+        entity.remove()
+    }
+
+    override fun getLinkedInventory(): Inventory? {
+        return linkedInventory
+    }
+
+    override fun addToContainerOrDrop(itemStack: ItemStack) {
+        val remaining = linkedInventory?.addItem(itemStack)
+
+        remaining?.forEach { (_, u) ->
+            location.world?.dropItem(location, u)
+        }
+    }
+
+    override fun addToContainerOrDrop(itemStack: Iterable<ItemStack>) {
+        itemStack.forEach {
+            addToContainerOrDrop(it)
+        }
     }
 
     private fun loadExtraData(data: String) {

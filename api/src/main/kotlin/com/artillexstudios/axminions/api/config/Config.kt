@@ -12,30 +12,30 @@ import java.io.InputStream
 
 class Config(file: File, stream: InputStream) {
     companion object {
-        @JvmField
-        val AUTO_SAVE_MINUTES = AxMinionsAPI.INSTANCE.getConfig().get("autosave-minutes", 3L)
-        @JvmField
-        val MAX_LINKING_DISTANCE = AxMinionsAPI.INSTANCE.getConfig().get("max-linking-distance", 30)
-        @JvmField
-        val DEFAULT_MINION_LIMIT = AxMinionsAPI.INSTANCE.getConfig().get("default-minion-limit", 5)
-        @JvmField
-        val ALLOW_FLOATING_MINIONS = AxMinionsAPI.INSTANCE.getConfig().get("allow-floating-minions", false)
-        @JvmField
-        val ONLY_OWNER_BREAK = AxMinionsAPI.INSTANCE.getConfig().get("only-owner-break", true)
-        @JvmField
-        val DISPLAY_WARNINGS = AxMinionsAPI.INSTANCE.getConfig().get("display-warnings", true)
-        @JvmField
-        val CAN_BREAK_TOOLS = AxMinionsAPI.INSTANCE.getConfig().get("can-break-tools", true)
-        @JvmField
-        val USE_DURABILITY = AxMinionsAPI.INSTANCE.getConfig().get("use-durability", true)
-        @JvmField
-        val DATABASE_TYPE = AxMinionsAPI.INSTANCE.getConfig().get("database.type", "H2")
-        @JvmField
-        val STACKER_HOOK = AxMinionsAPI.INSTANCE.getConfig().get("hooks.stacker", "none")
-        @JvmField
-        val ECONOMY_HOOK = AxMinionsAPI.INSTANCE.getConfig().get("hooks.economy", "Vault")
-        @JvmField
-        val PRICES_HOOK = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
+        @JvmStatic
+        fun AUTO_SAVE_MINUTES() = AxMinionsAPI.INSTANCE.getConfig().get("autosave-minutes", 3L)
+        @JvmStatic
+        fun MAX_LINKING_DISTANCE() = AxMinionsAPI.INSTANCE.getConfig().get("max-linking-distance", 30)
+        @JvmStatic
+        fun DEFAULT_MINION_LIMIT() = AxMinionsAPI.INSTANCE.getConfig().get("default-minion-limit", 5)
+        @JvmStatic
+        fun ALLOW_FLOATING_MINIONS() = AxMinionsAPI.INSTANCE.getConfig().get("allow-floating-minions", false)
+        @JvmStatic
+        fun ONLY_OWNER_BREAK() = AxMinionsAPI.INSTANCE.getConfig().get("only-owner-break", true)
+        @JvmStatic
+        fun DISPLAY_WARNINGS() = AxMinionsAPI.INSTANCE.getConfig().get("display-warnings", true)
+        @JvmStatic
+        fun CAN_BREAK_TOOLS() = AxMinionsAPI.INSTANCE.getConfig().get("can-break-tools", true)
+        @JvmStatic
+        fun USE_DURABILITY() = AxMinionsAPI.INSTANCE.getConfig().get("use-durability", true)
+        @JvmStatic
+        fun DATABASE_TYPE() = AxMinionsAPI.INSTANCE.getConfig().get("database.type", "H2")
+        @JvmStatic
+        fun STACKER_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.stacker", "none")
+        @JvmStatic
+        fun ECONOMY_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.economy", "Vault")
+        @JvmStatic
+        fun PRICES_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
     }
 
     private val config = Config(

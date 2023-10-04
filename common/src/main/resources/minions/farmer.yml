@@ -1,0 +1,135 @@
+name: "<level_color>[<level>] <#33FF33>Farmer <white>Minion <gray>[<owner>]"
+
+tool:
+  material:
+    - "WOODEN_HOE"
+    - "STONE_HOE"
+    - "GOLDEN_HOE"
+    - "IRON_HOE"
+    - "DIAMOND_HOE"
+    - "NETHERITE_HOE"
+
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxZTAzNWEzZDhkNjEyNjA3MmJjYmU1MmE5NzkxM2FjZTkzNTUyYTk5OTk1YjVkNDA3MGQ2NzgzYTMxZTkwOSJ9fX0="
+  name: "<#33FF33>Collector <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>Harvests and replants nearby crops."
+    - ""
+    - "<#33FF33>Statistics"
+    - " <#33FF33>❙ <white>Level: <#AAFFAA><level>"
+    - " <#33FF33>❙ <white>Harvested crops: <#AAFFAA><items>"
+    - ""
+    - "<#33FF33><b>(!)</b> Place the minion and give it a hoe!"
+
+gui:
+  upgrade:
+    type: "gold_ingot"
+    name: "<#00CCFF><b>Upgrade minion"
+    lore:
+      - ""
+      - " <gray>- <white>Level: <green><current_level> » <dark_green><next_level>"
+      - " <gray>- <white>Range: <green><current_range> » <dark_green><next_range>"
+      - " <gray>- <white>Speed: <green><current_speed> » <dark_green><next_speed>"
+      - ""
+      - "<#00CCFF>Requirements:"
+      - " <gray>- <white>Money: <#33FF33><price>$"
+      - " <gray>- <white>Crops harvested: <#33FF33><required_actions>"
+      - ""
+      - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
+  statistics:
+    type: "paper"
+    name: "<#33FF33><b>Statistics"
+    lore:
+      - ""
+      - " <gray>- <white>Crops harvested: <#33FF33><statistic_collected>"
+      - ""
+
+upgrades:
+  1:
+    range: 2
+    speed: 200
+    items:
+      helmet:
+        type: "player_head"
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxZTAzNWEzZDhkNjEyNjA3MmJjYmU1MmE5NzkxM2FjZTkzNTUyYTk5OTk1YjVkNDA3MGQ2NzgzYTMxZTkwOSJ9fX0="
+      chestplate:
+        type: "leather_chestplate"
+        color: "50, 255, 50"
+        glow: false
+      leggings:
+        type: "leather_leggings"
+        color: "50, 255, 50"
+        glow: false
+      boots:
+        type: "leather_boots"
+        color: "50, 255, 50"
+        glow: false
+  2:
+    range: 2.5
+    speed: 190
+    requirements:
+      money: 1000
+      actions: 10
+  3:
+    range: 3
+    speed: 180
+    requirements:
+      money: 3000
+      actions: 30
+  4:
+    range: 3.5
+    speed: 170
+    requirements:
+      money: 10000
+      actions: 100
+  5:
+    range: 3.5
+    speed: 160
+    requirements:
+      money: 20000
+      actions: 300
+  6:
+    range: 4
+    speed: 150
+    requirements:
+      money: 50000
+      actions: 600
+  7:
+    range: 4.5
+    speed: 140
+    requirements:
+      money: 150000
+      actions: 1000
+  8:
+    range: 5
+    speed: 120
+    requirements:
+      money: 500000
+      actions: 1750
+  9:
+    range: 5.5
+    speed: 110
+    requirements:
+      money: 1000000
+      actions: 25000
+  10:
+    range: 6
+    speed: 100
+    requirements:
+      money: 5000000
+      actions: 5000
+    items:
+      chestplate:
+        type: LEATHER_CHESTPLATE
+        color: "50, 225, 50"
+        glow: true
+      leggings:
+        type: LEATHER_LEGGINGS
+        color: "50, 225, 50"
+        glow: true
+      boots:
+        type: LEATHER_BOOTS
+        color: "50, 225, 50"
+        glow: true

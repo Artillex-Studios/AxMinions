@@ -13,16 +13,16 @@ import java.io.InputStream
 
 class Messages(file: File, stream: InputStream) {
     companion object {
-        @JvmField
-        var PREFIX = AxMinionsAPI.INSTANCE.getMessages().get<String>("prefix")
-        @JvmField
-        var NO_CONTAINER_WARNING = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-container")
-        @JvmField
-        var NO_TOOL_WARNING = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-tool")
-        @JvmField
-        var NO_WATER_NEARBY_WARNING = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-water-nearby")
-        @JvmField
-        var CONTAINER_FULL_WARNING = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
+        @JvmStatic
+        fun PREFIX() = AxMinionsAPI.INSTANCE.getMessages().get<String>("prefix")
+        @JvmStatic
+        fun NO_CONTAINER_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-container")
+        @JvmStatic
+        fun NO_TOOL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-tool")
+        @JvmStatic
+        fun NO_WATER_NEARBY_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-water-nearby")
+        @JvmStatic
+        fun CONTAINER_FULL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
     }
 
     private val config = Config(

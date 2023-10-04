@@ -3,10 +3,8 @@ package com.artillexstudios.axminions.data
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Direction
-import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.data.DataHandler
-import com.artillexstudios.axminions.minions.MinionImpl
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -58,7 +56,7 @@ class H2DataHandler : DataHandler {
                         itemStack = Serializers.ITEM_STACK.deserialize(tool)
                     }
 
-                    MinionImpl(
+                    com.artillexstudios.axminions.minions.Minion(
                         Serializers.LOCATION.deserialize(location),
                         uuid,
                         ownerPlayer,
@@ -74,7 +72,7 @@ class H2DataHandler : DataHandler {
         }
     }
 
-    override fun saveMinion(minion: Minion) {
+    override fun saveMinion(minion: com.artillexstudios.axminions.api.minions.Minion) {
         connection.prepareStatement("MERGE INTO `axminions_data`(`location`, `owner`, `linked-chest-location`, `extra_data`, `direction`, `type`, `level`, `tool`) KEY(`location`) VALUES(?,?,?,?,?,?,?,?);")
             .use { preparedStatement ->
                 preparedStatement.setString(1, Serializers.LOCATION.serialize(minion.getLocation()))
@@ -96,7 +94,7 @@ class H2DataHandler : DataHandler {
             }
     }
 
-    override fun deleteMinion(minion: Minion) {
+    override fun deleteMinion(minion: com.artillexstudios.axminions.api.minions.Minion) {
         connection.prepareStatement("DELETE FROM `axminions_data` WHERE `location` = ?;").use { preparedStatement ->
             preparedStatement.setString(1, Serializers.LOCATION.serialize(minion.getLocation()))
             preparedStatement.executeUpdate()
