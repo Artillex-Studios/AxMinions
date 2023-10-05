@@ -115,6 +115,19 @@ class H2DataHandler : DataHandler {
         return 0
     }
 
+    override fun isMinion(location: Location): Boolean {
+        connection.prepareStatement("SELECT * FROM `axminions_data` WHERE `location` = ?;").use { preparedStatement ->
+            preparedStatement.setString(1, Serializers.LOCATION.serialize(location))
+            preparedStatement.executeQuery().use { resultSet ->
+                if (resultSet.next()) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
     override fun disable() {
         connection.close()
     }

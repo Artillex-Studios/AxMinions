@@ -38,15 +38,16 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         run(minion)
     }
 
-    fun getItem(): ItemStack {
+    fun updateArmor(minion: Minion) {
+
+    }
+
+    fun getItem(level: Int = 1): ItemStack {
         val builder = ItemBuilder(config.getSection("item"))
-        val itemStack = builder.clonedGet()
-        val itemMeta = itemStack.itemMeta ?: return itemStack
+        builder.storePersistentData(MinionTypes.getMinionKey(), PersistentDataType.STRING, name)
+        builder.storePersistentData(MinionTypes.getLevelKey(), PersistentDataType.INTEGER, level)
 
-        itemMeta.persistentDataContainer.set(MinionTypes.getMinionKey(), PersistentDataType.STRING, name)
-        itemStack.setItemMeta(itemMeta)
-
-        return itemStack
+        return builder.clonedGet()
     }
 
     fun getConfig(): Config {

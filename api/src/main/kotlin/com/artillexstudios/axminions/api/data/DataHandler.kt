@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.api.data
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import org.bukkit.Location
 import java.util.UUID
 
 interface DataHandler {
@@ -17,6 +18,8 @@ interface DataHandler {
     fun deleteMinion(minion: Minion)
 
     fun getMinionAmount(uuid: UUID): Int
+
+    fun isMinion(location: Location): Boolean
 
     fun disable()
 }

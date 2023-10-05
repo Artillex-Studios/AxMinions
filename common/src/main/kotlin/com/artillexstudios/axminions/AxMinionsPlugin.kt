@@ -11,10 +11,13 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
+import com.artillexstudios.axminions.listeners.MinionPlaceListener
+import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
 import net.byteflux.libby.BukkitLibraryManager
 import net.byteflux.libby.Library
+import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
 import java.io.File
 
@@ -71,6 +74,10 @@ class AxMinionsPlugin : AxPlugin() {
         handler.register(AxMinionsCommand())
 
         handler.registerBrigadier()
+
+        Bukkit.getPluginManager().registerEvents(MinionPlaceListener(), this)
+
+        MinionTicker.startTicking()
     }
 
     private fun loadDataHandler() {

@@ -38,7 +38,7 @@ class Minion(
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
     private var range = 0.0
-    private var dirty = false
+    private var dirty = true
     private var armTick = 2.0
     private var warning: Warning? = null
     private var hologram: Hologram? = null
@@ -233,7 +233,7 @@ class Minion(
     }
 
     private fun loadExtraData(data: String) {
-        data.split("|").fastFor { split ->
+        data.split("|").forEach { split ->
             val secondSplit = split.split("=")
             if (secondSplit.isNotEmpty()) {
                 extraData[secondSplit[0]] = secondSplit[1]

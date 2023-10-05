@@ -1,4 +1,7 @@
-name: "<level_color>[<level>] <#33FF33>Farmer <white>Minion <gray>[<owner>]"
+name: "<#33FF33>Farmer <white>Minion"
+
+entity:
+  name: "<level_color>[<level>] <#33FF33>Farmer <white>Minion <gray>[<owner>]"
 
 tool:
   material:

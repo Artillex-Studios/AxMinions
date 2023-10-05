@@ -8,6 +8,7 @@ import java.util.Collections
 object MinionTypes {
     private val TYPES = hashMapOf<String, MinionType>()
     private val MINION_KEY = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "minion_type")
+    private val LEVEL_KEY = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "level")
 
     @JvmStatic
     fun register(type: MinionType): MinionType {
@@ -33,6 +34,11 @@ object MinionTypes {
     @JvmStatic
     fun getMinionKey(): NamespacedKey {
         return MINION_KEY
+    }
+
+    @JvmStatic
+    fun getLevelKey(): NamespacedKey {
+        return LEVEL_KEY
     }
 
     @JvmStatic

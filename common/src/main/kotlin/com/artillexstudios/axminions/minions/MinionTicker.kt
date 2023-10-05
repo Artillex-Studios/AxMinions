@@ -1,19 +1,21 @@
 package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axapi.scheduler.Scheduler
+import com.artillexstudios.axminions.utils.fastFor
 
 object MinionTicker {
     private var tick = 0L
 
-    fun tickAll() {
-        // Code to tick all
-
+    private inline fun tickAll() {
+        Minions.getMinions().fastFor { minion ->
+            minion.tick()
+        }
         tick++
     }
 
     fun startTicking() {
-        Scheduler.get().runTimer({ task ->
-
+        Scheduler.get().runTimer({ _ ->
+            tickAll()
         }, 0, 0)
     }
 

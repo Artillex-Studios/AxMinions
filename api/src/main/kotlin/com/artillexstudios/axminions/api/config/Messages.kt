@@ -23,6 +23,14 @@ class Messages(file: File, stream: InputStream) {
         fun NO_WATER_NEARBY_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-water-nearby")
         @JvmStatic
         fun CONTAINER_FULL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
+        @JvmStatic
+        fun RELOAD_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("reload")
+        @JvmStatic
+        fun PLACE_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.success")
+        @JvmStatic
+        fun PLACE_LIMIT_REACHED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.limit-reached")
+        @JvmStatic
+        fun PLACE_MINION_AT_LOCATION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.minion-at-location")
     }
 
     private val config = Config(

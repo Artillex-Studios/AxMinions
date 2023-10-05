@@ -1,5 +1,20 @@
 prefix: "<gradient:#00aaff:#00ccff>AxMinions</gradient> <gray>»</gray> "
 
+reload: "<green>Plugin successfully reloaded in <white><time></white>ms!"
+
+place:
+  success: "<green>Successfully placed a new <type> minion! <gray>(<placed>/<max>)"
+  limit-reached: "<red>Could not place minion! You have reached the limit! <gray>(<placed>/<max>)"
+  minion-at-location: "<red>Could not place minion! There already is a minion at that location!"
+
+pickup:
+  success: "<green>Successfully picked up a minion! <gray>(<placed>/<max>)"
+  inventory-full: "<red>Could not pick up minion! Make some space in your inventory!"
+
+convert:
+  start: "<green>Starting data conversion... "
+  finish: "<green>Successfully finished data conversion!"
+
 warnings:
   no-container: "<#FF3333>⚠ <#FFAAAA>You must link the minion to a container </#FFAAAA>⚠"
   no-tool: "<#FF3333>⚠ <#FFAAAA>The minion needs a tool </#FFAAAA>⚠"

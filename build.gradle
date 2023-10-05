@@ -32,6 +32,12 @@ allprojects {
         jvmToolchain(17)
     }
 
+    compileKotlin {
+        kotlinOptions {
+            javaParameters = true
+        }
+    }
+
     repositories {
         mavenCentral()
         mavenLocal()
