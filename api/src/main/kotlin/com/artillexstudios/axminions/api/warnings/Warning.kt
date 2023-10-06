@@ -1,8 +1,8 @@
 package com.artillexstudios.axminions.api.warnings
 
 import com.artillexstudios.axapi.hologram.HologramFactory
+import com.artillexstudios.axapi.libs.kyori.adventure.text.Component
 import com.artillexstudios.axminions.api.minions.Minion
-import net.kyori.adventure.text.Component
 
 abstract class Warning(private val name: String) {
 

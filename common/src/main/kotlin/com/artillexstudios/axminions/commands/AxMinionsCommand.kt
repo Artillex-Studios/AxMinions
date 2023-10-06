@@ -1,20 +1,15 @@
 package com.artillexstudios.axminions.commands
 
+import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import com.artillexstudios.axapi.libs.lamp.annotation.*
+import com.artillexstudios.axapi.libs.lamp.bukkit.annotation.CommandPermission
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import revxrsal.commands.annotation.AutoComplete
-import revxrsal.commands.annotation.Command
-import revxrsal.commands.annotation.Default
-import revxrsal.commands.annotation.Description
-import revxrsal.commands.annotation.Range
-import revxrsal.commands.annotation.Subcommand
-import revxrsal.commands.bukkit.annotation.CommandPermission
 
 @Command("axminions", "minion", "minions")
 class AxMinionsCommand {

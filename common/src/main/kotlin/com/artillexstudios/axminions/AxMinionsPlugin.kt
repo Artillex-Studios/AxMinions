@@ -2,6 +2,9 @@ package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
+import com.artillexstudios.axapi.libs.lamp.bukkit.BukkitCommandHandler
+import com.artillexstudios.axapi.libs.libby.libby.BukkitLibraryManager
+import com.artillexstudios.axapi.libs.libby.libby.Library
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -15,10 +18,7 @@ import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
-import net.byteflux.libby.BukkitLibraryManager
-import net.byteflux.libby.Library
 import org.bukkit.Bukkit
-import revxrsal.commands.bukkit.BukkitCommandHandler
 import java.io.File
 
 class AxMinionsPlugin : AxPlugin() {
