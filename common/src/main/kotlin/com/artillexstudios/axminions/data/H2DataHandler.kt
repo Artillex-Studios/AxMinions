@@ -11,14 +11,13 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.inventory.ItemStack
 import org.h2.jdbc.JdbcConnection
-import java.sql.Connection
 import java.sql.Statement
 import java.sql.Types
 import java.util.Properties
 import java.util.UUID
 
 class H2DataHandler : DataHandler {
-    private lateinit var connection: Connection
+    private lateinit var connection: JdbcConnection
 
     override fun getType(): String {
         return "H2"
@@ -219,11 +218,13 @@ class H2DataHandler : DataHandler {
         }
 
         if (userId == null) {
+            println("Userid null")
             return
         }
 
         connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?)")
             .use { statement ->
+                println("aaaa")
                 statement.setInt(1, locationId)
                 if (linkedChestId == null) {
                     statement.setNull(2, Types.INTEGER)
@@ -308,6 +309,6 @@ class H2DataHandler : DataHandler {
     }
 
     override fun disable() {
-        connection.close()
+        connection.prepareStatement("SHUTDOWN DEFRAG;").executeUpdate()
     }
 }
