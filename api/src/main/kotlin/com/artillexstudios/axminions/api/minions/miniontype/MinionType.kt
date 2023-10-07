@@ -16,6 +16,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
 
     fun load() {
         config = Config(File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"), defaults)
+        AxMinionsAPI.INSTANCE.getDataHandler().insertType(this)
         AxMinionsAPI.INSTANCE.getDataHandler().loadMinionsOfType(this)
     }
 
@@ -36,10 +37,6 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         if (!shouldRun(minion)) return
 
         run(minion)
-    }
-
-    fun updateArmor(minion: Minion) {
-
     }
 
     fun getItem(level: Int = 1): ItemStack {

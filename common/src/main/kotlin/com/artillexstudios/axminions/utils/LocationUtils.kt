@@ -17,12 +17,13 @@ object LocationUtils {
         val rangeZ = (blockZ - radius).rangeTo((blockZ + radius)).step(1.0)
 
         val radiusSquared = radius * radius
-        val smallRadiusSquared = (radius - 1) * (radius -1)
+        val smallRadiusSquared = (radius - 1) * (radius - 1)
 
         for (x in rangeX) {
             for (y in rangeY) {
                 for (z in rangeZ) {
-                    val distance = ((blockX - x) * (blockX - x) + ((blockZ - z) * (blockZ - z)) + ((blockY - y) * (blockY - y)))
+                    val distance =
+                        ((blockX - x) * (blockX - x) + ((blockZ - z) * (blockZ - z)) + ((blockY - y) * (blockY - y)))
 
                     if (distance < radiusSquared && !(filterEmpty && distance < smallRadiusSquared)) {
                         blocks.add(Location(location.world, x, y, z))

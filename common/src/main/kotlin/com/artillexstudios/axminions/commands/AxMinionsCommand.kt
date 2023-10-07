@@ -36,4 +36,11 @@ class AxMinionsCommand {
 
         sender.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RELOAD_SUCCESS(), Placeholder.unparsed("time", (System.currentTimeMillis() - start).toString())))
     }
+
+    @Subcommand("convert")
+    @CommandPermission("axminions.command.convert")
+    @Description("Convert from a different plugin")
+    fun convert(sender: CommandSender, ) {
+
+    }
 }

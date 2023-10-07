@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.minions.miniontype
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.utils.LocationUtils
 import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.Material
@@ -10,6 +11,10 @@ import org.bukkit.block.data.Ageable
 import org.bukkit.inventory.ItemStack
 
 class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResource("minions/farmer.yml")!!) {
+
+    override fun shouldRun(minion: Minion): Boolean {
+        return MinionTicker.getTick() % minion.getNextAction() == 0L
+    }
 
     override fun run(minion: Minion) {
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->

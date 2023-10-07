@@ -47,7 +47,7 @@ class MinionPlaceListener : Listener {
                 return@submit
             }
 
-            val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, "")
+            val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, 0, 0.0, AxMinionsPlugin.dataHandler.getLocationID(location), 0)
             AxMinionsPlugin.dataHandler.saveMinion(minion)
 
             event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_SUCCESS()))

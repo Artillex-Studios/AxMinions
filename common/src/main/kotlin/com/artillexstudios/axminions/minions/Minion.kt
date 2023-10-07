@@ -4,13 +4,14 @@ import com.artillexstudios.axapi.entity.PacketEntityFactory
 import com.artillexstudios.axapi.entity.impl.PacketArmorStand
 import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.hologram.Hologram
+import com.artillexstudios.axapi.utils.EquipmentSlot
+import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.RotationType
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
-import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -33,7 +34,10 @@ class Minion(
     private var tool: ItemStack?,
     private var linkedChest: Location?,
     private var direction: Direction,
-    savedExtraData: String
+    private var actions: Long,
+    private var storage: Double,
+    private val locationID: Int,
+    private var chestLocationId: Int
 ) : Minion {
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
@@ -47,7 +51,6 @@ class Minion(
 
     init {
         spawn()
-        loadExtraData(savedExtraData)
         Minions.load(this)
         linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
     }
@@ -60,6 +63,7 @@ class Minion(
         entity = PacketEntityFactory.get().spawnEntity(location, EntityType.ARMOR_STAND) as PacketArmorStand
         entity.setHasBasePlate(false)
         entity.setSmall(true)
+        updateArmour()
         entity.onClick { event ->
             if (event.isAttack) {
                 println("LEFT CLICKED!")
@@ -94,20 +98,19 @@ class Minion(
     }
 
     override fun getAsItem(): ItemStack {
-        return ItemStack(Material.STONE)
+        return type.getItem(level)
     }
 
     override fun getLevel(): Int {
         return this.level
     }
 
-    override fun storeData(key: String, value: String?) {
-        if (value == null) {
-            extraData.remove(key)
-            return
-        }
+    override fun setActions(actions: Long) {
+        this.actions = actions
+    }
 
-        extraData[key] = value
+    override fun setStorage(storage: Double) {
+        this.storage = storage
     }
 
     override fun setWarning(warning: Warning?) {
@@ -160,6 +163,14 @@ class Minion(
 
     override fun getNextAction(): Int {
         return this.nextAction
+    }
+
+    override fun getActionAmount(): Long {
+        return this.actions
+    }
+
+    override fun getStorage(): Double {
+        return this.storage
     }
 
     override fun getRange(): Double {
@@ -232,12 +243,37 @@ class Minion(
         }
     }
 
-    private fun loadExtraData(data: String) {
-        data.split("|").forEach { split ->
-            val secondSplit = split.split("=")
-            if (secondSplit.isNotEmpty()) {
-                extraData[secondSplit[0]] = secondSplit[1]
-            }
+    override fun updateArmour() {
+        for (entry in EquipmentSlot.entries) {
+            entity.setItem(entry, ItemStack(Material.AIR))
         }
+
+        type.getSection("items.helmet", level)?.let {
+            println("helmet!")
+            entity.setItem(EquipmentSlot.HELMET, ItemBuilder(it).get())
+        }
+
+        type.getSection("items.chestplate", level)?.let {
+            println("CP!")
+            entity.setItem(EquipmentSlot.CHEST_PLATE, ItemBuilder(it).get())
+        }
+
+        type.getSection("items.leggings", level)?.let {
+            println("legs!")
+            entity.setItem(EquipmentSlot.LEGGINGS, ItemBuilder(it).get())
+        }
+
+        type.getSection("items.boots", level)?.let {
+            println("boots!")
+            entity.setItem(EquipmentSlot.BOOTS, ItemBuilder(it).get())
+        }
+    }
+
+    override fun getLocationId(): Int {
+        return this.locationID
+    }
+
+    override fun getChestLocationId(): Int {
+        return this.chestLocationId
     }
 }

@@ -29,7 +29,9 @@ interface Minion {
 
     fun getLevel(): Int
 
-    fun storeData(key: String, value: String?)
+    fun setActions(actions: Long)
+
+    fun setStorage(storage: Double)
 
     fun setWarning(warning: Warning?)
 
@@ -57,6 +59,10 @@ interface Minion {
 
     fun getNextAction(): Int
 
+    fun getActionAmount(): Long
+
+    fun getStorage(): Double
+
     fun getRange(): Double
 
     fun resetAnimation()
@@ -80,4 +86,10 @@ interface Minion {
     fun addToContainerOrDrop(itemStack: ItemStack)
 
     fun addToContainerOrDrop(itemStack: Iterable<ItemStack>)
+
+    fun updateArmour()
+
+    fun getLocationId(): Int
+
+    fun getChestLocationId(): Int
 }

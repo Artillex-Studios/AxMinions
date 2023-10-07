@@ -9,6 +9,7 @@ inline fun <T> Array<T>.fastFor(action: (T) -> Unit) {
 
 inline fun <T> List<T>.fastFor(action: (T) -> Unit) {
     val indices = indices
+    if (indices.last == 0) return
     for (i in indices) {
         action(get(i))
     }
