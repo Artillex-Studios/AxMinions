@@ -30,7 +30,6 @@ class MinionPlaceListener : Listener {
         event.isCancelled = true
 
         val location = event.clickedBlock!!.getRelative(event.blockFace).location
-        location.add(0.5, 0.0, 0.5)
 
         val maxMinions = AxMinionsAPI.INSTANCE.getMinionLimit(event.player)
 
@@ -50,7 +49,7 @@ class MinionPlaceListener : Listener {
             val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, 0, 0.0, AxMinionsPlugin.dataHandler.getLocationID(location), 0)
             AxMinionsPlugin.dataHandler.saveMinion(minion)
 
-            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_SUCCESS()))
+            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_SUCCESS(), Placeholder.unparsed("type", minionType.getName()), Placeholder.unparsed("placed", (placed + 1).toString()), Placeholder.unparsed("max", (maxMinions).toString())))
         }
     }
 }

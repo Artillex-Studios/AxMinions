@@ -36,6 +36,8 @@ class Config(file: File, stream: InputStream) {
         fun ECONOMY_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.economy", "Vault")
         @JvmStatic
         fun PRICES_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
+        @JvmStatic
+        fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
     }
 
     private val config = Config(
@@ -53,6 +55,10 @@ class Config(file: File, stream: InputStream) {
 
     fun <T> get(route: String?): T {
         return this.config.get(route)
+    }
+
+    fun getConfig(): Config {
+        return config
     }
 
     fun reload() {

@@ -1,13 +1,20 @@
 package com.artillexstudios.axminions.commands
 
 import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import com.artillexstudios.axapi.libs.lamp.annotation.*
+import com.artillexstudios.axapi.libs.lamp.annotation.AutoComplete
+import com.artillexstudios.axapi.libs.lamp.annotation.Command
+import com.artillexstudios.axapi.libs.lamp.annotation.Default
+import com.artillexstudios.axapi.libs.lamp.annotation.Description
+import com.artillexstudios.axapi.libs.lamp.annotation.Range
+import com.artillexstudios.axapi.libs.lamp.annotation.Subcommand
 import com.artillexstudios.axapi.libs.lamp.bukkit.annotation.CommandPermission
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
+import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -18,8 +25,17 @@ class AxMinionsCommand {
     @CommandPermission("axminions.command.give")
     @Description("Give a minion to a player")
     @AutoComplete("* @minionTypes * *")
-    fun give(sender: CommandSender, @Default("me") receiver: Player, @Default("collector") minionType: MinionType, @Default("1") level: Int, @Default("1") @Range(min = 1.0, max = 64.0) amount: Int) {
-        receiver.inventory.addItem(minionType.getItem())
+    fun give(
+        sender: CommandSender,
+        receiver: Player,
+        minionType: MinionType,
+        @Default("1") level: Int,
+        @Default("1") @Range(min = 1.0, max = 64.0) amount: Int
+    ) {
+        val item = minionType.getItem(level)
+        item.amount = amount
+
+        receiver.inventory.addItem(item)
     }
 
     @Subcommand("reload")
@@ -34,13 +50,42 @@ class AxMinionsCommand {
             it.value.getConfig().reload()
         }
 
-        sender.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RELOAD_SUCCESS(), Placeholder.unparsed("time", (System.currentTimeMillis() - start).toString())))
+        sender.sendMessage(
+            StringUtils.formatToString(
+                Messages.PREFIX() + Messages.RELOAD_SUCCESS(),
+                Placeholder.unparsed("time", (System.currentTimeMillis() - start).toString())
+            )
+        )
     }
 
     @Subcommand("convert")
     @CommandPermission("axminions.command.convert")
     @Description("Convert from a different plugin")
-    fun convert(sender: CommandSender, ) {
+    fun convert(sender: CommandSender) {
 
+    }
+
+    @Subcommand("stats", "statistics")
+    @CommandPermission("axminions.command.statistics")
+    @Description("Get statistics of plugin")
+    fun stats(sender: CommandSender) {
+        val minions = AxMinionsAPI.INSTANCE.getMinions()
+        var loaded = 0
+        val total = minions.size
+
+        minions.fastFor {
+            if (it.getType().isChunkLoaded(it.getLocation())) {
+                loaded++
+            }
+        }
+
+        sender.sendMessage(
+            StringUtils.formatToString(
+                Messages.STATISTICS(),
+                Placeholder.unparsed("ticking", loaded.toString()),
+                Placeholder.unparsed("not-ticking", (total - loaded).toString()),
+                Placeholder.unparsed("total", total.toString())
+            )
+        )
     }
 }

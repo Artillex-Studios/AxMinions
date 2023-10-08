@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axapi.config.Config
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
+import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
@@ -28,7 +29,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         return true
     }
 
-    private fun isChunkLoaded(location: Location): Boolean {
+    fun isChunkLoaded(location: Location): Boolean {
         return location.world?.isChunkLoaded(location.blockX shr 4, location.blockZ shr 4) ?: return false
     }
 
@@ -40,7 +41,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     }
 
     fun getItem(level: Int = 1): ItemStack {
-        val builder = ItemBuilder(config.getSection("item"))
+        val builder = ItemBuilder(config.getSection("item"), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("actions", "0"))
         builder.storePersistentData(MinionTypes.getMinionKey(), PersistentDataType.STRING, name)
         builder.storePersistentData(MinionTypes.getLevelKey(), PersistentDataType.INTEGER, level)
 
@@ -79,6 +80,10 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         }
 
         return n
+    }
+
+    fun hasReachedMaxLevel(minion: Minion): Boolean {
+        return !config.backingDocument.isSection("upgrades.${minion.getLevel() + 1}")
     }
 
     abstract fun run(minion: Minion)

@@ -4,14 +4,15 @@ import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.hologram.Hologram
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.warnings.Warning
+import java.util.UUID
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
-import java.util.UUID
 
-interface Minion {
+interface Minion : InventoryHolder {
 
     fun getType(): MinionType
 
@@ -21,7 +22,7 @@ interface Minion {
 
     fun getLocation(): Location
 
-    fun updateInventory(inventory: Inventory)
+    fun updateInventories()
 
     fun openInventory(player: Player)
 
@@ -73,8 +74,6 @@ interface Minion {
 
     fun getLinkedChest(): Location?
 
-    fun serializeExtraData(): String
-
     fun setDirection(direction: Direction)
 
     fun getDirection(): Direction
@@ -92,4 +91,6 @@ interface Minion {
     fun getLocationId(): Int
 
     fun getChestLocationId(): Int
+
+    fun removeOpenInventory(inventory: Inventory)
 }

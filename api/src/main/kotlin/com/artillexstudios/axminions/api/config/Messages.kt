@@ -6,10 +6,13 @@ import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.Du
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings
+import com.artillexstudios.axapi.utils.RotationType
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.minions.Direction
 import java.io.File
 import java.io.InputStream
+import java.util.Locale
 
 class Messages(file: File, stream: InputStream) {
     companion object {
@@ -31,6 +34,19 @@ class Messages(file: File, stream: InputStream) {
         fun PLACE_LIMIT_REACHED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.limit-reached")
         @JvmStatic
         fun PLACE_MINION_AT_LOCATION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.minion-at-location")
+        @JvmStatic
+        fun STATISTICS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("statistics")
+        @JvmStatic
+        fun LEVEL_COLOR(level: Int = 1) = AxMinionsAPI.INSTANCE.getMessages().get("levels.$level", "<#33FF33>")
+        @JvmStatic
+        fun UPGRADES_MAX_LEVEL_REACHED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("upgrades.limit-reached")
+        @JvmStatic
+        fun ROTATION_NAME(direction: Direction) = AxMinionsAPI.INSTANCE.getMessages().get("directions.${direction.name.lowercase(
+            Locale.ENGLISH)}", direction.name)
+        @JvmStatic
+        fun WRONG_TOOL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("tools.wrong-tool")
+        @JvmStatic
+        fun ERROR_INVENTORY_FULL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("errors.inventory-full")
     }
 
     private val config = Config(
@@ -44,6 +60,10 @@ class Messages(file: File, stream: InputStream) {
 
     fun <T> get(route: String?): T {
         return this.config.get(route)
+    }
+
+    fun <T> get(route: String?, default: T): T {
+        return this.config.get(route, default)
     }
 
     fun getFormatted(route: String?): String {

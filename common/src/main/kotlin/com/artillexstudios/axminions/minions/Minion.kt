@@ -4,16 +4,25 @@ import com.artillexstudios.axapi.entity.PacketEntityFactory
 import com.artillexstudios.axapi.entity.impl.PacketArmorStand
 import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.hologram.Hologram
+import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import com.artillexstudios.axapi.scheduler.Scheduler
+import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axapi.utils.EquipmentSlot
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.RotationType
+import com.artillexstudios.axapi.utils.StringUtils
+import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.config.Config
+import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.listeners.LinkingListener
+import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.Container
 import org.bukkit.enchantments.Enchantment
@@ -24,9 +33,12 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import java.util.UUID
 import kotlin.math.roundToInt
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.persistence.PersistentDataType
 
 class Minion(
-    private val location: Location,
+    private var location: Location,
     private val ownerUUID: UUID,
     private val owner: OfflinePlayer,
     private val type: MinionType,
@@ -48,6 +60,7 @@ class Minion(
     private var hologram: Hologram? = null
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
+    private val openInventories = mutableListOf<Inventory>()
 
     init {
         spawn()
@@ -60,15 +73,21 @@ class Minion(
     }
 
     override fun spawn() {
+        location.x += 0.5
+        location.z += 0.5
         entity = PacketEntityFactory.get().spawnEntity(location, EntityType.ARMOR_STAND) as PacketArmorStand
         entity.setHasBasePlate(false)
         entity.setSmall(true)
+        entity.setHasArms(true)
+        setDirection(direction)
         updateArmour()
         entity.onClick { event ->
             if (event.isAttack) {
                 println("LEFT CLICKED!")
             } else {
-                println("RIGHT CLICKED!")
+                Scheduler.get().run {
+                    openInventory(event.player)
+                }
             }
         }
     }
@@ -89,12 +108,63 @@ class Minion(
         return this.location
     }
 
-    override fun updateInventory(inventory: Inventory) {
+    override fun updateInventories() {
+        openInventories.fastFor {
+            updateInventory(it)
+        }
+    }
 
+    private fun updateInventory(inventory: Inventory) {
+        AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
+            if (it.equals("filler")) return@forEach
+            val item: ItemStack
+            if (it.equals("upgrade", true) || it.equals("statistics", true)) {
+                val level = Placeholder.unparsed("level", level.toString())
+                val nextLevel = Placeholder.unparsed("next_level", when (type.hasReachedMaxLevel(this)) {
+                    true -> Messages.UPGRADES_MAX_LEVEL_REACHED()
+                    else -> (this.level + 1).toString()
+                })
+                val range = Placeholder.unparsed("range", type.getString("range", this.level))
+                val nextRange = Placeholder.unparsed("next_range", type.getString("range", this.level + 1))
+                val extra = Placeholder.unparsed("extra", type.getString("extra", this.level))
+                val nextExtra = Placeholder.unparsed("next_extra", type.getString("extra", this.level + 1))
+                val speed = Placeholder.unparsed("speed", type.getString("speed", this.level))
+                val nextSpeed = Placeholder.unparsed("next_speed", type.getString("speed", this.level + 1))
+                val price = Placeholder.unparsed("price", type.getString("requirements.money", this.level + 1))
+                val requiredActions = Placeholder.unparsed("required_actions", type.getString("requirements.actions", this.level + 1))
+                val stored = Placeholder.unparsed("storage", storage.toString())
+                val actions = Placeholder.unparsed("actions", actions.toString())
+
+                item = ItemBuilder(type.getConfig().getSection("gui.$it"), level, nextLevel, range, nextRange, extra, nextExtra, speed, nextSpeed, price, requiredActions, stored, actions).storePersistentData(
+                    MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
+            } else if (it.equals("item")) {
+                item = ItemBuilder(tool?.clone() ?: ItemStack(Material.AIR)).get()
+            } else {
+                val rotation = Placeholder.unparsed("direction", Messages.ROTATION_NAME(direction))
+                val linked = Placeholder.unparsed("linked", when (linkedChest) {
+                    null -> "---"
+                    else -> Serializers.LOCATION.serialize(linkedChest)
+                })
+                item = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"), rotation, linked).storePersistentData(
+                    MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
+            }
+
+            inventory.setItem(AxMinionsAPI.INSTANCE.getConfig().get("gui.items.$it.slot"), item)
+        }
     }
 
     override fun openInventory(player: Player) {
+        LinkingListener.linking.remove(player.uniqueId)
+        val inventory = Bukkit.createInventory(this, Config.GUI_SIZE(), StringUtils.formatToString(type.getConfig().get("name"), Placeholder.unparsed("level_color", Messages.LEVEL_COLOR(level)), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("owner", owner.name ?: "???")))
 
+        val filler = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.filler")).get()
+        for (i in 0..< Config.GUI_SIZE()) {
+            inventory.setItem(i, filler)
+        }
+
+        updateInventory(inventory)
+        player.openInventory(inventory)
+        openInventories.add(inventory)
     }
 
     override fun getAsItem(): ItemStack {
@@ -139,6 +209,12 @@ class Minion(
 
     override fun setTool(tool: ItemStack) {
         this.tool = tool
+
+        if (tool.type == Material.AIR) {
+            entity.setItem(EquipmentSlot.MAIN_HAND, null)
+        } else {
+            entity.setItem(EquipmentSlot.MAIN_HAND, tool)
+        }
     }
 
     override fun getTool(): ItemStack? {
@@ -191,22 +267,11 @@ class Minion(
     override fun setLinkedChest(location: Location?) {
         this.linkedChest = location?.clone()
         linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
+        updateInventories()
     }
 
     override fun getLinkedChest(): Location? {
         return this.linkedChest
-    }
-
-    override fun serializeExtraData(): String {
-        val builder = StringBuilder()
-        for (data in extraData) {
-            builder.append(data.key)
-            builder.append("=")
-            builder.append(data.value)
-            builder.append("|")
-        }
-
-        return builder.toString()
     }
 
     override fun setDirection(direction: Direction) {
@@ -245,26 +310,22 @@ class Minion(
 
     override fun updateArmour() {
         for (entry in EquipmentSlot.entries) {
-            entity.setItem(entry, ItemStack(Material.AIR))
+            entity.setItem(entry, null)
         }
 
         type.getSection("items.helmet", level)?.let {
-            println("helmet!")
             entity.setItem(EquipmentSlot.HELMET, ItemBuilder(it).get())
         }
 
         type.getSection("items.chestplate", level)?.let {
-            println("CP!")
             entity.setItem(EquipmentSlot.CHEST_PLATE, ItemBuilder(it).get())
         }
 
         type.getSection("items.leggings", level)?.let {
-            println("legs!")
             entity.setItem(EquipmentSlot.LEGGINGS, ItemBuilder(it).get())
         }
 
         type.getSection("items.boots", level)?.let {
-            println("boots!")
             entity.setItem(EquipmentSlot.BOOTS, ItemBuilder(it).get())
         }
     }
@@ -275,5 +336,13 @@ class Minion(
 
     override fun getChestLocationId(): Int {
         return this.chestLocationId
+    }
+
+    override fun removeOpenInventory(inventory: Inventory) {
+        openInventories.remove(inventory)
+    }
+
+    override fun getInventory(): Inventory {
+        return Bukkit.createInventory(this, 9)
     }
 }

@@ -9,7 +9,9 @@ place:
 
 pickup:
   success: "<green>Successfully picked up a minion! <gray>(<placed>/<max>)"
-  inventory-full: "<red>Could not pick up minion! Make some space in your inventory!"
+
+errors:
+  inventory-full: "<red>You don't have enough space in your inventory to do this! Go, and make some space!"
 
 convert:
   start: "<green>Starting data conversion... "
@@ -20,6 +22,36 @@ warnings:
   no-tool: "<#FF3333>⚠ <#FFAAAA>The minion needs a tool </#FFAAAA>⚠"
   no-water-nearby: "<#FF3333>⚠ <#FFAAAA>The minion needs water nearby </#FFAAAA>⚠"
   container-full: "<#FF3333>⚠ <#FFAAAA>The container of this minion is full </#FFAAAA>⚠"
+
+statistics: |
+  <white>Ticking minions: <gradient:#00aaff:#00ccff><ticking></gradient>
+  <white>Not ticking minions: <gradient:#00aaff:#00ccff><not-ticking></gradient>
+  <white>Total: <gradient:#00aaff:#00ccff><total></gradient>
+
+upgrades:
+  upgraded: "<green>Successfully upgraded the minion to level: <white><level></white>!"
+  limit-reached: "<red>You have maxed this minion!"
+
+levels:
+  1: "<#33FF33>"
+  2: "<#66FF00>"
+  3: "<#AAFF00>"
+  4: "<#FFFF00>"
+  5: "<#FFCC00>"
+  6: "<#FFAA00>"
+  7: "<#FF8800>"
+  8: "<#FF5500>"
+  9: "<#FF3333>"
+  10: "<#FF0000>"
+
+directions:
+  north: "North"
+  east: "East"
+  south: "South"
+  west: "West"
+
+tools:
+  wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 # Do not change!
 config-version: 1

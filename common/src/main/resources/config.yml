@@ -43,5 +43,39 @@ hooks:
   # Supported prices providers: ShopGUIPlus, Essentials, EconomyShopGUI, CMI, custom
   prices: "ShopGUIPlus"
 
+gui:
+  size: 27
+  items:
+    filler:
+      type: "black_stained_glass_pane"
+      name: ""
+    rotate:
+      type: "ender_eye"
+      name: "<#33FF33><b>Rotate"
+      lore:
+        - ""
+        - " <gray>- <white>Current: <#FFCC00><rotation>"
+        - ""
+        - "<#FFCC00><b>(!)</b> Click here to rotate your minion!"
+      slot: 10
+    link:
+      type: "chest"
+      name: "<#FFCC00><b>Link to container"
+      lore:
+        - ""
+        - " <gray>- <white>Status: <#FFCC00><linked>"
+        - ""
+        - "<#FFCC00><b>(!)</b> Click here to link your minion to a container!"
+      slot: 11
+    item:
+      type: "air"
+      slot: 13
+
+    # These settings are minion-specific, you can edit them in each minion's file!
+    upgrade:
+      slot: 15
+    statistics:
+      slot: 16
+
 # Do not change!
 config-version: 1

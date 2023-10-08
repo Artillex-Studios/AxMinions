@@ -27,7 +27,7 @@ class H2DataHandler : DataHandler {
         connection =
             JdbcConnection("jdbc:h2:./${AxMinionsPlugin.INSTANCE.dataFolder}/data", Properties(), null, null, false)
 
-        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_types`(`id` BIGINT AUTO_INCREMENT PRIMARY KEY, `name` VARCHAR(64));")
+        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_types`(`id` INT AUTO_INCREMENT PRIMARY KEY, `name` VARCHAR(64));")
             .use {
                 it.executeUpdate()
             }
@@ -37,17 +37,17 @@ class H2DataHandler : DataHandler {
                 it.executeUpdate()
             }
 
-        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_worlds`(`id` BIGINT AUTO_INCREMENT PRIMARY KEY, `name` VARCHAR(64));")
+        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_worlds`(`id` INT AUTO_INCREMENT PRIMARY KEY, `name` VARCHAR(64));")
             .use {
                 it.executeUpdate()
             }
 
-        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_locations`(`id` BIGINT AUTO_INCREMENT PRIMARY KEY, `x` INT, `y` INT, `z` INT, `world_id` INT, FOREIGN KEY(world_id) REFERENCES `axminions_worlds`(`id`));")
+        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_locations`(`id` INT AUTO_INCREMENT PRIMARY KEY, `x` INT, `y` INT, `z` INT, `world_id` INT, FOREIGN KEY(world_id) REFERENCES `axminions_worlds`(`id`));")
             .use {
                 it.executeUpdate()
             }
 
-        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_minions`(`id` BIGINT AUTO_INCREMENT PRIMARY KEY, `location_id` INT, `chest_location_id` INT, `owner_id` UUID, `type_id` INT, `direction` TINYINT, `level` SMALLINT, `storage` DOUBLE, `actions` BIGINT, `tool` CLOB, FOREIGN KEY(`location_id`) REFERENCES `axminions_locations`(id), FOREIGN KEY(`chest_location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`owner_id`) REFERENCES `axminions_users`(`uuid`), FOREIGN KEY(`type_id`) REFERENCES `axminions_types`(`id`));")
+        connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_minions`(`id` INT AUTO_INCREMENT PRIMARY KEY, `location_id` INT, `chest_location_id` INT, `owner_id` UUID, `type_id` TINYINT, `direction` TINYINT, `level` SMALLINT, `storage` DOUBLE, `actions` BIGINT, `tool` CLOB, FOREIGN KEY(`location_id`) REFERENCES `axminions_locations`(id), FOREIGN KEY(`chest_location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`owner_id`) REFERENCES `axminions_users`(`uuid`), FOREIGN KEY(`type_id`) REFERENCES `axminions_types`(`id`));")
             .use {
                 it.executeUpdate()
             }
@@ -151,7 +151,7 @@ class H2DataHandler : DataHandler {
     }
 
     override fun getLocation(locationId: Int): Location? {
-        connection.prepareStatement("SELECT `name` FROM `axminions_locations` WHERE `id` = ?").use { statement ->
+        connection.prepareStatement("SELECT * FROM `axminions_locations` WHERE `id` = ?;").use { statement ->
             statement.setInt(1, locationId)
             statement.executeQuery().use { resultSet ->
                 if (resultSet.next()) {
@@ -169,7 +169,7 @@ class H2DataHandler : DataHandler {
     }
 
     override fun getWorld(worldId: Int): World? {
-        connection.prepareStatement("SELECT `name` FROM `axminions_worlds` WHERE `id` = ?").use { statement ->
+        connection.prepareStatement("SELECT `name` FROM `axminions_worlds` WHERE `id` = ?;").use { statement ->
             statement.setInt(1, worldId)
             statement.executeQuery().use { resultSet ->
                 if (resultSet.next()) {
@@ -184,7 +184,7 @@ class H2DataHandler : DataHandler {
     override fun saveMinion(minion: com.artillexstudios.axminions.api.minions.Minion) {
         val locationId = getLocationID(minion.getLocation())
         var linkedChestId: Int? = null
-        var userId: Int? = null
+        var userId: UUID? = null
         var minionTypeId = 0
 
         connection.prepareStatement("SELECT * FROM `axminions_types` WHERE `name` = ?;").use {
@@ -210,34 +210,34 @@ class H2DataHandler : DataHandler {
 
             statement.generatedKeys.use { resultSet ->
                 if (resultSet.next()) {
-                    if (resultSet.next()) {
-                        userId = resultSet.getInt(1)
-                    }
+                    userId = resultSet.getObject(1) as UUID
                 }
             }
         }
 
         if (userId == null) {
-            println("Userid null")
             return
         }
 
         connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?)")
             .use { statement ->
-                println("aaaa")
                 statement.setInt(1, locationId)
                 if (linkedChestId == null) {
                     statement.setNull(2, Types.INTEGER)
                 } else {
                     statement.setInt(2, linkedChestId)
                 }
-                statement.setInt(3, userId!!)
+                statement.setObject(3, userId!!)
                 statement.setInt(4, minionTypeId)
                 statement.setByte(5, minion.getDirection().ordinal.toByte())
                 statement.setInt(6, minion.getLevel())
                 statement.setDouble(7, minion.getStorage())
                 statement.setLong(8, minion.getActionAmount())
-                statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
+                if (minion.getTool() == null || minion.getTool()?.type == Material.AIR) {
+                    statement.setNull(9, Types.CLOB);
+                } else {
+                    statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
+                }
                 statement.executeUpdate()
             }
     }

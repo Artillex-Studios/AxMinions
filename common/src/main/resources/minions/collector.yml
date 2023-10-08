@@ -22,7 +22,7 @@ item:
     - ""
     - "<#FFEE00>Statistics"
     - " <#FFEE00>❙ <white>Level: <#FFEEAA><level>"
-    - " <#FFEE00>❙ <white>Collected items: <#FFEEAA><items>"
+    - " <#FFEE00>❙ <white>Collected items: <#FFEEAA><actions>"
     - ""
     - "<#FFEE00><b>(!)</b> Place the minion and give it a shovel!"
 
@@ -32,9 +32,9 @@ gui:
     name: "<#00CCFF><b>Upgrade minion"
     lore:
       - ""
-      - " <gray>- <white>Level: <green><current_level> » <dark_green><next_level>"
-      - " <gray>- <white>Range: <green><current_range> » <dark_green><next_range>"
-      - " <gray>- <white>Speed: <green><current_speed> » <dark_green><next_speed>"
+      - " <gray>- <white>Level: <green><level> » <dark_green><next_level>"
+      - " <gray>- <white>Range: <green><range> » <dark_green><next_range>"
+      - " <gray>- <white>Speed: <green><speed> » <dark_green><next_speed>"
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
@@ -46,7 +46,7 @@ gui:
     name: "<#FFEE00><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Collected items: <#FFEE00><statistic_collected>"
+      - " <gray>- <white>Collected items: <#FFEE00><actions>"
       - ""
 
 upgrades:

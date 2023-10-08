@@ -14,6 +14,8 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
+import com.artillexstudios.axminions.listeners.LinkingListener
+import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
@@ -76,6 +78,8 @@ class AxMinionsPlugin : AxPlugin() {
         handler.registerBrigadier()
 
         Bukkit.getPluginManager().registerEvents(MinionPlaceListener(), this)
+        Bukkit.getPluginManager().registerEvents(LinkingListener(), this)
+        Bukkit.getPluginManager().registerEvents(MinionInventoryListener(), this)
 
         MinionTicker.startTicking()
     }
