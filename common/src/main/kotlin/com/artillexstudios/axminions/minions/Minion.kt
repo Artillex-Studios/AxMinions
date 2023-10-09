@@ -25,14 +25,12 @@ import com.artillexstudios.axminions.utils.fastFor
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.Container
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import java.util.UUID
-import kotlin.math.roundToInt
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.persistence.PersistentDataType
@@ -52,8 +50,8 @@ class Minion(
     private var chestLocationId: Int
 ) : Minion {
     private lateinit var entity: PacketArmorStand
-    private var nextAction = 0
-    private var range = 0.0
+    internal var nextAction = 0
+    internal var range = 0.0
     private var dirty = true
     private var armTick = 2.0
     private var warning: Warning? = null
@@ -61,6 +59,8 @@ class Minion(
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     private val openInventories = mutableListOf<Inventory>()
+    @Volatile
+    private var ticking = false
 
     init {
         spawn()
@@ -95,9 +95,7 @@ class Minion(
     override fun tick() {
         if (dirty) {
             dirty = false
-            range = type.getDouble("range", level)
-            val efficiency = 1.0 - (getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
-            nextAction = (type.getLong("speed", level) * efficiency).roundToInt()
+            type.onToolDirty(this)
         }
 
         type.tick(this)
@@ -340,6 +338,14 @@ class Minion(
 
     override fun removeOpenInventory(inventory: Inventory) {
         openInventories.remove(inventory)
+    }
+
+    override fun isTicking(): Boolean {
+        return ticking
+    }
+
+    override fun setTicking(ticking: Boolean) {
+        this.ticking = ticking
     }
 
     override fun getInventory(): Inventory {

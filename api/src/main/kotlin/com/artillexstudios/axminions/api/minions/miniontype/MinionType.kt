@@ -25,16 +25,20 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         return this.name
     }
 
+    open fun onToolDirty(minion: Minion) {
+
+    }
+
     open fun shouldRun(minion: Minion): Boolean {
         return true
     }
 
-    fun isChunkLoaded(location: Location): Boolean {
-        return location.world?.isChunkLoaded(location.blockX shr 4, location.blockZ shr 4) ?: return false
+    fun isTicking(minion: Minion): Boolean {
+        return minion.isTicking()
     }
 
     fun tick(minion: Minion) {
-        if (!isChunkLoaded(minion.getLocation())) return
+        if (!minion.isTicking()) return
         if (!shouldRun(minion)) return
 
         run(minion)

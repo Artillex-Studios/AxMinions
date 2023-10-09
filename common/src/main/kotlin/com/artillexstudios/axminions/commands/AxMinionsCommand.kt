@@ -74,7 +74,7 @@ class AxMinionsCommand {
         val total = minions.size
 
         minions.fastFor {
-            if (it.getType().isChunkLoaded(it.getLocation())) {
+            if (it.getType().isTicking(it)) {
                 loaded++
             }
         }

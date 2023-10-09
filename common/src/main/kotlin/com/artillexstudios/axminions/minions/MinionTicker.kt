@@ -7,9 +7,12 @@ object MinionTicker {
     private var tick = 0L
 
     private inline fun tickAll() {
-        Minions.getMinions().fastFor { minion ->
-            minion.tick()
+        Minions.get().values.forEach { list ->
+            list.fastFor {
+                it.tick()
+            }
         }
+
         tick++
     }
 

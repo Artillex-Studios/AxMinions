@@ -93,4 +93,8 @@ interface Minion : InventoryHolder {
     fun getChestLocationId(): Int
 
     fun removeOpenInventory(inventory: Inventory)
+
+    fun isTicking(): Boolean
+
+    fun setTicking(ticking: Boolean)
 }
