@@ -6,14 +6,23 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.utils.LocationUtils
 import com.artillexstudios.axminions.utils.fastFor
+import kotlin.math.roundToInt
 import org.bukkit.Material
 import org.bukkit.block.data.Ageable
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 
 class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResource("minions/farmer.yml")!!) {
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
+    }
+
+    override fun onToolDirty(minion: Minion) {
+        val minionImpl = minion as com.artillexstudios.axminions.minions.Minion
+        minionImpl.range = getDouble("range", minion.getLevel())
+        val efficiency = 1.0 - (minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
+        minionImpl.nextAction = (getLong("speed", minion.getLevel()) * efficiency).roundToInt()
     }
 
     override fun run(minion: Minion) {
