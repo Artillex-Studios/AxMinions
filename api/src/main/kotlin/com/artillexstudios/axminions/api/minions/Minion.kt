@@ -97,4 +97,8 @@ interface Minion : InventoryHolder {
     fun isTicking(): Boolean
 
     fun setTicking(ticking: Boolean)
+
+    fun setRange(range: Double)
+
+    fun setNextAction(nextAction: Int)
 }

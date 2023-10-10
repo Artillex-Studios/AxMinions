@@ -11,6 +11,7 @@ import com.artillexstudios.axapi.utils.EquipmentSlot
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.RotationType
 import com.artillexstudios.axapi.utils.StringUtils
+import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
@@ -50,8 +51,8 @@ class Minion(
     private var chestLocationId: Int
 ) : Minion {
     private lateinit var entity: PacketArmorStand
-    internal var nextAction = 0
-    internal var range = 0.0
+    private var nextAction = 0
+    private var range = 0.0
     private var dirty = true
     private var armTick = 2.0
     private var warning: Warning? = null
@@ -59,7 +60,6 @@ class Minion(
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     private val openInventories = mutableListOf<Inventory>()
-    @Volatile
     private var ticking = false
 
     init {
@@ -136,7 +136,8 @@ class Minion(
                 item = ItemBuilder(type.getConfig().getSection("gui.$it"), level, nextLevel, range, nextRange, extra, nextExtra, speed, nextSpeed, price, requiredActions, stored, actions).storePersistentData(
                     MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
             } else if (it.equals("item")) {
-                item = ItemBuilder(tool?.clone() ?: ItemStack(Material.AIR)).get()
+                println("Setting item! $tool")
+                item = tool?.clone() ?: ItemStack(Material.AIR)
             } else {
                 val rotation = Placeholder.unparsed("direction", Messages.ROTATION_NAME(direction))
                 val linked = Placeholder.unparsed("linked", when (linkedChest) {
@@ -213,6 +214,10 @@ class Minion(
         } else {
             entity.setItem(EquipmentSlot.MAIN_HAND, tool)
         }
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun getTool(): ItemStack? {
@@ -264,7 +269,7 @@ class Minion(
 
     override fun setLinkedChest(location: Location?) {
         this.linkedChest = location?.clone()
-        linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
+        linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
         updateInventories()
     }
 
@@ -346,6 +351,14 @@ class Minion(
 
     override fun setTicking(ticking: Boolean) {
         this.ticking = ticking
+    }
+
+    override fun setRange(range: Double) {
+        this.range = range
+    }
+
+    override fun setNextAction(nextAction: Int) {
+        this.nextAction = nextAction
     }
 
     override fun getInventory(): Inventory {

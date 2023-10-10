@@ -20,12 +20,13 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
     override fun onToolDirty(minion: Minion) {
         val minionImpl = minion as com.artillexstudios.axminions.minions.Minion
-        minionImpl.range = getDouble("range", minion.getLevel())
+        minionImpl.setRange(getDouble("range", minion.getLevel()))
         val efficiency = 1.0 - (minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
-        minionImpl.nextAction = (getLong("speed", minion.getLevel()) * efficiency).roundToInt()
+        minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
     }
 
     override fun run(minion: Minion) {
+        minion.resetAnimation()
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
             val block = location.block
             val drops = arrayListOf<ItemStack>()
