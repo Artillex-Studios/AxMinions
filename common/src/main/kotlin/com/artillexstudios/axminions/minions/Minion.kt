@@ -108,12 +108,11 @@ class Minion(
 
     override fun updateInventories() {
         openInventories.fastFor {
-            println(it)
             updateInventory(it)
         }
     }
 
-    private fun updateInventory(inventory: Inventory) {
+    override fun updateInventory(inventory: Inventory) {
         AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
             if (it.equals("filler")) return@forEach
             val item: ItemStack

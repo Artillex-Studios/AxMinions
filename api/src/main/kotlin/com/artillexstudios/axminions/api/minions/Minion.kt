@@ -24,6 +24,8 @@ interface Minion : InventoryHolder {
 
     fun updateInventories()
 
+    fun updateInventory(inventory: Inventory)
+
     fun openInventory(player: Player)
 
     fun getAsItem(): ItemStack
