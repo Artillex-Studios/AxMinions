@@ -55,6 +55,8 @@ class MinionInventoryListener : Listener {
                 event.currentItem!!.amount = 0
             }
 
+            println("Updatng inventoeroeroere" +
+                    "reruje9rjuaifdjhaierfhjaiofiaefioaehfioa hfiaehjirfoaehio aeifhqeaioufhaeiuofhaiefheaifhieaf")
             minion.updateInventories()
             return
         }
@@ -73,6 +75,7 @@ class MinionInventoryListener : Listener {
             tool.setItemMeta(toolMeta)
 
             player.inventory.addItem(tool)
+            minion.updateInventories()
             return
         }
 

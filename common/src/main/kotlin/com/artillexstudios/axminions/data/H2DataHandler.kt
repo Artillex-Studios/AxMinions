@@ -84,6 +84,8 @@ class H2DataHandler : DataHandler {
                     val actions = resultSet.getLong("actions")
                     val tool = resultSet.getString("tool")
 
+                    println("direction: $direction, tool: $tool chest location: $chestLocationId")
+
                     val location = getLocation(locationId)
                     var chestLocation: Location? = null
                     if (chestLocationId != 0) {
@@ -234,7 +236,7 @@ class H2DataHandler : DataHandler {
                 statement.setDouble(7, minion.getStorage())
                 statement.setLong(8, minion.getActionAmount())
                 if (minion.getTool() == null || minion.getTool()?.type == Material.AIR) {
-                    statement.setNull(9, Types.CLOB);
+                    statement.setNull(9, Types.CLOB)
                 } else {
                     statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
                 }

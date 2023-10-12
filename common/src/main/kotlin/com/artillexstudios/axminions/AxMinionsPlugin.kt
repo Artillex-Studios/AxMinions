@@ -14,6 +14,7 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
+import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
@@ -31,6 +32,7 @@ class AxMinionsPlugin : AxPlugin() {
         lateinit var config: Config
         lateinit var dataHandler: DataHandler
         lateinit var dataQueue: ThreadedQueue<Runnable>
+        lateinit var integrations: Integrations
     }
 
     init {
@@ -45,6 +47,7 @@ class AxMinionsPlugin : AxPlugin() {
     override fun load() {
         INSTANCE = this
         AxMinionsAPI.INSTANCE = AxMinionsAPIImpl(this)
+        integrations = Integrations()
     }
 
     override fun enable() {

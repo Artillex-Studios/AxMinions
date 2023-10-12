@@ -5,6 +5,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.data.DataHandler
+import com.artillexstudios.axminions.api.integrations.Integrations
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.minions.Minions
 import org.bukkit.entity.Player
@@ -54,5 +55,9 @@ class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
         }
 
         return limit
+    }
+
+    override fun getIntegrations(): Integrations {
+        TODO("Not yet implemented")
     }
 }

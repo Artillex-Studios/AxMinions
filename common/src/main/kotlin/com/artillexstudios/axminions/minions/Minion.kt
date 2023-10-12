@@ -108,6 +108,7 @@ class Minion(
 
     override fun updateInventories() {
         openInventories.fastFor {
+            println(it)
             updateInventory(it)
         }
     }
@@ -136,7 +137,6 @@ class Minion(
                 item = ItemBuilder(type.getConfig().getSection("gui.$it"), level, nextLevel, range, nextRange, extra, nextExtra, speed, nextSpeed, price, requiredActions, stored, actions).storePersistentData(
                     MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
             } else if (it.equals("item")) {
-                println("Setting item! $tool")
                 item = tool?.clone() ?: ItemStack(Material.AIR)
             } else {
                 val rotation = Placeholder.unparsed("direction", Messages.ROTATION_NAME(direction))
@@ -207,12 +207,13 @@ class Minion(
     }
 
     override fun setTool(tool: ItemStack) {
-        this.tool = tool
+        this.tool = tool.clone()
+        updateInventories()
 
         if (tool.type == Material.AIR) {
             entity.setItem(EquipmentSlot.MAIN_HAND, null)
         } else {
-            entity.setItem(EquipmentSlot.MAIN_HAND, tool)
+            entity.setItem(EquipmentSlot.MAIN_HAND, tool.clone())
         }
 
         AxMinionsPlugin.dataQueue.submit {
@@ -271,6 +272,10 @@ class Minion(
         this.linkedChest = location?.clone()
         linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
         updateInventories()
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun getLinkedChest(): Location? {
@@ -281,6 +286,10 @@ class Minion(
         this.direction = direction
         location.yaw = direction.yaw
         entity.teleport(location)
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun getDirection(): Direction {
@@ -315,6 +324,8 @@ class Minion(
         for (entry in EquipmentSlot.entries) {
             entity.setItem(entry, null)
         }
+
+        setTool(this.tool ?: ItemStack(Material.AIR))
 
         type.getSection("items.helmet", level)?.let {
             entity.setItem(EquipmentSlot.HELMET, ItemBuilder(it).get())
