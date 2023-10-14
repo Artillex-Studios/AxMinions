@@ -1,6 +1,5 @@
 package com.artillexstudios.axminions.integrations.stacker
 
-import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.integrations.types.StackerIntegration
 import org.bukkit.Location
 import org.bukkit.entity.Item
@@ -22,6 +21,6 @@ class DefaultStackerIntegration : StackerIntegration {
     }
 
     override fun register() {
-        AxMinionsPlugin.integrations.register(this)
+
     }
 }

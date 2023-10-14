@@ -115,7 +115,7 @@ class Minion(
         }
 
         if (Config.DEBUG() && debugHologram != null) {
-            debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking Chunk ticking: ${Minions.isTicking(location.chunk)} CHUNK X: ${location.chunk.x} CHUNK Z: ${location.chunk.z}"))
+            debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking"))
         }
 
         type.tick(this)

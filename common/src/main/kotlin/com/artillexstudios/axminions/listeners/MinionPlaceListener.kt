@@ -58,7 +58,6 @@ class MinionPlaceListener : Listener {
                 minion.setLevel(level)
                 minion.setActions(stats)
                 minion.setTicking(true)
-                Minions.addTicking(location.chunk)
                 event.player.sendMessage("Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${Minions.isTicking(location.chunk)}")
                 AxMinionsPlugin.dataHandler.saveMinion(minion)
             }
