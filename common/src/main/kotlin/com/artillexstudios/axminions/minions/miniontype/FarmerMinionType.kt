@@ -4,8 +4,10 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.minions.MinionTicker
-import com.artillexstudios.axminions.utils.LocationUtils
-import com.artillexstudios.axminions.utils.fastFor
+import com.artillexstudios.axminions.api.utils.LocationUtils
+import com.artillexstudios.axminions.api.utils.MinionUtils
+import com.artillexstudios.axminions.api.utils.fastFor
+import com.artillexstudios.axminions.api.warnings.Warnings
 import kotlin.math.roundToInt
 import org.bukkit.Material
 import org.bukkit.block.data.Ageable
@@ -26,16 +28,41 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
     }
 
     override fun run(minion: Minion) {
-        minion.resetAnimation()
+        if (minion.getLinkedChest() != null) {
+            val type = minion.getLinkedChest()!!.block.type
+            if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
+                minion.setLinkedChest(null)
+            }
+        }
+
+        if (minion.getLinkedInventory() == null) {
+            minion.setLinkedChest(null)
+        }
+
+        if (!minion.canUseTool()) {
+            Warnings.NO_TOOL.display(minion)
+            return
+        }
+
+        Warnings.remove(minion)
+
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
             val block = location.block
             val drops = arrayListOf<ItemStack>()
 
             when (block.type) {
-                Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO, Material.MELON, Material.PUMPKIN -> {
+                Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
+                    MinionUtils.getPlant(block).fastFor {
+                        drops.addAll(it.getDrops(minion.getTool()))
+                        it.type = Material.AIR
+                    }
+                }
+
+                Material.MELON, Material.PUMPKIN -> {
                     drops.addAll(block.getDrops(minion.getTool()))
                     block.type = Material.AIR
                 }
+
                 Material.COCOA_BEANS, Material.COCOA, Material.NETHER_WART, Material.WHEAT, Material.CARROTS, Material.BEETROOTS, Material.POTATOES -> {
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
@@ -43,6 +70,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     ageable.age = 0
                     block.blockData = ageable
                 }
+
                 Material.SWEET_BERRY_BUSH -> {
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
@@ -50,10 +78,14 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     ageable.age = 1
                     block.blockData = ageable
                 }
+
                 else -> return@fastFor
             }
 
             minion.addToContainerOrDrop(drops)
+            val dropsSize = drops.size
+            minion.damageTool(dropsSize)
+            minion.setActions(minion.getActionAmount() + dropsSize)
         }
     }
 }

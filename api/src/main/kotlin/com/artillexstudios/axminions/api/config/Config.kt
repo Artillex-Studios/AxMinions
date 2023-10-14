@@ -38,6 +38,8 @@ class Config(file: File, stream: InputStream) {
         fun PRICES_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
         @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
+        @JvmStatic
+        fun DEBUG() = AxMinionsAPI.INSTANCE.getConfig().get<Boolean>("debug")
     }
 
     private val config = Config(

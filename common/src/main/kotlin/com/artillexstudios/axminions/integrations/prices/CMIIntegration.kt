@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.api.integrations.types.PricesIntegration
 import org.bukkit.inventory.ItemStack
 
 class CMIIntegration : PricesIntegration {
+
     override fun getPrice(itemStack: ItemStack): Double {
         TODO("Not yet implemented")
     }

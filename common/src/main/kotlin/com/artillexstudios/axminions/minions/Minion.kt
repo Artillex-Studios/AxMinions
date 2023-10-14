@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.entity.PacketEntityFactory
 import com.artillexstudios.axapi.entity.impl.PacketArmorStand
 import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.hologram.Hologram
+import com.artillexstudios.axapi.hologram.HologramFactory
 import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.serializers.Serializers
@@ -18,23 +19,25 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
-import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
+import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
-import com.artillexstudios.axminions.utils.fastFor
+import java.util.UUID
+import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.Container
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.util.EulerAngle
-import java.util.UUID
-import org.bukkit.Bukkit
-import org.bukkit.Material
+import org.bukkit.inventory.meta.Damageable
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.util.EulerAngle
 
 class Minion(
     private var location: Location,
@@ -61,6 +64,7 @@ class Minion(
     private var linkedInventory: Inventory? = null
     private val openInventories = mutableListOf<Inventory>()
     private var ticking = false
+    private var debugHologram: Hologram? = null
 
     init {
         spawn()
@@ -79,6 +83,18 @@ class Minion(
         entity.setHasBasePlate(false)
         entity.setSmall(true)
         entity.setHasArms(true)
+        entity.name = StringUtils.format(
+            type.getConfig().get("entity.name"),
+            Placeholder.unparsed("owner", owner.name ?: "???"),
+            Placeholder.unparsed("level", level.toString()),
+            Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+        )
+
+        if (Config.DEBUG()) {
+            debugHologram = HologramFactory.get().spawnHologram(location.clone().add(0.0, 2.0, 0.0), "$locationID")
+            debugHologram?.addLine(StringUtils.format("ticking: $ticking"))
+        }
+
         setDirection(direction)
         updateArmour()
         entity.onClick { event ->
@@ -96,6 +112,10 @@ class Minion(
         if (dirty) {
             dirty = false
             type.onToolDirty(this)
+        }
+
+        if (Config.DEBUG() && debugHologram != null) {
+            debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking Chunk ticking: ${Minions.isTicking(location.chunk)} CHUNK X: ${location.chunk.x} CHUNK Z: ${location.chunk.z}"))
         }
 
         type.tick(this)
@@ -118,10 +138,12 @@ class Minion(
             val item: ItemStack
             if (it.equals("upgrade", true) || it.equals("statistics", true)) {
                 val level = Placeholder.unparsed("level", level.toString())
-                val nextLevel = Placeholder.unparsed("next_level", when (type.hasReachedMaxLevel(this)) {
-                    true -> Messages.UPGRADES_MAX_LEVEL_REACHED()
-                    else -> (this.level + 1).toString()
-                })
+                val nextLevel = Placeholder.unparsed(
+                    "next_level", when (type.hasReachedMaxLevel(this)) {
+                        true -> Messages.UPGRADES_MAX_LEVEL_REACHED()
+                        else -> (this.level + 1).toString()
+                    }
+                )
                 val range = Placeholder.unparsed("range", type.getString("range", this.level))
                 val nextRange = Placeholder.unparsed("next_range", type.getString("range", this.level + 1))
                 val extra = Placeholder.unparsed("extra", type.getString("extra", this.level))
@@ -129,22 +151,45 @@ class Minion(
                 val speed = Placeholder.unparsed("speed", type.getString("speed", this.level))
                 val nextSpeed = Placeholder.unparsed("next_speed", type.getString("speed", this.level + 1))
                 val price = Placeholder.unparsed("price", type.getString("requirements.money", this.level + 1))
-                val requiredActions = Placeholder.unparsed("required_actions", type.getString("requirements.actions", this.level + 1))
+                val requiredActions =
+                    Placeholder.unparsed("required_actions", type.getString("requirements.actions", this.level + 1))
                 val stored = Placeholder.unparsed("storage", storage.toString())
                 val actions = Placeholder.unparsed("actions", actions.toString())
 
-                item = ItemBuilder(type.getConfig().getSection("gui.$it"), level, nextLevel, range, nextRange, extra, nextExtra, speed, nextSpeed, price, requiredActions, stored, actions).storePersistentData(
-                    MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
+                item = ItemBuilder(
+                    type.getConfig().getSection("gui.$it"),
+                    level,
+                    nextLevel,
+                    range,
+                    nextRange,
+                    extra,
+                    nextExtra,
+                    speed,
+                    nextSpeed,
+                    price,
+                    requiredActions,
+                    stored,
+                    actions
+                ).storePersistentData(
+                    Keys.GUI, PersistentDataType.STRING, it
+                ).get()
             } else if (it.equals("item")) {
                 item = tool?.clone() ?: ItemStack(Material.AIR)
             } else {
                 val rotation = Placeholder.unparsed("direction", Messages.ROTATION_NAME(direction))
-                val linked = Placeholder.unparsed("linked", when (linkedChest) {
-                    null -> "---"
-                    else -> Serializers.LOCATION.serialize(linkedChest)
-                })
-                item = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"), rotation, linked).storePersistentData(
-                    MinionTypes.getGuiKey(), PersistentDataType.STRING, it).get()
+                val linked = Placeholder.unparsed(
+                    "linked", when (linkedChest) {
+                        null -> "---"
+                        else -> Serializers.LOCATION.serialize(linkedChest)
+                    }
+                )
+                item = ItemBuilder(
+                    AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"),
+                    rotation,
+                    linked
+                ).storePersistentData(
+                    Keys.GUI, PersistentDataType.STRING, it
+                ).get()
             }
 
             inventory.setItem(AxMinionsAPI.INSTANCE.getConfig().get("gui.items.$it.slot"), item)
@@ -153,10 +198,19 @@ class Minion(
 
     override fun openInventory(player: Player) {
         LinkingListener.linking.remove(player.uniqueId)
-        val inventory = Bukkit.createInventory(this, Config.GUI_SIZE(), StringUtils.formatToString(type.getConfig().get("name"), Placeholder.unparsed("level_color", Messages.LEVEL_COLOR(level)), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("owner", owner.name ?: "???")))
+        val inventory = Bukkit.createInventory(
+            this,
+            Config.GUI_SIZE(),
+            StringUtils.formatToString(
+                type.getConfig().get("name"),
+                Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level)),
+                Placeholder.unparsed("level", level.toString()),
+                Placeholder.unparsed("owner", owner.name ?: "???")
+            )
+        )
 
         val filler = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.filler")).get()
-        for (i in 0..< Config.GUI_SIZE()) {
+        for (i in 0..<Config.GUI_SIZE()) {
             inventory.setItem(i, filler)
         }
 
@@ -166,7 +220,7 @@ class Minion(
     }
 
     override fun getAsItem(): ItemStack {
-        return type.getItem(level)
+        return type.getItem(level, actions)
     }
 
     override fun getLevel(): Int {
@@ -207,7 +261,7 @@ class Minion(
 
     override fun setTool(tool: ItemStack) {
         this.tool = tool.clone()
-        updateInventories()
+        dirty = true
 
         if (tool.type == Material.AIR) {
             entity.setItem(EquipmentSlot.MAIN_HAND, null)
@@ -230,6 +284,17 @@ class Minion(
 
     override fun setLevel(level: Int) {
         this.level = level
+
+        entity.name = StringUtils.format(
+            type.getConfig().get("entity.name"),
+            Placeholder.unparsed("owner", owner.name ?: "???"),
+            Placeholder.unparsed("level", level.toString()),
+            Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+        )
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun getData(key: String): String? {
@@ -306,10 +371,15 @@ class Minion(
     }
 
     override fun addToContainerOrDrop(itemStack: ItemStack) {
+        if (linkedInventory == null) {
+            AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(itemStack, itemStack.amount, location)
+            return
+        }
+
         val remaining = linkedInventory?.addItem(itemStack)
 
         remaining?.forEach { (_, u) ->
-            location.world?.dropItem(location, u)
+            AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(u, u.amount, location)
         }
     }
 
@@ -369,6 +439,46 @@ class Minion(
 
     override fun setNextAction(nextAction: Int) {
         this.nextAction = nextAction
+    }
+
+    override fun markDirty() {
+        dirty = true
+    }
+
+    override fun damageTool(amount: Int) {
+        val meta = this.tool?.itemMeta as? Damageable ?: return
+
+        if (Math.random() > 1f / (meta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
+
+        if ((tool?.type?.maxDurability ?: return) <= meta.damage + amount) {
+            if (Config.CAN_BREAK_TOOLS()) {
+                setTool(ItemStack(Material.AIR))
+            }
+        } else {
+            meta.damage += amount
+            tool?.itemMeta = meta
+        }
+    }
+
+    override fun canUseTool(): Boolean {
+        val meta = this.tool?.itemMeta ?: return false
+
+        if (!Config.USE_DURABILITY() && meta is Damageable) {
+            return true
+        }
+
+        if (meta is Damageable) {
+            if ((tool?.type?.maxDurability ?: return false) <= meta.damage + 1) {
+                if (Config.CAN_BREAK_TOOLS()) {
+                    setTool(ItemStack(Material.AIR))
+                }
+                return false
+            } else {
+                return true
+            }
+        }
+
+        return false
     }
 
     override fun getInventory(): Inventory {

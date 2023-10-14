@@ -1,6 +1,9 @@
-package com.artillexstudios.axminions.utils
+package com.artillexstudios.axminions.api.utils
 
+import kotlin.math.roundToInt
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
+
 object LocationUtils {
 
     @JvmStatic
@@ -30,6 +33,19 @@ object LocationUtils {
                     }
                 }
             }
+        }
+
+        return blocks
+    }
+
+    fun getAllBlocksFacing(location: Location, radius: Double, face: BlockFace): ArrayList<Location> {
+        val blocks = ArrayList<Location>(radius.toInt())
+
+        val modX = face.modX
+        val modZ = face.modZ
+
+        for (i in 1..radius.roundToInt()) {
+            blocks.add(location.clone().add(i * modX.toDouble(), 0.0, i * modZ.toDouble()))
         }
 
         return blocks

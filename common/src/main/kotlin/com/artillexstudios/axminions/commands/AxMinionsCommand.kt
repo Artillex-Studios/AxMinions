@@ -14,7 +14,7 @@ import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
-import com.artillexstudios.axminions.utils.fastFor
+import com.artillexstudios.axminions.api.utils.fastFor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -48,6 +48,10 @@ class AxMinionsCommand {
 
         MinionTypes.getMinionTypes().forEach {
             it.value.getConfig().reload()
+        }
+
+        AxMinionsAPI.INSTANCE.getMinions().fastFor {
+            it.markDirty()
         }
 
         sender.sendMessage(

@@ -1,25 +1,28 @@
 package com.artillexstudios.axminions.integrations.stacker
 
 import com.artillexstudios.axminions.api.integrations.types.StackerIntegration
+import dev.rosewood.rosestacker.api.RoseStackerAPI
 import org.bukkit.Location
 import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 
 class RoseStackerIntegration : StackerIntegration {
+    lateinit var instance: RoseStackerAPI
+
     override fun getStackSize(entity: LivingEntity): Long {
-        TODO("Not yet implemented")
+        return instance.getStackedEntity(entity)?.stackSize?.toLong() ?: 1
     }
 
     override fun getStackSize(item: Item): Long {
-        TODO("Not yet implemented")
+        return instance.getStackedItem(item)?.stackSize?.toLong() ?: 1
     }
 
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
-        TODO("Not yet implemented")
+        instance.dropItemStack(itemStack, amount, location, false)
     }
 
     override fun register() {
-        TODO("Not yet implemented")
+        instance =  RoseStackerAPI.getInstance()
     }
 }

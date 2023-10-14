@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axapi.scheduler.Scheduler
-import com.artillexstudios.axminions.utils.fastFor
+import com.artillexstudios.axminions.api.utils.fastFor
 
 object MinionTicker {
     private var tick = 0L

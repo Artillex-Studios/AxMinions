@@ -61,6 +61,30 @@ allprojects {
         maven {
             url = uri('https://repo.alessiodp.com/releases/')
         }
+
+        maven {
+            url = uri('https://repo.rosewooddev.io/repository/public/')
+        }
+
+        maven {
+            url = uri('https://repo.bg-software.com/repository/api/')
+        }
+
+        maven {
+            url = uri('https://repo.essentialsx.net/releases/')
+        }
+
+        maven {
+            url = uri('https://maven.enginehub.org/repo/')
+        }
+
+        maven {
+            url = uri('https://repo.codemc.org/repository/maven-snapshots')
+        }
+
+        maven {
+            url = uri('https://repo.codemc.org/repository/maven-public/')
+        }
     }
 
     dependencies {
@@ -71,6 +95,20 @@ allprojects {
         compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
         compileOnly 'com.h2database:h2:2.2.220'
+        compileOnly 'dev.rosewood:rosestacker:1.5.9'
+        compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
+        compileOnly 'net.essentialsx:EssentialsX:2.19.0'
+        compileOnly 'com.github.Gypopo:EconomyShopGUI-API:1.6.0'
+        compileOnly 'com.github.Gypopo:EconomyShopGUI-API:1.6.0'
+        compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
+        compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT'
+        compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2023.2'
+        compileOnly 'world.bentobox:bentobox:1.24.0-SNAPSHOT'
+        compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
+        compileOnly 'com.github.angeschossen:LandsAPI:6.29.12'
+        compileOnly 'com.intellectualsites.plotsquared:plotsquared-core:7.0.0-rc.4'
+        compileOnly 'com.intellectualsites.plotsquared:plotsquared-bukkit:7.0.0-rc.4'
+        implementation platform('com.intellectualsites.bom:bom-newest:1.35')
         implementation files('../libs/AxAPI-1.0-SNAPSHOT.jar')
     }
 

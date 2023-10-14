@@ -16,6 +16,11 @@ import com.artillexstudios.axminions.integrations.prices.CMIIntegration
 import com.artillexstudios.axminions.integrations.prices.EconomyShopGUIIntegration
 import com.artillexstudios.axminions.integrations.prices.EssentialsIntegration
 import com.artillexstudios.axminions.integrations.prices.ShopGUIPlusIntegration
+import com.artillexstudios.axminions.integrations.protection.BentoBoxIntegration
+import com.artillexstudios.axminions.integrations.protection.GriefPreventionIntegration
+import com.artillexstudios.axminions.integrations.protection.LandsIntegration
+import com.artillexstudios.axminions.integrations.protection.SuperiorSkyBlock2Integration
+import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegration
 import com.artillexstudios.axminions.integrations.stacker.DefaultStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.WildStackerIntegration
@@ -26,7 +31,7 @@ class Integrations : Integrations {
     private lateinit var stackerIntegration: StackerIntegration
     private lateinit var pricesIntegration: PricesIntegration
     private lateinit var economyIntegration: EconomyIntegration
-    private lateinit var protectionIntegrations: ProtectionIntegrations
+    private val protectionIntegrations = com.artillexstudios.axminions.integrations.protection.ProtectionIntegrations()
 
     override fun getStackerIntegration(): StackerIntegration {
         return stackerIntegration
@@ -107,7 +112,27 @@ class Integrations : Integrations {
             }
         }
 
+        protectionIntegrations.clear()
 
+        if (Bukkit.getPluginManager().getPlugin("SuperiorSkyblock2") != null) {
+            register(SuperiorSkyBlock2Integration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            register(WorldGuardIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("BentoBox") != null) {
+            register(BentoBoxIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("GriefPrevention") != null) {
+            register(GriefPreventionIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("Lands") != null) {
+            register(LandsIntegration())
+        }
     }
 
     override fun register(integration: Integration) {
@@ -117,7 +142,7 @@ class Integrations : Integrations {
             }
 
             is ProtectionIntegration -> {
-                // Hook into protection
+                protectionIntegrations.register(integration)
             }
 
             is EconomyIntegration -> {
@@ -132,6 +157,7 @@ class Integrations : Integrations {
                 throw InvalidIntegrationException("There is no builtin integration that the following class extends: ${integration::class.java}")
             }
         }
+        integration.register()
     }
 
     private fun isPluginLoaded(pluginName: String): Boolean {
@@ -147,6 +173,14 @@ class Integrations : Integrations {
     }
 
     override fun deregister(integration: Integration) {
-        TODO("Not yet implemented")
+        when (integration) {
+            is ProtectionIntegration -> {
+                protectionIntegrations.deregister(integration)
+            }
+
+            else -> {
+                throw InvalidIntegrationException("You can only unregister a protection integration!")
+            }
+        }
     }
 }

@@ -22,6 +22,8 @@ import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
+import com.artillexstudios.axminions.minions.miniontype.LumberMinionType
+import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import org.bukkit.Bukkit
 import java.io.File
 
@@ -47,12 +49,13 @@ class AxMinionsPlugin : AxPlugin() {
     override fun load() {
         INSTANCE = this
         AxMinionsAPI.INSTANCE = AxMinionsAPIImpl(this)
-        integrations = Integrations()
     }
 
     override fun enable() {
         AxMinionsPlugin.config = Config(File(dataFolder, "config.yml"), getResource("config.yml")!!)
         messages = Messages(File(dataFolder, "messages.yml"), getResource("messages.yml")!!)
+        integrations = Integrations()
+        integrations.reload()
 
         loadDataHandler()
         dataQueue = ThreadedQueue("AxMinions-Database-Queue")
@@ -60,6 +63,8 @@ class AxMinionsPlugin : AxPlugin() {
         MinionTypes.also {
             it.register(CollectorMinionType())
             it.register(FarmerMinionType())
+            it.register(MinerMinionType())
+            it.register(LumberMinionType())
         }
 
         val handler = BukkitCommandHandler.create(this)

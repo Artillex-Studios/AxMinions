@@ -15,7 +15,7 @@ abstract class Warning(private val name: String) {
     fun display(minion: Minion) {
         if (minion.getWarning() == null) {
             val hologram = HologramFactory.get()
-                .spawnHologram(minion.getLocation().clone().add(0.0, 1.15, 0.0), minion.getLocation().toString())
+                .spawnHologram(minion.getLocation().clone().add(0.0, 1.35, 0.0), minion.getLocation().toString())
             hologram.addLine(getContent())
             minion.setWarning(this)
             minion.setWarningHologram(hologram)

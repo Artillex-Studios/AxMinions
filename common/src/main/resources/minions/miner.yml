@@ -1,0 +1,147 @@
+name: "<#00AAFF>Miner <white>Minion"
+
+entity:
+  name: "<level_color>[<level>] <#00AAFF>Miner <white>Minion <gray>[<owner>]"
+
+tool:
+  material:
+    - "WOODEN_PICKAXE"
+    - "STONE_PICKAXE"
+    - "GOLDEN_PICKAXE"
+    - "IRON_PICKAXE"
+    - "DIAMOND_PICKAXE"
+    - "NETHERITE_PICKAXE"
+
+# Can be: sphere, line, face, asphere
+# If set to sphere: checks blocks in a sphere with the range of the minion as radius (Most resource intensive, the larger the radius, the worse)
+# If set to line: checks blocks in all 4 directions from the minion in the range of the minion
+# If set to face: checks blocks only in the facing of the minion (Least resource intensive)
+# If set to asphere: checks blocks in a sphere with the range of the minion as the radius, around the minion
+# Only switch to asphere mode, if you know what you're doing,
+# as it may cause some issues due to states being concurrently modified!
+mode: line
+
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+  name: "<#00AAFF>Miner <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>Collects all items around itself."
+    - ""
+    - "<#00AAFF>Statistics"
+    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00AAFF>❙ <white>Broken blocks: <#FFEEAA><actions>"
+    - ""
+    - "<#00AAFF><b>(!)</b> Place the minion and give it a pickaxe!"
+
+gui:
+  upgrade:
+    type: "gold_ingot"
+    name: "<#00CCFF><b>Upgrade minion"
+    lore:
+      - ""
+      - " <gray>- <white>Level: <green><level> » <dark_green><next_level>"
+      - " <gray>- <white>Range: <green><range> » <dark_green><next_range>"
+      - " <gray>- <white>Speed: <green><speed> » <dark_green><next_speed>"
+      - ""
+      - "<#00CCFF>Requirements:"
+      - " <gray>- <white>Money: <#33FF33><price>$"
+      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - ""
+      - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
+  statistics:
+    type: "paper"
+    name: "<#00AAFF><b>Statistics"
+    lore:
+      - ""
+      - " <gray>- <white>Broken blocks: <#00AAFF><actions>"
+      - ""
+
+upgrades:
+  1:
+    range: 3
+    speed: 200
+    items:
+      helmet:
+        type: "player_head"
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+      chestplate:
+        type: "leather_chestplate"
+        color: "0, 150, 255"
+        glow: false
+      leggings:
+        type: "leather_leggings"
+        color: "0, 150, 255"
+        glow: false
+      boots:
+        type: "leather_boots"
+        color: "0, 150, 255"
+        glow: false
+  2:
+    range: 4
+    speed: 190
+    requirements:
+      money: 1000
+      actions: 100
+  3:
+    range: 5
+    speed: 175
+    requirements:
+      money: 3000
+      actions: 300
+  4:
+    range: 6
+    speed: 160
+    requirements:
+      money: 10000
+      actions: 1000
+  5:
+    range: 7
+    speed: 150
+    requirements:
+      money: 20000
+      actions: 3000
+  6:
+    range: 8
+    speed: 130
+    requirements:
+      money: 50000
+      actions: 6000
+  7:
+    range: 9
+    speed: 115
+    requirements:
+      money: 150000
+      actions: 10000
+  8:
+    range: 10
+    speed: 100
+    requirements:
+      money: 500000
+      actions: 17500
+  9:
+    range: 11
+    speed: 85
+    requirements:
+      money: 1000000
+      actions: 25000
+  10:
+    range: 12
+    speed: 60
+    requirements:
+      money: 5000000
+      actions: 50000
+    items:
+      chestplate:
+        type: LEATHER_CHESTPLATE
+        color: "255, 200, 0"
+        glow: true
+      leggings:
+        type: LEATHER_LEGGINGS
+        color: "255, 200, 0"
+        glow: true
+      boots:
+        type: LEATHER_BOOTS
+        color: "255, 200, 0"
+        glow: true

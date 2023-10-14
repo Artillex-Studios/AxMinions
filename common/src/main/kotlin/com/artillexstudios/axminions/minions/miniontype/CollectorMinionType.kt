@@ -24,7 +24,6 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
     }
 
     override fun run(minion: Minion) {
-        minion.resetAnimation()
         if (minion.getLinkedChest() == null) {
             Warnings.NO_CONTAINER.display(minion)
             return
@@ -45,6 +44,13 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
 
         Warnings.remove(minion)
 
+        if (!minion.canUseTool()) {
+            Warnings.NO_TOOL.display(minion)
+            return
+        }
+
+        Warnings.remove(minion)
+
         val entities = minion.getLocation().world?.getNearbyEntities(
             minion.getLocation(),
             minion.getRange(),
@@ -58,7 +64,14 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
                 return
             }
 
-            //TODO: Add to inventory and remove items
+            val amount = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(item)
+            val stack = item.itemStack.clone()
+            stack.amount = amount.toInt()
+
+            minion.addToContainerOrDrop(stack)
+            minion.setActions(minion.getActionAmount() + 1)
+            minion.damageTool()
+            item.remove()
         }
     }
 }

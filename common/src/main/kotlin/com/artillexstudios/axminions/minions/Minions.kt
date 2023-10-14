@@ -2,77 +2,70 @@ package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.utils.ChunkPos
-import com.artillexstudios.axminions.utils.fastFor
+import com.artillexstudios.axminions.api.utils.fastFor
 import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import org.bukkit.Chunk
 
 object Minions {
-    private val mutex = Object()
-    private val minions = hashMapOf<ChunkPos, ArrayList<Minion>>()
-    private val mutableChunkPos = ChunkPos(0, 0)
+    private val minions = ConcurrentHashMap<ChunkPos, ArrayList<Minion>>()
 
     fun addTicking(chunk: Chunk) {
-        synchronized(mutex) {
-            mutableChunkPos.x = chunk.x
-            mutableChunkPos.z = chunk.z
+        val pos = ChunkPos(chunk.x, chunk.z)
 
-            minions[mutableChunkPos]?.fastFor {
-                it.setTicking(true)
-            } ?: return
-        }
+        minions[pos]?.fastFor {
+            it.setTicking(true)
+        } ?: return
+        println("LOADING CHUNK! X: ${chunk.x} Z: ${chunk.z}")
+    }
+
+    fun isTicking(chunk: Chunk): Boolean {
+        val pos = ChunkPos(chunk.x, chunk.z)
+
+        return minions.contains(pos)
     }
 
     fun removeTicking(chunk: Chunk) {
-        synchronized(mutex) {
-            mutableChunkPos.x = chunk.x
-            mutableChunkPos.z = chunk.z
+        val pos = ChunkPos(chunk.x, chunk.z)
 
-            val minions = this.minions[mutableChunkPos] ?: return
+        val minions = this.minions[pos] ?: return
 
-            minions.fastFor {
-                it.setTicking(false)
-            }
+        minions.fastFor {
+            it.setTicking(false)
         }
     }
 
     fun load(minion: Minion) {
-        synchronized(mutex) {
-            mutableChunkPos.x = round(minion.getLocation().x) shr 4
-            mutableChunkPos.z = round(minion.getLocation().z) shr 4
-            val pos = minions[mutableChunkPos] ?: arrayListOf()
+        println("LOADING MINION!!")
+        val chunkPos = ChunkPos(minion.getLocation().chunk.x, minion.getLocation().chunk.z)
+        val pos = minions[chunkPos] ?: arrayListOf()
 
-            pos.add(minion)
-            minions[mutableChunkPos] = pos
-        }
+        pos.add(minion)
+        minions[chunkPos] = pos
     }
 
     fun remove(minion: Minion) {
-        synchronized(mutex) {
-            mutableChunkPos.x = minion.getLocation().blockX shr 4
-            mutableChunkPos.z = minion.getLocation().blockZ shr 4
-            val pos = minions[mutableChunkPos] ?: return
+        val chunkPos = ChunkPos(minion.getLocation().chunk.x, minion.getLocation().chunk.z)
 
-            pos.remove(minion)
-            if (pos.isEmpty()) {
-                minions.remove(mutableChunkPos)
-            }
+        val pos = minions[chunkPos] ?: return
+
+        pos.remove(minion)
+        if (pos.isEmpty()) {
+            minions.remove(chunkPos)
         }
     }
 
     fun getMinions(): List<Minion> {
-        synchronized(mutex) {
-            val list = mutableListOf<Minion>()
-            minions.forEach { (_, value) ->
-                list.addAll(value)
-            }
-            return Collections.unmodifiableList(list)
+        val list = mutableListOf<Minion>()
+        minions.forEach { (_, value) ->
+            list.addAll(value)
         }
+        return Collections.unmodifiableList(list)
+
     }
 
-    internal fun get(): HashMap<ChunkPos, ArrayList<Minion>> {
-        synchronized(mutex) {
-            return minions
-        }
+    internal fun get(): ConcurrentHashMap<ChunkPos, ArrayList<Minion>> {
+        return minions
     }
 
     private infix fun round(double: Double): Int {

@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.utils
+package com.artillexstudios.axminions.api.utils
 
 inline fun <T> Array<T>.fastFor(action: (T) -> Unit) {
     val indices = indices

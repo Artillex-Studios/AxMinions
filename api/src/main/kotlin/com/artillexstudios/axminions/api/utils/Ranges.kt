@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.utils
+package com.artillexstudios.axminions.api.utils
 
 // Thanks a lot to this hero! https://stackoverflow.com/a/44332139
 infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {

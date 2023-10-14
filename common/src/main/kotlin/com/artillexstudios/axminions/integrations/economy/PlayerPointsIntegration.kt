@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.api.integrations.types.EconomyIntegration
 import org.bukkit.entity.Player
 
 class PlayerPointsIntegration : EconomyIntegration {
+
     override fun getBalance(player: Player): Double {
         TODO("Not yet implemented")
     }

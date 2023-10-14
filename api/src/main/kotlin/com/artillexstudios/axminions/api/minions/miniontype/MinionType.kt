@@ -6,6 +6,7 @@ import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resol
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
+import com.artillexstudios.axminions.api.utils.Keys
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -41,13 +42,14 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         if (!minion.isTicking()) return
         if (!shouldRun(minion)) return
 
+        minion.resetAnimation()
         run(minion)
     }
 
-    fun getItem(level: Int = 1): ItemStack {
-        val builder = ItemBuilder(config.getSection("item"), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("actions", "0"))
-        builder.storePersistentData(MinionTypes.getMinionKey(), PersistentDataType.STRING, name)
-        builder.storePersistentData(MinionTypes.getLevelKey(), PersistentDataType.INTEGER, level)
+    fun getItem(level: Int = 1, actions: Long = 0): ItemStack {
+        val builder = ItemBuilder(config.getSection("item"), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("actions", actions.toString()))
+        builder.storePersistentData(Keys.MINION_TYPE, PersistentDataType.STRING, name)
+        builder.storePersistentData(Keys.LEVEL, PersistentDataType.INTEGER, level)
 
         return builder.clonedGet()
     }

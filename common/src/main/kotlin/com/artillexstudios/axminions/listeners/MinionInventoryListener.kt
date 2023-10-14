@@ -5,8 +5,11 @@ import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
-import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
-import com.artillexstudios.axminions.utils.fastFor
+import com.artillexstudios.axminions.api.utils.CoolDown
+import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.fastFor
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -18,6 +21,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 class MinionInventoryListener : Listener {
+    private val coolDown = CoolDown<UUID>()
 
     @EventHandler
     fun onInventoryDragEvent(event: InventoryDragEvent) {
@@ -32,6 +36,12 @@ class MinionInventoryListener : Listener {
         if (event.clickedInventory == null) return
         event.isCancelled = true
         val player = event.whoClicked as Player
+
+        if (coolDown.contains(player.uniqueId)) {
+            return
+        }
+
+        coolDown.add(player.uniqueId, 250)
 
         val allowedTools = arrayListOf<Material>()
         minion.getType().getConfig().getStringList("tool.material").fastFor {
@@ -48,6 +58,7 @@ class MinionInventoryListener : Listener {
                 val current = event.currentItem!!.clone()
                 val tool = minion.getTool()?.clone()
                 minion.setTool(current)
+                minion.updateArmour()
                 event.currentItem!!.amount = 0
                 event.clickedInventory!!.addItem(tool)
             } else {
@@ -68,8 +79,9 @@ class MinionInventoryListener : Listener {
 
             val tool = minion.getTool()?.clone() ?: return
             minion.setTool(ItemStack(Material.AIR))
+            minion.updateArmour()
             val toolMeta = tool.itemMeta ?: return
-            toolMeta.persistentDataContainer.remove(MinionTypes.getGuiKey())
+            toolMeta.persistentDataContainer.remove(Keys.GUI)
             tool.setItemMeta(toolMeta)
 
             player.inventory.addItem(tool)
@@ -82,16 +94,16 @@ class MinionInventoryListener : Listener {
         }
 
         val meta = event.clickedInventory?.getItem(event.slot)?.itemMeta ?: return
-        if (!meta.persistentDataContainer.has(MinionTypes.getGuiKey(), PersistentDataType.STRING)) return
-        val type = meta.persistentDataContainer.get(MinionTypes.getGuiKey(), PersistentDataType.STRING)
+        if (!meta.persistentDataContainer.has(Keys.GUI, PersistentDataType.STRING)) return
+        val type = meta.persistentDataContainer.get(Keys.GUI, PersistentDataType.STRING)
 
         when (type) {
             "rotate" -> {
                 when (minion.getDirection()) {
                     Direction.NORTH -> minion.setDirection(Direction.WEST)
-                    Direction.EAST ->  minion.setDirection(Direction.NORTH)
-                    Direction.SOUTH ->  minion.setDirection(Direction.EAST)
-                    Direction.WEST ->  minion.setDirection(Direction.SOUTH)
+                    Direction.EAST -> minion.setDirection(Direction.NORTH)
+                    Direction.SOUTH -> minion.setDirection(Direction.EAST)
+                    Direction.WEST -> minion.setDirection(Direction.SOUTH)
                 }
             }
 

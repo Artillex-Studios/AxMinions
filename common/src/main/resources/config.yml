@@ -77,5 +77,9 @@ gui:
     statistics:
       slot: 16
 
+# Only change this, if you are asked to! This will make your performance worse, and will spam messages in your console!
+# Requires restart!
+debug: false
+
 # Do not change!
 config-version: 1

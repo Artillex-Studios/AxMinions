@@ -103,4 +103,10 @@ interface Minion : InventoryHolder {
     fun setRange(range: Double)
 
     fun setNextAction(nextAction: Int)
+
+    fun markDirty()
+
+    fun damageTool(amount: Int = 1)
+
+    fun canUseTool(): Boolean
 }
