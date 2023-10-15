@@ -20,6 +20,7 @@ repositories {
 dependencies {
     implementation project(path: ":api")
     implementation project(path: ":common")
+    implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
 }
 
 allprojects {
@@ -110,6 +111,9 @@ allprojects {
         compileOnly 'com.intellectualsites.plotsquared:plotsquared-bukkit:7.0.0-rc.4'
         implementation platform('com.intellectualsites.bom:bom-newest:1.35')
         implementation files('../libs/AxAPI-1.0-SNAPSHOT.jar')
+//        compileOnly files('../libs/CMI-API9.5.0.8.jar')
+//        compileOnly files('../libs/IridiumSkyblock-3.2.12.jar')
+//        compileOnly files('../libs/KingdomsX-1.16.12.jar')
     }
 
     shadowJar {

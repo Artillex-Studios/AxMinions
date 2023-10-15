@@ -9,9 +9,9 @@ interface Integrations {
 
     fun getStackerIntegration(): StackerIntegration
 
-    fun getPricesIntegration(): PricesIntegration
+    fun getPricesIntegration(): PricesIntegration?
 
-    fun getEconomyIntegration(): EconomyIntegration
+    fun getEconomyIntegration(): EconomyIntegration?
 
     fun getProtectionIntegration(): ProtectionIntegrations
 

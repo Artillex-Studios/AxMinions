@@ -12,6 +12,7 @@ import java.io.InputStream
 
 class Config(file: File, stream: InputStream) {
     companion object {
+        private var debug: Boolean? = null
         @JvmStatic
         fun AUTO_SAVE_MINUTES() = AxMinionsAPI.INSTANCE.getConfig().get("autosave-minutes", 3L)
         @JvmStatic
@@ -39,7 +40,13 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
         @JvmStatic
-        fun DEBUG() = AxMinionsAPI.INSTANCE.getConfig().get<Boolean>("debug")
+        fun DEBUG(): Boolean {
+            if (debug === null) {
+                debug = AxMinionsAPI.INSTANCE.getConfig().get("debug", false)
+            }
+
+            return debug ?: false
+        }
     }
 
     private val config = Config(

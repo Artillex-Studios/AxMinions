@@ -17,13 +17,17 @@ import com.artillexstudios.axminions.data.H2DataHandler
 import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
+import com.artillexstudios.axminions.listeners.MinionDamageListener
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
+import com.artillexstudios.axminions.minions.miniontype.FisherMinionType
 import com.artillexstudios.axminions.minions.miniontype.LumberMinionType
 import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
+import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
+import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import org.bukkit.Bukkit
 import java.io.File
 
@@ -65,6 +69,9 @@ class AxMinionsPlugin : AxPlugin() {
             it.register(FarmerMinionType())
             it.register(MinerMinionType())
             it.register(LumberMinionType())
+            it.register(SellerMinionType())
+            it.register(FisherMinionType())
+            it.register(SlayerMinionType())
         }
 
         val handler = BukkitCommandHandler.create(this)
@@ -84,12 +91,15 @@ class AxMinionsPlugin : AxPlugin() {
 
         handler.register(AxMinionsCommand())
 
-        handler.registerBrigadier()
+        if (handler.isBrigadierSupported) {
+            handler.registerBrigadier()
+        }
 
         Bukkit.getPluginManager().registerEvents(MinionPlaceListener(), this)
         Bukkit.getPluginManager().registerEvents(LinkingListener(), this)
         Bukkit.getPluginManager().registerEvents(MinionInventoryListener(), this)
         Bukkit.getPluginManager().registerEvents(ChunkListener(), this)
+        Bukkit.getPluginManager().registerEvents(MinionDamageListener(), this)
 
         MinionTicker.startTicking()
     }
@@ -102,8 +112,6 @@ class AxMinionsPlugin : AxPlugin() {
         if (Config.DATABASE_TYPE().equals("H2", true)) {
             dataHandler = H2DataHandler()
             dataHandler.setup()
-        } else {
-
         }
     }
 }

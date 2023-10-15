@@ -44,7 +44,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
             return
         }
 
-        Warnings.remove(minion)
+        Warnings.remove(minion, Warnings.NO_TOOL)
 
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
             val block = location.block

@@ -42,14 +42,14 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
             return
         }
 
-        Warnings.remove(minion)
+        Warnings.remove(minion, Warnings.NO_CONTAINER)
 
         if (!minion.canUseTool()) {
             Warnings.NO_TOOL.display(minion)
             return
         }
 
-        Warnings.remove(minion)
+        Warnings.remove(minion, Warnings.NO_TOOL)
 
         val entities = minion.getLocation().world?.getNearbyEntities(
             minion.getLocation(),

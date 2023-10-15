@@ -29,9 +29,11 @@ object Warnings {
     }
 
     @JvmStatic
-    fun remove(minion: Minion) {
-        minion.getWarningHologram()?.remove()
-        minion.setWarningHologram(null)
-        minion.setWarning(null)
+    fun remove(minion: Minion, warning: Warning) {
+        if (minion.getWarning() == warning) {
+            minion.getWarningHologram()?.remove()
+            minion.setWarningHologram(null)
+            minion.setWarning(null)
+        }
     }
 }

@@ -14,7 +14,7 @@ tool:
 
 # Can be: sphere, line, face, asphere
 # If set to sphere: checks blocks in a sphere with the range of the minion as radius (Most resource intensive, the larger the radius, the worse)
-# If set to line: checks blocks in all 4 directions from the minion in the range of the minion
+# If set to line: checks blocks in all 4 directions from the minion in the range of the minion (Best performance to blocks broken ratio)
 # If set to face: checks blocks only in the facing of the minion (Least resource intensive)
 # If set to asphere: checks blocks in a sphere with the range of the minion as the radius, around the minion
 # Only switch to asphere mode, if you know what you're doing,
@@ -79,55 +79,55 @@ upgrades:
         color: "0, 150, 255"
         glow: false
   2:
-    range: 4
-    speed: 190
+    range: 3
+    speed: 185
     requirements:
       money: 1000
       actions: 100
   3:
-    range: 5
+    range: 3
     speed: 175
     requirements:
       money: 3000
       actions: 300
   4:
-    range: 6
+    range: 4
     speed: 160
     requirements:
       money: 10000
       actions: 1000
   5:
-    range: 7
+    range: 4
     speed: 150
     requirements:
       money: 20000
       actions: 3000
   6:
-    range: 8
+    range: 5
     speed: 130
     requirements:
       money: 50000
       actions: 6000
   7:
-    range: 9
+    range: 5
     speed: 115
     requirements:
       money: 150000
       actions: 10000
   8:
-    range: 10
+    range: 6
     speed: 100
     requirements:
       money: 500000
       actions: 17500
   9:
-    range: 11
+    range: 6
     speed: 85
     requirements:
       money: 1000000
       actions: 25000
   10:
-    range: 12
+    range: 7
     speed: 60
     requirements:
       money: 5000000

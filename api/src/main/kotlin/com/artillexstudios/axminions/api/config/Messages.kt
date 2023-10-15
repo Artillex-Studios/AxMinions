@@ -47,6 +47,14 @@ class Messages(file: File, stream: InputStream) {
         fun WRONG_TOOL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("tools.wrong-tool")
         @JvmStatic
         fun ERROR_INVENTORY_FULL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("errors.inventory-full")
+        @JvmStatic
+        fun LINK_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.success")
+        @JvmStatic
+        fun LINK_UNLINK() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.unlink")
+        @JvmStatic
+        fun LINK_FAIL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.fail")
+        @JvmStatic
+        fun LINK_START() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.start")
     }
 
     private val config = Config(

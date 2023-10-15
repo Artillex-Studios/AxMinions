@@ -5,6 +5,7 @@ import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
@@ -53,14 +54,15 @@ class MinionPlaceListener : Listener {
             }
 
             val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
-            Scheduler.get().run {
-                val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, 0, 0.0, locationId, 0)
-                minion.setLevel(level)
-                minion.setActions(stats)
-                minion.setTicking(true)
+            val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, 0, 0.0, locationId, 0)
+            minion.setLevel(level)
+            minion.setActions(stats)
+            minion.setTicking(true)
+            if (Config.DEBUG()) {
                 event.player.sendMessage("Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${Minions.isTicking(location.chunk)}")
-                AxMinionsPlugin.dataHandler.saveMinion(minion)
             }
+
+            AxMinionsPlugin.dataHandler.saveMinion(minion)
 
             event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_SUCCESS(), Placeholder.unparsed("type", minionType.getName()), Placeholder.unparsed("placed", (placed + 1).toString()), Placeholder.unparsed("max", (maxMinions).toString())))
         }

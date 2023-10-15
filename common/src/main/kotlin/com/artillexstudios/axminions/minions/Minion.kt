@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.minions
 import com.artillexstudios.axapi.entity.PacketEntityFactory
 import com.artillexstudios.axapi.entity.impl.PacketArmorStand
 import com.artillexstudios.axapi.entity.impl.PacketEntity
+import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
 import com.artillexstudios.axapi.hologram.HologramFactory
 import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -99,12 +100,32 @@ class Minion(
         updateArmour()
         entity.onClick { event ->
             if (event.isAttack) {
-                println("LEFT CLICKED!")
+//                if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
+//                    breakMinion(event)
+//                } else if (AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+                    breakMinion(event)
+//                }
             } else {
+/*                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+
+                }*/
+
                 Scheduler.get().run {
                     openInventory(event.player)
                 }
             }
+        }
+    }
+
+    private fun breakMinion(event: PacketEntityInteractEvent) {
+        setTicking(false)
+        val tool = getTool()
+        val asItem = getAsItem()
+        val remaining = event.player.inventory.addItem(tool, asItem)
+        remove()
+
+        remaining.forEach { (_, i) ->
+            AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(i, i.amount, location)
         }
     }
 
@@ -132,7 +153,7 @@ class Minion(
         }
     }
 
-    override fun updateInventory(inventory: Inventory) {
+    private fun updateInventory(inventory: Inventory) {
         AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
             if (it.equals("filler")) return@forEach
             val item: ItemStack
@@ -284,6 +305,8 @@ class Minion(
 
     override fun setLevel(level: Int) {
         this.level = level
+        updateArmour()
+        updateInventories()
 
         entity.name = StringUtils.format(
             type.getConfig().get("entity.name"),
@@ -361,9 +384,13 @@ class Minion(
     }
 
     override fun remove() {
-        Warnings.remove(this)
+        Warnings.remove(this, warning ?: Warnings.NO_CONTAINER)
         Minions.remove(this)
         entity.remove()
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.deleteMinion(this)
+        }
     }
 
     override fun getLinkedInventory(): Inventory? {
@@ -457,6 +484,7 @@ class Minion(
         } else {
             meta.damage += amount
             tool?.itemMeta = meta
+            updateInventories()
         }
     }
 

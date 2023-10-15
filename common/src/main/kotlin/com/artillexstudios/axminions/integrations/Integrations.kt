@@ -18,6 +18,8 @@ import com.artillexstudios.axminions.integrations.prices.EssentialsIntegration
 import com.artillexstudios.axminions.integrations.prices.ShopGUIPlusIntegration
 import com.artillexstudios.axminions.integrations.protection.BentoBoxIntegration
 import com.artillexstudios.axminions.integrations.protection.GriefPreventionIntegration
+import com.artillexstudios.axminions.integrations.protection.IridiumSkyBlockIntegration
+import com.artillexstudios.axminions.integrations.protection.KingdomsXIntegration
 import com.artillexstudios.axminions.integrations.protection.LandsIntegration
 import com.artillexstudios.axminions.integrations.protection.SuperiorSkyBlock2Integration
 import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegration
@@ -29,19 +31,19 @@ import org.bukkit.Bukkit
 
 class Integrations : Integrations {
     private lateinit var stackerIntegration: StackerIntegration
-    private lateinit var pricesIntegration: PricesIntegration
-    private lateinit var economyIntegration: EconomyIntegration
+    private var pricesIntegration: PricesIntegration? = null
+    private var economyIntegration: EconomyIntegration? = null
     private val protectionIntegrations = com.artillexstudios.axminions.integrations.protection.ProtectionIntegrations()
 
     override fun getStackerIntegration(): StackerIntegration {
         return stackerIntegration
     }
 
-    override fun getPricesIntegration(): PricesIntegration {
+    override fun getPricesIntegration(): PricesIntegration? {
         return pricesIntegration
     }
 
-    override fun getEconomyIntegration(): EconomyIntegration {
+    override fun getEconomyIntegration(): EconomyIntegration? {
         return economyIntegration
     }
 
@@ -132,6 +134,14 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("Lands") != null) {
             register(LandsIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("IridiumSkyBlock") != null) {
+            register(IridiumSkyBlockIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("KingdomsX") != null) {
+            register(KingdomsXIntegration())
         }
     }
 

@@ -1,30 +1,25 @@
-name: "<#00AAFF>Lumberjack <white>Minion"
+name: "<#00EEFF>Fisher <white>Minion"
 
 entity:
-  name: "<level_color>[<level>] <#00AAFF>Lumberjack <white>Minion <gray>[<owner>]"
+  name: "<level_color>[<level>] <#00EEFF>Fisher <white>Minion <gray>[<owner>]"
 
 tool:
   material:
-    - "WOODEN_AXE"
-    - "STONE_AXE"
-    - "GOLDEN_AXE"
-    - "IRON_AXE"
-    - "DIAMOND_AXE"
-    - "NETHERITE_AXE"
+    - "FISHING_ROD"
 
 item:
   type: "player_head"
-  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
-  name: "<#00AAFF>Lumberjack <white>Minion"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWMxNWU1ZmI1NmZhMTZiMDc0N2IxYmNiMDUzMzVmNTVkMWZhMzE1NjFjMDgyYjVlMzY0M2RiNTU2NTQxMDg1MiJ9fX0="
+  name: "<#00EEFF>Fisher <white>Minion"
   lore:
     - ""
-    - " <gray>- <white>Collects all items around itself."
+    - " <gray>- <white>It catches fish."
     - ""
-    - "<#00AAFF>Statistics"
-    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#00AAFF>❙ <white>Broken blocks: <#FFEEAA><actions>"
+    - "<#00EEFF>Statistics"
+    - " <#00EEFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00EEFF>❙ <white>Fish caught: <#FFEEAA><actions>"
     - ""
-    - "<#00AAFF><b>(!)</b> Place the minion and give it an axe!"
+    - "<#00EEFF><b>(!)</b> Place the minion and give it a fishing rod!"
 
 gui:
   upgrade:
@@ -38,15 +33,15 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - " <gray>- <white>Fish caught: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
     type: "paper"
-    name: "<#00AAFF><b>Statistics"
+    name: "<#00EEFF><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Broken blocks: <#00AAFF><actions>"
+      - " <gray>- <white>Killed mobs: <#00EEFF><actions>"
       - ""
 
 upgrades:
@@ -56,7 +51,7 @@ upgrades:
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWMxNWU1ZmI1NmZhMTZiMDc0N2IxYmNiMDUzMzVmNTVkMWZhMzE1NjFjMDgyYjVlMzY0M2RiNTU2NTQxMDg1MiJ9fX0="
       chestplate:
         type: "leather_chestplate"
         color: "0, 150, 255"

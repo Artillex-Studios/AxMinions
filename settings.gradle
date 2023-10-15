@@ -12,4 +12,6 @@ plugins {
 rootProject.name = 'AxMinions'
 include 'api'
 include 'common'
+include 'nms'
+include 'nms:v1_20_R1'
 

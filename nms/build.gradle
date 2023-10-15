@@ -1,0 +1,13 @@
+plugins {
+    id("io.papermc.paperweight.userdev") version "1.5.4" apply false
+}
+
+group = "com.artillexstudios.axminions"
+version = rootProject.version
+
+subprojects {
+    dependencies {
+        compileOnly project(":common")
+        compileOnly project(":api")
+    }
+}

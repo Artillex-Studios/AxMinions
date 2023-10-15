@@ -1,30 +1,28 @@
-name: "<#00AAFF>Lumberjack <white>Minion"
+name: "<#CC00FF>Seller <white>Minion"
 
 entity:
-  name: "<level_color>[<level>] <#00AAFF>Lumberjack <white>Minion <gray>[<owner>]"
+  name: "<level_color>[<level>] <#CC00FF>Seller <white>Minion <gray>[<owner>]"
 
 tool:
   material:
-    - "WOODEN_AXE"
-    - "STONE_AXE"
-    - "GOLDEN_AXE"
-    - "IRON_AXE"
-    - "DIAMOND_AXE"
-    - "NETHERITE_AXE"
+    - "BOW"
+    - "CROSSBOW"
+
+delete-unsellable: true
 
 item:
   type: "player_head"
-  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
-  name: "<#00AAFF>Lumberjack <white>Minion"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDI0YmE3NjBhNjFkZDI1NmM1MmIzMjUxMjlmNDYwMTZhZTg5MjIzMmEwZGVhMTcxNWY5OTdmN2M0ZDYyMmJlZiJ9fX0="
+  name: "<#CC00FF>Seller <white>Minion"
   lore:
     - ""
-    - " <gray>- <white>Collects all items around itself."
+    - " <gray>- <white>Sells all items from it's container."
     - ""
-    - "<#00AAFF>Statistics"
-    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#00AAFF>❙ <white>Broken blocks: <#FFEEAA><actions>"
+    - "<#CC00FF>Statistics"
+    - " <#CC00FF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#CC00FF>❙ <white>Sold items: <#FFEEAA><actions>"
     - ""
-    - "<#00AAFF><b>(!)</b> Place the minion and give it an axe!"
+    - "<#CC00FF><b>(!)</b> Place the minion and give it a bow!"
 
 gui:
   upgrade:
@@ -43,83 +41,95 @@ gui:
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
     type: "paper"
-    name: "<#00AAFF><b>Statistics"
+    name: "<#CC00FF><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Broken blocks: <#00AAFF><actions>"
+      - " <gray>- <white>Collected items: <#CC00FF><actions>"
+      - " <gray>- <white>Stored coins: <#CC00FF><storage>"
       - ""
+      - "<#CC00FF><b>(!)</b> Click here to collect the stored coins!"
 
 upgrades:
   1:
-    range: 3
-    speed: 200
+    multiplier: 1
+    speed: 600
+    storage: 100000
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDI0YmE3NjBhNjFkZDI1NmM1MmIzMjUxMjlmNDYwMTZhZTg5MjIzMmEwZGVhMTcxNWY5OTdmN2M0ZDYyMmJlZiJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "0, 150, 255"
+        color: "200, 0, 255"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "0, 150, 255"
+        color: "255, 230, 0"
         glow: false
       boots:
         type: "leather_boots"
-        color: "0, 150, 255"
+        color: "255, 230, 0"
         glow: false
   2:
-    range: 4
-    speed: 190
+    multiplier: 1.05
+    speed: 500
+    storage: 500000
     requirements:
       money: 1000
       actions: 100
   3:
-    range: 4
-    speed: 175
+    multiplier: 1.1
+    speed: 450
+    storage: 1000000
     requirements:
       money: 3000
       actions: 300
   4:
-    range: 5
-    speed: 160
+    multiplier: 1.15
+    speed: 400
+    storage: 4000000
     requirements:
       money: 10000
       actions: 1000
   5:
-    range: 5
-    speed: 150
+    multiplier: 1.2
+    speed: 350
+    storage: 7000000
     requirements:
       money: 20000
       actions: 3000
   6:
-    range: 6
-    speed: 130
+    multiplier: 1.25
+    speed: 300
+    storage: 10000000
     requirements:
       money: 50000
       actions: 6000
   7:
-    range: 6
-    speed: 115
+    multiplier: 1.3
+    speed: 250
+    storage: 30000000
     requirements:
       money: 150000
       actions: 10000
   8:
-    range: 7
-    speed: 100
+    multiplier: 1.35
+    speed: 200
+    storage: 50000000
     requirements:
       money: 500000
       actions: 17500
   9:
-    range: 8
-    speed: 85
+    multiplier: 1.4
+    speed: 150
+    storage: 80000000
     requirements:
       money: 1000000
       actions: 25000
   10:
-    range: 8
-    speed: 60
+    multiplier: 1.5
+    speed: 100
+    storage: 100000000
     requirements:
       money: 5000000
       actions: 50000

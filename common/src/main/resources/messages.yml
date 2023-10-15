@@ -32,6 +32,12 @@ upgrades:
   upgraded: "<green>Successfully upgraded the minion to level: <white><level></white>!"
   limit-reached: "<red>You have maxed this minion!"
 
+link:
+  success: "<green>Successfully linked the minion to a container!"
+  unlink: "<green>You have unliked the minion."
+  fail: "<red>You can't link to that block! It's either too far away, or not a container!"
+  start: "<green>Started linking! Click on a container!"
+
 levels:
   1: "<#33FF33>"
   2: "<#66FF00>"

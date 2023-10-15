@@ -44,7 +44,7 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
             return
         }
 
-        Warnings.remove(minion)
+        Warnings.remove(minion, Warnings.NO_TOOL)
 
         val loot = ArrayList<ItemStack>()
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->

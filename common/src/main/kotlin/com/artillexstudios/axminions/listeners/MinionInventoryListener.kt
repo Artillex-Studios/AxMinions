@@ -66,7 +66,7 @@ class MinionInventoryListener : Listener {
                 event.currentItem!!.amount = 0
             }
 
-            minion.updateInventory(event.inventory)
+            minion.updateInventories()
             return
         }
 
@@ -85,7 +85,7 @@ class MinionInventoryListener : Listener {
             tool.setItemMeta(toolMeta)
 
             player.inventory.addItem(tool)
-            minion.updateInventory(event.inventory)
+            minion.updateInventories()
             return
         }
 
@@ -110,15 +110,16 @@ class MinionInventoryListener : Listener {
             "link" -> {
                 if (minion.getLinkedChest() != null) {
                     minion.setLinkedChest(null)
-                    // TODO Unlink message
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_UNLINK()))
                     return
                 }
 
+                player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_START()))
                 LinkingListener.linking[player.uniqueId] = minion
             }
         }
 
-        minion.updateInventory(event.inventory)
+        minion.updateInventories()
     }
 
     @EventHandler

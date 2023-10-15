@@ -1,30 +1,34 @@
-name: "<#00AAFF>Lumberjack <white>Minion"
+name: "<#FF3333>Slayer <white>Minion"
 
 entity:
-  name: "<level_color>[<level>] <#00AAFF>Lumberjack <white>Minion <gray>[<owner>]"
+  name: "<level_color>[<level>] <#FF3333>Slayer <white>Minion <gray>[<owner>]"
 
 tool:
   material:
-    - "WOODEN_AXE"
-    - "STONE_AXE"
-    - "GOLDEN_AXE"
-    - "IRON_AXE"
-    - "DIAMOND_AXE"
-    - "NETHERITE_AXE"
+    - "WOODEN_SWORD"
+    - "STONE_SWORD"
+    - "GOLDEN_SWORD"
+    - "IRON_SWORD"
+    - "DIAMOND_SWORD"
+    - "NETHERITE_SWORD"
+
+damage-animals: false
+damage-tamed: false
+damage-renamed: false
 
 item:
   type: "player_head"
-  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
-  name: "<#00AAFF>Lumberjack <white>Minion"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
+  name: "<#FF3333>Slayer <white>Minion"
   lore:
     - ""
-    - " <gray>- <white>Collects all items around itself."
+    - " <gray>- <white>Kills mobs around itself."
     - ""
-    - "<#00AAFF>Statistics"
-    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#00AAFF>❙ <white>Broken blocks: <#FFEEAA><actions>"
+    - "<#FF3333>Statistics"
+    - " <#FF3333>❙ <white>Level: <#FFEEAA><level>"
+    - " <#FF3333>❙ <white>Mobs killed: <#FFEEAA><actions>"
     - ""
-    - "<#00AAFF><b>(!)</b> Place the minion and give it an axe!"
+    - "<#FF3333><b>(!)</b> Place the minion and give it a sword!"
 
 gui:
   upgrade:
@@ -38,15 +42,15 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - " <gray>- <white>Killed mobs: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
     type: "paper"
-    name: "<#00AAFF><b>Statistics"
+    name: "<#FF3333><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Broken blocks: <#00AAFF><actions>"
+      - " <gray>- <white>Killed mobs: <#FF3333><actions>"
       - ""
 
 upgrades:
@@ -56,7 +60,7 @@ upgrades:
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
       chestplate:
         type: "leather_chestplate"
         color: "0, 150, 255"

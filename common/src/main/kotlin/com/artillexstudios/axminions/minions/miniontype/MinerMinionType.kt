@@ -49,7 +49,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             return
         }
 
-        Warnings.remove(minion)
+        Warnings.remove(minion, Warnings.NO_TOOL)
 
         when (getConfig().getString("mode").lowercase(Locale.ENGLISH)) {
             "sphere" -> {
