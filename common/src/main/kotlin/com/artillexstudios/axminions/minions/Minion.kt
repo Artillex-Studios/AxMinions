@@ -6,7 +6,7 @@ import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
 import com.artillexstudios.axapi.hologram.HologramFactory
-import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axapi.utils.EquipmentSlot
@@ -57,6 +57,7 @@ class Minion(
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
     private var range = 0.0
+    @Volatile
     private var dirty = true
     private var armTick = 2.0
     private var warning: Warning? = null
@@ -84,6 +85,24 @@ class Minion(
         entity.setHasBasePlate(false)
         entity.setSmall(true)
         entity.setHasArms(true)
+
+        entity.onClick { event ->
+            println("bbbbbbbbbbbbbb")
+            if (event.isAttack) {
+                if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
+                    breakMinion(event)
+                } else if (AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+                    breakMinion(event)
+                }
+            } else {
+                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+                    Scheduler.get().run {
+                        openInventory(event.player)
+                    }
+                }
+            }
+        }
+
         entity.name = StringUtils.format(
             type.getConfig().get("entity.name"),
             Placeholder.unparsed("owner", owner.name ?: "???"),
@@ -98,23 +117,6 @@ class Minion(
 
         setDirection(direction)
         updateArmour()
-        entity.onClick { event ->
-            if (event.isAttack) {
-//                if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
-//                    breakMinion(event)
-//                } else if (AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
-                    breakMinion(event)
-//                }
-            } else {
-/*                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
-
-                }*/
-
-                Scheduler.get().run {
-                    openInventory(event.player)
-                }
-            }
-        }
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
@@ -235,8 +237,9 @@ class Minion(
             inventory.setItem(i, filler)
         }
 
-        updateInventory(inventory)
+        println("aaaaa")
         player.openInventory(inventory)
+        updateInventory(inventory)
         openInventories.add(inventory)
     }
 
@@ -291,6 +294,7 @@ class Minion(
         }
 
         AxMinionsPlugin.dataQueue.submit {
+            println("Saving minion!")
             AxMinionsPlugin.dataHandler.saveMinion(this)
         }
     }
@@ -375,6 +379,7 @@ class Minion(
         entity.teleport(location)
 
         AxMinionsPlugin.dataQueue.submit {
+            println("Saving minion!")
             AxMinionsPlugin.dataHandler.saveMinion(this)
         }
     }

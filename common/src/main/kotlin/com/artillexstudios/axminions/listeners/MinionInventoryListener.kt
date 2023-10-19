@@ -1,15 +1,16 @@
 package com.artillexstudios.axminions.listeners
 
 import com.artillexstudios.axapi.utils.StringUtils
+import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
+import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.CoolDown
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -116,6 +117,43 @@ class MinionInventoryListener : Listener {
 
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_START()))
                 LinkingListener.linking[player.uniqueId] = minion
+            }
+
+            "upgrade" -> {
+                val money = minion.getType().getDouble("requirements.money", minion.getLevel() + 1)
+                val actions = minion.getType().getDouble("requirements.actions", minion.getLevel() + 1)
+
+                if (minion.getType().hasReachedMaxLevel(minion)) {
+                    return
+                }
+
+                if (minion.getActionAmount() < actions) {
+                    return
+                }
+
+                AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
+                    if (it.getBalance(player) < money) {
+                        return
+                    }
+
+                    it.takeBalance(player, money)
+                }
+
+                minion.setLevel(minion.getLevel() + 1)
+            }
+
+            "statistics" -> {
+                val stored = minion.getStorage()
+
+                if (stored == 0.0) {
+                    return
+                }
+
+                if (minion.getType() == MinionTypes.getMinionTypes()["seller"]) {
+                    // TODO: Give money
+                } else {
+                    player.giveExp(stored.toInt())
+                }
             }
         }
 

@@ -2,7 +2,7 @@ package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axapi.config.Config
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
-import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion

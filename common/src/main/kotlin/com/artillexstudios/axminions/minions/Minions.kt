@@ -66,7 +66,6 @@ object Minions {
 
         if (pos === null) {
             pos = ChunkPos(chunkX, chunkZ)
-            println("Adding new pos! $pos")
             minions.add(pos!!)
         }
 

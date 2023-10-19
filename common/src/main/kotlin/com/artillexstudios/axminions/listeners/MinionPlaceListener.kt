@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
-import com.artillexstudios.axapi.libs.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin

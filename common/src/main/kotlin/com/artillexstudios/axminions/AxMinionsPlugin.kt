@@ -2,7 +2,6 @@ package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
-import com.artillexstudios.axapi.libs.lamp.bukkit.BukkitCommandHandler
 import com.artillexstudios.axapi.libs.libby.libby.BukkitLibraryManager
 import com.artillexstudios.axapi.libs.libby.libby.Library
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -28,8 +27,9 @@ import com.artillexstudios.axminions.minions.miniontype.LumberMinionType
 import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
-import org.bukkit.Bukkit
 import java.io.File
+import org.bukkit.Bukkit
+import revxrsal.commands.bukkit.BukkitCommandHandler
 
 class AxMinionsPlugin : AxPlugin() {
     companion object {
@@ -43,8 +43,10 @@ class AxMinionsPlugin : AxPlugin() {
 
     init {
         val manager = BukkitLibraryManager(this, "../../libraries")
-        val stdLib = Library.builder().groupId("org{}jetbrains{}kotlin").artifactId("kotlin-stdlib").version("1.9.0").relocate("org{}jetbrains{}kotlin", "com{}artillexstudios{}axminions{}libs{}kotlin").build()
-        val h2 = Library.builder().groupId("com{}h2database").artifactId("h2").version("2.2.220").relocate("org{}h2", "com{}artillexstudios{}axminions{}libs{}h2").build()
+        val stdLib = Library.builder().groupId("org{}jetbrains{}kotlin").artifactId("kotlin-stdlib").version("1.9.0")
+            .relocate("org{}jetbrains{}kotlin", "com{}artillexstudios{}axminions{}libs{}kotlin").build()
+        val h2 = Library.builder().groupId("com{}h2database").artifactId("h2").version("2.2.220")
+            .relocate("org{}h2", "com{}artillexstudios{}axminions{}libs{}h2").build()
         manager.addMavenCentral()
         manager.loadLibrary(stdLib)
         manager.loadLibrary(h2)
@@ -100,6 +102,7 @@ class AxMinionsPlugin : AxPlugin() {
         Bukkit.getPluginManager().registerEvents(MinionInventoryListener(), this)
         Bukkit.getPluginManager().registerEvents(ChunkListener(), this)
         Bukkit.getPluginManager().registerEvents(MinionDamageListener(), this)
+
 
         MinionTicker.startTicking()
     }

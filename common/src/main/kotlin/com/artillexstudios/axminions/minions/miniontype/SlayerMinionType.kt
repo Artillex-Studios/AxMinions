@@ -10,7 +10,6 @@ import com.artillexstudios.axminions.nms.NMSHandler
 import kotlin.math.roundToInt
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Tameable
@@ -63,19 +62,6 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
             }
 
             NMSHandler.get().attack(minion, it)
-            it.location.world!!.getNearbyEntities(it.location, 2.0, 2.0, 2.0).filterIsInstance<Item>().fastFor { item ->
-                if (minion.getLinkedInventory()?.firstEmpty() == -1) {
-                    Warnings.CONTAINER_FULL.display(minion)
-                    return
-                }
-
-                val amount = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(item)
-                val stack = item.itemStack
-                stack.amount = amount.toInt()
-
-                minion.addToContainerOrDrop(stack)
-                item.remove()
-            }
         }
     }
 }

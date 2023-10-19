@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.nms.v1_20_R1
 
-import com.artillexstudios.axminions.api.events.MinionDamageEntityEvent
+import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
+import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
@@ -85,7 +86,7 @@ object DamageHandler {
                 }
             }
 
-            val event = MinionDamageEntityEvent(source, entity as org.bukkit.entity.LivingEntity, f.toDouble())
+            val event = PreMinionDamageEntityEvent(source, entity as org.bukkit.entity.LivingEntity, f.toDouble())
             Bukkit.getPluginManager().callEvent(event)
             if (event.isCancelled) {
                 return
@@ -94,6 +95,11 @@ object DamageHandler {
             val flag5 = nmsEntity.hurt(nmsEntity.damageSources().magic(), f.toFloat())
 
             if (flag5) {
+                if ((nmsEntity as LivingEntity).isDeadOrDying) {
+                    val killEvent = MinionKillEntityEvent(source, entity, nmsEntity.drops)
+                    Bukkit.getPluginManager().callEvent(killEvent)
+                }
+
                 if (i > 0) {
                     if (nmsEntity is LivingEntity) {
                         (nmsEntity).knockback(
@@ -120,11 +126,16 @@ object DamageHandler {
                     while (iterator.hasNext()) {
                         val entityliving: LivingEntity = iterator.next() as LivingEntity
 
-                        if ((entityliving !is ArmorStand || !(entityliving).isMarker) && source.getLocation().distanceSquared(
-                                (entity as Entity).location
-                            ) < 9.0
+                        if ((entityliving !is ArmorStand || !(entityliving).isMarker) && source.getLocation()
+                                .distanceSquared(
+                                    (entity as Entity).location
+                                ) < 9.0
                         ) {
-                            val damageEvent = MinionDamageEntityEvent(source, entityliving.bukkitEntity as org.bukkit.entity.LivingEntity, f4.toDouble())
+                            val damageEvent = PreMinionDamageEntityEvent(
+                                source,
+                                entityliving.bukkitEntity as org.bukkit.entity.LivingEntity,
+                                f4.toDouble()
+                            )
                             Bukkit.getPluginManager().callEvent(damageEvent)
                             if (event.isCancelled) {
                                 return
@@ -132,6 +143,10 @@ object DamageHandler {
 
                             // CraftBukkit start - Only apply knockback if the damage hits
                             if (entityliving.hurt(nmsEntity.damageSources().magic(), f4)) {
+                                if (entityliving.isDeadOrDying) {
+                                    val killEvent = MinionKillEntityEvent(source, entity, entityliving.drops)
+                                    Bukkit.getPluginManager().callEvent(killEvent)
+                                }
                                 entityliving.knockback(
                                     0.4000000059604645,
                                     Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
