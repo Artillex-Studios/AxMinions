@@ -4,10 +4,11 @@ import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.utils.ChunkPos
 import com.artillexstudios.axminions.api.utils.fastFor
 import java.util.Collections
+import java.util.concurrent.ConcurrentLinkedQueue
 import org.bukkit.Chunk
 
 object Minions {
-    private val minions = arrayListOf<ChunkPos>()
+    private val minions = ConcurrentLinkedQueue<ChunkPos>()
 
     fun addTicking(chunk: Chunk) {
         val chunkX = chunk.x
@@ -98,7 +99,7 @@ object Minions {
         return Collections.unmodifiableList(list)
     }
 
-    internal fun get(): ArrayList<ChunkPos> {
+    internal fun get(): ConcurrentLinkedQueue<ChunkPos> {
         return minions
     }
 

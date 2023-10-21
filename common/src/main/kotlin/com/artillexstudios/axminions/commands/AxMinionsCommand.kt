@@ -47,8 +47,8 @@ class AxMinionsCommand {
         AxMinionsPlugin.config.reload()
         AxMinionsPlugin.messages.reload()
 
-        MinionTypes.getMinionTypes().forEach {
-            it.value.getConfig().reload()
+        MinionTypes.getMinionTypes().fastFor { _, v ->
+            v.getConfig().reload()
         }
 
         AxMinionsAPI.INSTANCE.getMinions().fastFor {

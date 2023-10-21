@@ -18,7 +18,7 @@ class DefaultStackerIntegration : StackerIntegration {
     }
 
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
-        Scheduler.get().runAt(location) {
+        Scheduler.get().executeAt(location) {
             location.world!!.dropItem(location, itemStack)
         }
     }

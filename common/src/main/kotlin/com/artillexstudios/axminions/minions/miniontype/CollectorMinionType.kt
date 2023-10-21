@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.minions.miniontype
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
 import kotlin.math.roundToInt
@@ -58,7 +59,7 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
             minion.getRange()
         )
 
-        entities?.filterIsInstance<Item>()?.forEach { item ->
+        entities?.filterIsInstance<Item>()?.fastFor { item ->
             if (minion.getLinkedInventory()?.firstEmpty() == -1) {
                 Warnings.CONTAINER_FULL.display(minion)
                 return

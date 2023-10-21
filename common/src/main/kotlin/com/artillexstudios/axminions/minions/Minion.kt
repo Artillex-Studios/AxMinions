@@ -73,7 +73,7 @@ class Minion(
         Minions.load(this)
 
         if (linkedChest != null) {
-            Scheduler.get().runAt(linkedChest) {
+            Scheduler.get().executeAt(linkedChest) {
                 linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
             }
         }
@@ -130,7 +130,7 @@ class Minion(
         val remaining = event.player.inventory.addItem(tool, asItem)
         remove()
 
-        remaining.forEach { (_, i) ->
+        remaining.fastFor { _, i ->
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(i, i.amount, location)
         }
     }
@@ -145,7 +145,7 @@ class Minion(
             debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking"))
         }
 
-        Scheduler.get().runAt(location) {
+        Scheduler.get().executeAt(location) {
             type.tick(this)
         }
         animate()
@@ -162,8 +162,8 @@ class Minion(
     }
 
     private fun updateInventory(inventory: Inventory) {
-        AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
-            if (it.equals("filler")) return@forEach
+        AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).fastFor {
+            if (it.equals("filler")) return@fastFor
             val item: ItemStack
             if (it.equals("upgrade", true) || it.equals("statistics", true)) {
                 val level = Placeholder.unparsed("level", level.toString())
@@ -370,7 +370,7 @@ class Minion(
     override fun setLinkedChest(location: Location?) {
         this.linkedChest = location?.clone()
         if (linkedChest != null) {
-            Scheduler.get().runAt(linkedChest) {
+            Scheduler.get().executeAt(linkedChest) {
                 linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
 
                 updateInventories()
@@ -422,7 +422,7 @@ class Minion(
 
         val remaining = linkedInventory?.addItem(itemStack)
 
-        remaining?.forEach { (_, u) ->
+        remaining?.fastFor { _, u ->
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(u, u.amount, location)
         }
     }

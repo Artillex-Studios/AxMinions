@@ -101,8 +101,8 @@ class AxMinionsPlugin : AxPlugin() {
 
         // Retroactively load minions for the already loaded worlds
         Bukkit.getWorlds().fastFor { world ->
-            MinionTypes.getMinionTypes().forEach { map ->
-                dataHandler.loadMinionsForWorld(map.value, world)
+            MinionTypes.getMinionTypes().fastFor { _, v ->
+                dataHandler.loadMinionsForWorld(v, world)
             }
         }
 

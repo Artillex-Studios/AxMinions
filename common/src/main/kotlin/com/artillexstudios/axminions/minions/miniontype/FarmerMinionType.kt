@@ -55,7 +55,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                 Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
                     MinionUtils.getPlant(block).fastFor {
                         val blockDrops = it.getDrops(minion.getTool())
-                        blockDrops.forEach { itemStack ->
+                        blockDrops.fastFor { itemStack ->
                             size += itemStack.amount
                         }
                         drops.addAll(blockDrops)
@@ -65,7 +65,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
                 Material.MELON, Material.PUMPKIN -> {
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.forEach { itemStack ->
+                    blockDrops.fastFor { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
@@ -76,7 +76,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.forEach { itemStack ->
+                    blockDrops.fastFor { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
@@ -88,7 +88,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.forEach { itemStack ->
+                    blockDrops.fastFor { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)

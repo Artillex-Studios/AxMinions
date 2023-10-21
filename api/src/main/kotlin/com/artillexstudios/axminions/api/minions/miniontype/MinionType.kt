@@ -7,6 +7,7 @@ import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.fastFor
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import java.io.File
@@ -75,12 +76,12 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     private fun <T> get(key: String, level: Int, defaultValue: T?, clazz: Class<T>): T? {
         var n = defaultValue
 
-        config.getSection("upgrades").getRoutesAsStrings(false).forEach {
+        config.getSection("upgrades").getRoutesAsStrings(false).fastFor {
             if (it.toInt() > level) {
                 return n
             }
 
-            if (config.backingDocument.getAsOptional("upgrades.$it.$key", clazz).isEmpty) return@forEach
+            if (config.backingDocument.getAsOptional("upgrades.$it.$key", clazz).isEmpty) return@fastFor
 
             n = config.get("upgrades.$it.$key")
         }
