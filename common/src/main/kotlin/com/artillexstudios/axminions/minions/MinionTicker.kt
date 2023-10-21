@@ -19,7 +19,7 @@ object MinionTicker {
     fun startTicking() {
         Scheduler.get().runTimer({ _ ->
             tickAll()
-        }, 0, 0)
+        }, 1, 1)
     }
 
     fun getTick(): Long {

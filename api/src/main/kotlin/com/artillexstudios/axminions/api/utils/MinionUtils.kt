@@ -78,9 +78,15 @@ object MinionUtils {
 
                 FACES.fastFor {
                     val relative = block.getRelative(it)
-                    if (!visited.contains(relative)) {
+                    if (visited.add(relative)) {
                         queue.add(relative)
-                        visited.add(relative)
+                    }
+                }
+            } else if (type.endsWith("_LEAVES")) {
+                FACES.fastFor {
+                    val relative = block.getRelative(it)
+                    if (visited.add(relative)) {
+                        queue.add(relative)
                     }
                 }
             }

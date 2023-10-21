@@ -46,7 +46,12 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
 
         Warnings.remove(minion, Warnings.NO_TOOL)
 
-        minion.getLocation().world!!.getNearbyEntities(minion.getLocation(), minion.getRange(), minion.getRange(), minion.getRange()).filterIsInstance<LivingEntity>().fastFor {
+        minion.getLocation().world!!.getNearbyEntities(
+            minion.getLocation(),
+            minion.getRange(),
+            minion.getRange(),
+            minion.getRange()
+        ).filterIsInstance<LivingEntity>().fastFor {
             if (it is Player) return@fastFor
 
             if (!getConfig().getBoolean("damage-animals") && NMSHandler.get().isAnimal(it)) {

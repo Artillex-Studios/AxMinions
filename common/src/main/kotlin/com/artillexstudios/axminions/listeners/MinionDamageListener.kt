@@ -12,9 +12,10 @@ import org.bukkit.event.Listener
 class MinionDamageListener : Listener {
 
     @EventHandler
-    fun onPreMinionDamageEntityEvent(event: MinionKillEntityEvent) {
+    fun onMinionKillEntityEvent(event: MinionKillEntityEvent) {
         val entitySize = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(event.target)
 
+        event.minion.setActions(event.minion.getActionAmount() + entitySize)
         event.minion.setStorage(event.minion.getStorage() + ThreadLocalRandom.current().nextInt(1, 4) * entitySize)
 
         event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0).filterIsInstance<Item>().fastFor { item ->

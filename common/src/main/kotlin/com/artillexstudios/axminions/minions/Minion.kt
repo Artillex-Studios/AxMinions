@@ -71,7 +71,12 @@ class Minion(
     init {
         spawn()
         Minions.load(this)
-        linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+
+        if (linkedChest != null) {
+            Scheduler.get().runAt(linkedChest) {
+                linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+            }
+        }
     }
 
     override fun getType(): MinionType {
@@ -140,7 +145,9 @@ class Minion(
             debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking"))
         }
 
-        type.tick(this)
+        Scheduler.get().runAt(location) {
+            type.tick(this)
+        }
         animate()
     }
 
@@ -362,8 +369,13 @@ class Minion(
 
     override fun setLinkedChest(location: Location?) {
         this.linkedChest = location?.clone()
-        linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
-        updateInventories()
+        if (linkedChest != null) {
+            Scheduler.get().runAt(linkedChest) {
+                linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+
+                updateInventories()
+            }
+        }
 
         AxMinionsPlugin.dataQueue.submit {
             AxMinionsPlugin.dataHandler.saveMinion(this)

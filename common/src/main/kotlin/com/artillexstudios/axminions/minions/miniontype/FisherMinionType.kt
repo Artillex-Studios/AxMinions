@@ -40,7 +40,7 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
         }
 
         var waterLocation: Location? = null
-        run breaking@ {
+        run breaking@{
             LocationUtils.getAllBlocksInRadius(minion.getLocation(), 2.0, false).fastFor {
                 if (it.block.type != Material.WATER) return@fastFor
 
@@ -67,5 +67,6 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
 
         minion.addToContainerOrDrop(loot)
         minion.setStorage(minion.getStorage() + xp)
+        minion.damageTool()
     }
 }

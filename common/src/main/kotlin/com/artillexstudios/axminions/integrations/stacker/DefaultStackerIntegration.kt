@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.integrations.stacker
 
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.api.integrations.types.StackerIntegration
 import org.bukkit.Location
 import org.bukkit.entity.Item
@@ -17,7 +18,9 @@ class DefaultStackerIntegration : StackerIntegration {
     }
 
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
-        location.world!!.dropItem(location, itemStack)
+        Scheduler.get().runAt(location) {
+            location.world!!.dropItem(location, itemStack)
+        }
     }
 
     override fun register() {

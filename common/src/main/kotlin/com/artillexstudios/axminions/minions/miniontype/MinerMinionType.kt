@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.miniontype
 
 import com.artillexstudios.axapi.scheduler.Scheduler
+import com.artillexstudios.axapi.scheduler.impl.FoliaScheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
@@ -51,34 +52,60 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
         Warnings.remove(minion, Warnings.NO_TOOL)
 
+        var amount = 0
         when (getConfig().getString("mode").lowercase(Locale.ENGLISH)) {
             "sphere" -> {
                 LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
                     val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                     if (isStoneGenerator) {
-                        minion.addToContainerOrDrop(location.block.getDrops(minion.getTool()))
+                        val drops = location.block.getDrops(minion.getTool())
+                        drops.forEach {
+                            amount += it.amount
+                        }
+                        minion.addToContainerOrDrop(drops)
                         location.block.type = Material.AIR
                     }
                 }
             }
 
             "asphere" -> {
-                if (asyncExecutor == null) {
-                    asyncExecutor = Executors.newFixedThreadPool(3)
-                }
+                if (Scheduler.get() !is FoliaScheduler) {
+                    if (asyncExecutor == null) {
+                        asyncExecutor = Executors.newFixedThreadPool(3)
+                    }
 
-                asyncExecutor!!.execute {
-                    LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
-                        val isStoneGenerator = MinionUtils.isStoneGenerator(location)
+                    asyncExecutor!!.execute {
+                        LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
+                            .fastFor { location ->
+                                val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
-                        if (isStoneGenerator) {
-                            Scheduler.get().run {
-                                minion.addToContainerOrDrop(location.block.getDrops(minion.getTool()))
+                                if (isStoneGenerator) {
+                                    Scheduler.get().run {
+                                        val drops = location.block.getDrops(minion.getTool())
+                                        drops.forEach {
+                                            amount += it.amount
+                                        }
+                                        minion.addToContainerOrDrop(drops)
+                                        location.block.type = Material.AIR
+                                    }
+                                }
+                            }
+                    }
+                } else {
+                    LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
+                        .fastFor { location ->
+                            val isStoneGenerator = MinionUtils.isStoneGenerator(location)
+
+                            if (isStoneGenerator) {
+                                val drops = location.block.getDrops(minion.getTool())
+                                drops.forEach {
+                                    amount += it.amount
+                                }
+                                minion.addToContainerOrDrop(drops)
                                 location.block.type = Material.AIR
                             }
                         }
-                    }
                 }
             }
 
@@ -88,7 +115,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                         if (isStoneGenerator) {
-                            minion.addToContainerOrDrop(location.block.getDrops(minion.getTool()))
+                            val drops = location.block.getDrops(minion.getTool())
+                            drops.forEach {
+                                amount += it.amount
+                            }
+                            minion.addToContainerOrDrop(drops)
                             location.block.type = Material.AIR
                         }
                     }
@@ -96,15 +127,22 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
 
             "face" -> {
-                LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing).fastFor { location ->
-                    val isStoneGenerator = MinionUtils.isStoneGenerator(location)
+                LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing)
+                    .fastFor { location ->
+                        val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
-                    if (isStoneGenerator) {
-                        minion.addToContainerOrDrop(location.block.getDrops(minion.getTool()))
-                        location.block.type = Material.AIR
+                        if (isStoneGenerator) {
+                            val drops = location.block.getDrops(minion.getTool())
+                            drops.forEach {
+                                amount += it.amount
+                            }
+                            minion.addToContainerOrDrop(drops)
+                            location.block.type = Material.AIR
+                        }
                     }
-                }
             }
         }
+
+        minion.damageTool(amount)
     }
 }

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.miniontype
 
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
@@ -88,10 +89,7 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
                 Material.SPRUCE_SAPLING
             }
 
-            else -> {
-                println("Material: $material")
-                Material.OAK_SAPLING
-            }
+            else -> Material.OAK_SAPLING
         }
     }
 }
