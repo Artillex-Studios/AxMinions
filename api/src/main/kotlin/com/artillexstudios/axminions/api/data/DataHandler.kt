@@ -14,7 +14,7 @@ interface DataHandler {
 
     fun insertType(minionType: MinionType)
 
-    fun loadMinionsOfType(minionType: MinionType)
+    fun loadMinionsForWorld(minionType: MinionType, world: World)
 
     fun getLocationID(location: Location): Int
 

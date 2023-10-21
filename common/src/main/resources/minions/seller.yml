@@ -31,12 +31,12 @@ gui:
     lore:
       - ""
       - " <gray>- <white>Level: <green><level> » <dark_green><next_level>"
-      - " <gray>- <white>Range: <green><range> » <dark_green><next_range>"
+      - " <gray>- <white>Multiplier: <green><multiplier> » <dark_green><next_multiplier>"
       - " <gray>- <white>Speed: <green><speed> » <dark_green><next_speed>"
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - " <gray>- <white>Sold items: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:

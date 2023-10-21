@@ -10,6 +10,7 @@ import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.nms.NMSHandler
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.roundToInt
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 
@@ -38,17 +39,17 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
             minion.setLinkedChest(null)
         }
 
-        var hasWater = false
-        run breaking@{
+        var waterLocation: Location? = null
+        run breaking@ {
             LocationUtils.getAllBlocksInRadius(minion.getLocation(), 2.0, false).fastFor {
                 if (it.block.type != Material.WATER) return@fastFor
 
-                hasWater = true
+                waterLocation = it
                 return@breaking
             }
         }
 
-        if (!hasWater) {
+        if (waterLocation == null) {
             Warnings.NO_WATER_NEARBY.display(minion)
             return
         }
@@ -61,7 +62,7 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
 
         Warnings.remove(minion, Warnings.NO_TOOL)
 
-        val loot = NMSHandler.get().generateRandomFishingLoot(minion)
+        val loot = NMSHandler.get().generateRandomFishingLoot(minion, waterLocation!!)
         val xp = ThreadLocalRandom.current().nextInt(6) + 1
 
         minion.addToContainerOrDrop(loot)

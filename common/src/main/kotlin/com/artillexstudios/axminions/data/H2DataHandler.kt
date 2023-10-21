@@ -60,7 +60,7 @@ class H2DataHandler : DataHandler {
         }
     }
 
-    override fun loadMinionsOfType(minionType: MinionType) {
+    override fun loadMinionsForWorld(minionType: MinionType, world: World) {
         var typeId = 0
         connection.prepareStatement("SELECT `id` FROM `axminions_types` WHERE `name` = ?;").use { statement ->
             statement.setString(1, minionType.getName())
@@ -71,8 +71,9 @@ class H2DataHandler : DataHandler {
             }
         }
 
-        connection.prepareStatement("SELECT * FROM `axminions_minions` WHERE `type_id` = ?;").use { statement ->
-            statement.setInt(1, typeId)
+        connection.prepareStatement("SELECT `minions`.* FROM `axminions_minions` AS `minions` JOIN `axminions_locations` AS `location` ON `minions`.`location_id` = `location`.`id` WHERE `location`.`world_id` = (SELECT `id` FROM `axminions_worlds` WHERE `name` = ?) AND `type_id` = ?;").use { statement ->
+            statement.setString(1, world.name)
+            statement.setInt(2, typeId)
             statement.executeQuery().use { resultSet ->
                 while (resultSet.next()) {
                     val locationId = resultSet.getInt("location_id")
@@ -83,8 +84,6 @@ class H2DataHandler : DataHandler {
                     val storage = resultSet.getDouble("storage")
                     val actions = resultSet.getLong("actions")
                     val tool = resultSet.getString("tool")
-
-                    println("direction: $direction, tool: $tool chest location: $chestLocationId")
 
                     val location = getLocation(locationId)
                     var chestLocation: Location? = null
@@ -175,7 +174,7 @@ class H2DataHandler : DataHandler {
             statement.setInt(1, worldId)
             statement.executeQuery().use { resultSet ->
                 if (resultSet.next()) {
-                    return Bukkit.getWorld(resultSet.getString("name"))!!
+                    return Bukkit.getWorld(resultSet.getString("name"))
                 }
 
                 return null
@@ -280,7 +279,7 @@ class H2DataHandler : DataHandler {
     }
 
     override fun getMinionAmount(uuid: UUID): Int {
-        connection.prepareStatement("SELECT COUNT(`owner_id`) FROM `axminions_minions` WHERE `owner_id` = (SELECT `owner_id` FROM `axminions_users` WHERE `uuid` = ?);")
+        connection.prepareStatement("SELECT COUNT(`owner_id`) FROM `axminions_minions` WHERE `owner_id` = ?;")
             .use { statement ->
                 statement.setObject(1, uuid)
                 statement.executeQuery().use { resultSet ->

@@ -48,7 +48,7 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
 
         val loot = ArrayList<ItemStack>()
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
-            MinionUtils.getTree(location.block).fastFor {
+            MinionUtils.getTree(location.block).forEach {
                 val down = it.getRelative(BlockFace.DOWN).type
                 loot.addAll(it.getDrops(minion.getTool()))
 
@@ -88,7 +88,10 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
                 Material.SPRUCE_SAPLING
             }
 
-            else -> Material.OAK_SAPLING
+            else -> {
+                println("Material: $material")
+                Material.OAK_SAPLING
+            }
         }
     }
 }

@@ -2,12 +2,11 @@ package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.exception.MinionTypeAlreadyRegisteredException
-import org.bukkit.NamespacedKey
 import java.util.Collections
+import org.bukkit.World
 
 object MinionTypes {
     private val TYPES = hashMapOf<String, MinionType>()
-
 
     @JvmStatic
     fun register(type: MinionType): MinionType {
@@ -18,6 +17,13 @@ object MinionTypes {
         TYPES[type.getName()] = type
         type.load()
         return type
+    }
+
+    @JvmStatic
+    fun loadForWorld(world: World) {
+        TYPES.forEach {
+            AxMinionsAPI.INSTANCE.getDataHandler().loadMinionsForWorld(it.value, world)
+        }
     }
 
     @JvmStatic

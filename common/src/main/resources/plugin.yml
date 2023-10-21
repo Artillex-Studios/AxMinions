@@ -5,3 +5,16 @@ api-version: 1.19
 softdepend:
   - RoseStacker
   - WildStacker
+  - CMI
+  - Vault
+  - EconomyShopGUI
+  - Essentials
+  - ShopGUIPlus
+  - BentoBox
+  - GriefPrevention
+  - IridiumSkyBlock
+  - KingdomsX
+  - Lands
+  - SuperiorSkyBlock2
+  - WorldGuard
+  - PlotSquared

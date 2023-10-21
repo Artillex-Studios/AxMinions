@@ -54,9 +54,9 @@ gui:
       name: "<#33FF33><b>Rotate"
       lore:
         - ""
-        - " <gray>- <white>Current: <#FFCC00><rotation>"
+        - " <gray>- <white>Current: <#33FF33><direction>"
         - ""
-        - "<#FFCC00><b>(!)</b> Click here to rotate your minion!"
+        - "<#33FF33><b>(!)</b> Click here to rotate your minion!"
       slot: 10
     link:
       type: "chest"

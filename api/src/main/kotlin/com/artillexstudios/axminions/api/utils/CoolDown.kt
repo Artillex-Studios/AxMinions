@@ -1,31 +1,27 @@
 package com.artillexstudios.axminions.api.utils
 
-class CoolDown<T> : HashMap<T, Long>() {
+class CoolDown<T> {
+    private val map = HashMap<T, Long>()
 
     fun add(value: T, time: Long) {
         expire()
-        put(value, System.currentTimeMillis() + time)
+        map[value] = System.currentTimeMillis() + time
     }
-
-    override fun containsKey(key: T): Boolean {
-        expire()
-        return super.containsKey(key)
-    }
-
 
     fun contains(value: T): Boolean {
-        return containsKey(value)
+        expire()
+        return map.containsKey(value)
     }
 
-    override fun remove(key: T): Long? {
+    fun remove(key: T): Long? {
         expire()
-        return super.remove(key)
+        return map.remove(key)
     }
 
     private fun expire() {
         val currentTime = System.currentTimeMillis()
 
-        val iterator = iterator()
+        val iterator = map.iterator()
         while (iterator.hasNext()) {
             val next = iterator.next()
             if (next.value <= currentTime) {

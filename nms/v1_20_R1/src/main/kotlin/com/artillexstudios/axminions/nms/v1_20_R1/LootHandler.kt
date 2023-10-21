@@ -7,13 +7,14 @@ import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.Vec3
+import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 
 object LootHandler {
 
-    fun generateFishingLoot(minion: Minion): List<ItemStack> {
+    fun generateFishingLoot(minion: Minion, waterLocation: Location): List<ItemStack> {
         val nmsItem: net.minecraft.world.item.ItemStack = if (minion.getTool() == null) {
             net.minecraft.world.item.ItemStack.EMPTY
         } else {
@@ -23,7 +24,7 @@ object LootHandler {
         val level = (minion.getLocation().world as CraftWorld).handle
 
         val lootparams = LootParams.Builder(level).withParameter(
-            LootContextParams.ORIGIN, Vec3(minion.getLocation().x, minion.getLocation().y, minion.getLocation().z)
+            LootContextParams.ORIGIN, Vec3(waterLocation.x, waterLocation.y, waterLocation.z)
         ).withParameter(LootContextParams.TOOL, nmsItem).withOptionalParameter(LootContextParams.THIS_ENTITY, null)
             .create(LootContextParamSets.FISHING)
 

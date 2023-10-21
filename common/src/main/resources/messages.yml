@@ -31,6 +31,7 @@ statistics: |
 upgrades:
   upgraded: "<green>Successfully upgraded the minion to level: <white><level></white>!"
   limit-reached: "<red>You have maxed this minion!"
+  fail: "<red>Your minion either doesn't have enough actions, or you don't have enough money to buy this upgrade!"
 
 link:
   success: "<green>Successfully linked the minion to a container!"

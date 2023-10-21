@@ -8,6 +8,7 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
+import com.artillexstudios.axminions.converter.LitMinionsConverter
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import revxrsal.commands.annotation.AutoComplete
@@ -66,7 +67,8 @@ class AxMinionsCommand {
     @CommandPermission("axminions.command.convert")
     @Description("Convert from a different plugin")
     fun convert(sender: CommandSender) {
-
+        val converter = LitMinionsConverter()
+        converter.convert()
     }
 
     @Subcommand("stats", "statistics")

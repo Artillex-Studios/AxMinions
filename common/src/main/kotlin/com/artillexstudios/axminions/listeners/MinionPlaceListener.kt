@@ -58,6 +58,7 @@ class MinionPlaceListener : Listener {
             minion.setLevel(level)
             minion.setActions(stats)
             minion.setTicking(true)
+            event.item?.amount = event.item?.amount?.minus(1) ?: 0
             if (Config.DEBUG()) {
                 event.player.sendMessage("Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${Minions.isTicking(location.chunk)}")
             }

@@ -13,7 +13,6 @@ class MinionDamageListener : Listener {
 
     @EventHandler
     fun onPreMinionDamageEntityEvent(event: MinionKillEntityEvent) {
-        println("MINION KILL ENTITY EVENT")
         val entitySize = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(event.target)
 
         event.minion.setStorage(event.minion.getStorage() + ThreadLocalRandom.current().nextInt(1, 4) * entitySize)

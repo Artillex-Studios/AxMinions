@@ -117,6 +117,7 @@ class MinionInventoryListener : Listener {
 
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_START()))
                 LinkingListener.linking[player.uniqueId] = minion
+                player.closeInventory()
             }
 
             "upgrade" -> {
@@ -128,6 +129,7 @@ class MinionInventoryListener : Listener {
                 }
 
                 if (minion.getActionAmount() < actions) {
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.UPGRADE_FAIL()))
                     return
                 }
 
@@ -150,7 +152,12 @@ class MinionInventoryListener : Listener {
                 }
 
                 if (minion.getType() == MinionTypes.getMinionTypes()["seller"]) {
-                    // TODO: Give money
+                    AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
+                        minion.getOwner()?.let {
+                            player -> it.giveBalance(player, stored)
+                            minion.setStorage(0.0)
+                        }
+                    }
                 } else {
                     player.giveExp(stored.toInt())
                 }

@@ -58,6 +58,6 @@ class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
     }
 
     override fun getIntegrations(): Integrations {
-        TODO("Not yet implemented")
+        return AxMinionsPlugin.integrations
     }
 }

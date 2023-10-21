@@ -69,7 +69,7 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
             stack.amount = amount.toInt()
 
             minion.addToContainerOrDrop(stack)
-            minion.setActions(minion.getActionAmount() + 1)
+            minion.setActions(minion.getActionAmount() + amount)
             minion.damageTool()
             item.remove()
         }

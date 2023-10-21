@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.nms
 
 import com.artillexstudios.axapi.utils.Version
 import com.artillexstudios.axminions.api.minions.Minion
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
@@ -17,7 +18,7 @@ interface NMSHandler {
 
     fun attack(source: Minion, target: Entity)
 
-    fun generateRandomFishingLoot(minion: Minion): List<ItemStack>
+    fun generateRandomFishingLoot(minion: Minion, waterLocation: Location): List<ItemStack>
 
     fun isAnimal(entity: Entity): Boolean
 }

@@ -11,6 +11,7 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
+import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
 import com.artillexstudios.axminions.integrations.Integrations
@@ -19,6 +20,7 @@ import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionDamageListener
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
+import com.artillexstudios.axminions.listeners.WorldListener
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
@@ -97,12 +99,21 @@ class AxMinionsPlugin : AxPlugin() {
             handler.registerBrigadier()
         }
 
-        Bukkit.getPluginManager().registerEvents(MinionPlaceListener(), this)
-        Bukkit.getPluginManager().registerEvents(LinkingListener(), this)
-        Bukkit.getPluginManager().registerEvents(MinionInventoryListener(), this)
-        Bukkit.getPluginManager().registerEvents(ChunkListener(), this)
-        Bukkit.getPluginManager().registerEvents(MinionDamageListener(), this)
+        // Retroactively load minions for the already loaded worlds
+        Bukkit.getWorlds().fastFor { world ->
+            MinionTypes.getMinionTypes().forEach { map ->
+                dataHandler.loadMinionsForWorld(map.value, world)
+            }
+        }
 
+        Bukkit.getPluginManager().also {
+            it.registerEvents(MinionPlaceListener(), this)
+            it.registerEvents(LinkingListener(), this)
+            it.registerEvents(MinionInventoryListener(), this)
+            it.registerEvents(ChunkListener(), this)
+            it.registerEvents(MinionDamageListener(), this)
+            it.registerEvents(WorldListener(), this)
+        }
 
         MinionTicker.startTicking()
     }

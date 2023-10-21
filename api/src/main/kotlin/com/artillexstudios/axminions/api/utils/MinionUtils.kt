@@ -62,10 +62,10 @@ object MinionUtils {
     }
 
     @JvmStatic
-    fun getTree(startBlock: Block): List<Block> {
+    fun getTree(startBlock: Block): Set<Block> {
         val queue: Queue<Block> = LinkedList()
         val visited = mutableSetOf<Block>()
-        val tree = mutableListOf<Block>()
+        val tree = mutableSetOf<Block>()
 
         queue.add(startBlock)
 

@@ -71,7 +71,7 @@ class Minion(
     init {
         spawn()
         Minions.load(this)
-        linkedInventory = (linkedChest?.block?.blockData as? Container)?.inventory
+        linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
     }
 
     override fun getType(): MinionType {
@@ -87,7 +87,6 @@ class Minion(
         entity.setHasArms(true)
 
         entity.onClick { event ->
-            println("bbbbbbbbbbbbbb")
             if (event.isAttack) {
                 if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
                     breakMinion(event)
@@ -167,17 +166,19 @@ class Minion(
                         else -> (this.level + 1).toString()
                     }
                 )
-                val range = Placeholder.unparsed("range", type.getString("range", this.level))
-                val nextRange = Placeholder.unparsed("next_range", type.getString("range", this.level + 1))
-                val extra = Placeholder.unparsed("extra", type.getString("extra", this.level))
-                val nextExtra = Placeholder.unparsed("next_extra", type.getString("extra", this.level + 1))
-                val speed = Placeholder.unparsed("speed", type.getString("speed", this.level))
-                val nextSpeed = Placeholder.unparsed("next_speed", type.getString("speed", this.level + 1))
-                val price = Placeholder.unparsed("price", type.getString("requirements.money", this.level + 1))
+                val range = Placeholder.unparsed("range", type.getDouble("range", this.level).toString())
+                val nextRange = Placeholder.unparsed("next_range", type.getDouble("range", this.level + 1).toString())
+                val extra = Placeholder.unparsed("extra", type.getDouble("extra", this.level).toString())
+                val nextExtra = Placeholder.unparsed("next_extra", type.getDouble("extra", this.level + 1).toString())
+                val speed = Placeholder.unparsed("speed", type.getDouble("speed", this.level).toString())
+                val nextSpeed = Placeholder.unparsed("next_speed", type.getDouble("speed", this.level + 1).toString())
+                val price = Placeholder.unparsed("price", type.getDouble("requirements.money", this.level + 1).toString())
                 val requiredActions =
-                    Placeholder.unparsed("required_actions", type.getString("requirements.actions", this.level + 1))
+                    Placeholder.unparsed("required_actions", type.getDouble("requirements.actions", this.level + 1).toString())
                 val stored = Placeholder.unparsed("storage", storage.toString())
                 val actions = Placeholder.unparsed("actions", actions.toString())
+                val multiplier = Placeholder.unparsed("multiplier", type.getDouble("multiplier", this.level).toString())
+                val nextMultiplier = Placeholder.unparsed("next_multiplier", type.getDouble("multiplier", this.level + 1).toString())
 
                 item = ItemBuilder(
                     type.getConfig().getSection("gui.$it"),
@@ -192,7 +193,9 @@ class Minion(
                     price,
                     requiredActions,
                     stored,
-                    actions
+                    actions,
+                    multiplier,
+                    nextMultiplier
                 ).storePersistentData(
                     Keys.GUI, PersistentDataType.STRING, it
                 ).get()
@@ -237,7 +240,6 @@ class Minion(
             inventory.setItem(i, filler)
         }
 
-        println("aaaaa")
         player.openInventory(inventory)
         updateInventory(inventory)
         openInventories.add(inventory)
@@ -287,14 +289,13 @@ class Minion(
         this.tool = tool.clone()
         dirty = true
 
-        if (tool.type == Material.AIR) {
+        if (this.tool?.type == Material.AIR) {
             entity.setItem(EquipmentSlot.MAIN_HAND, null)
         } else {
             entity.setItem(EquipmentSlot.MAIN_HAND, tool.clone())
         }
 
         AxMinionsPlugin.dataQueue.submit {
-            println("Saving minion!")
             AxMinionsPlugin.dataHandler.saveMinion(this)
         }
     }
@@ -379,7 +380,6 @@ class Minion(
         entity.teleport(location)
 
         AxMinionsPlugin.dataQueue.submit {
-            println("Saving minion!")
             AxMinionsPlugin.dataHandler.saveMinion(this)
         }
     }
