@@ -23,7 +23,8 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
     override fun onToolDirty(minion: Minion) {
         val minionImpl = minion as com.artillexstudios.axminions.minions.Minion
         minionImpl.setRange(getDouble("range", minion.getLevel()))
-        val efficiency = 1.0 - (minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
+        val tool = minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1
+        val efficiency = 1.0 - if (tool > 0.9) 0.9 else tool
         minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
     }
 
@@ -55,7 +56,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                 Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
                     MinionUtils.getPlant(block).fastFor {
                         val blockDrops = it.getDrops(minion.getTool())
-                        blockDrops.fastFor { itemStack ->
+                        blockDrops.forEach { itemStack ->
                             size += itemStack.amount
                         }
                         drops.addAll(blockDrops)
@@ -65,7 +66,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
                 Material.MELON, Material.PUMPKIN -> {
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.fastFor { itemStack ->
+                    blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
@@ -76,7 +77,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.fastFor { itemStack ->
+                    blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
@@ -88,7 +89,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                     val ageable = block.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
                     val blockDrops = block.getDrops(minion.getTool())
-                    blockDrops.fastFor { itemStack ->
+                    blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)

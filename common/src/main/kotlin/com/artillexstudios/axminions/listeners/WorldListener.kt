@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
+import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -9,6 +10,8 @@ class WorldListener : Listener {
 
     @EventHandler
     fun onWorldLoadEvent(event: WorldLoadEvent) {
-        MinionTypes.loadForWorld(event.world)
+        AxMinionsPlugin.dataQueue.submit {
+            MinionTypes.loadForWorld(event.world)
+        }
     }
 }

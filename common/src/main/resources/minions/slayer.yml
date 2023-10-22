@@ -51,6 +51,7 @@ gui:
     lore:
       - ""
       - " <gray>- <white>Killed mobs: <#FF3333><actions>"
+      - " <gray>- <white>Stored exp: <#CC00FF><storage>"
       - ""
 
 upgrades:

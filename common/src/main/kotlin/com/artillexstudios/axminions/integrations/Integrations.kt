@@ -118,30 +118,44 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("SuperiorSkyblock2") != null) {
             register(SuperiorSkyBlock2Integration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into SuperiorSkyblock2!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             register(WorldGuardIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into WorldGuard!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("BentoBox") != null) {
             register(BentoBoxIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into BentoBox!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("GriefPrevention") != null) {
             register(GriefPreventionIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into GriefPrevention!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("Lands") != null) {
             register(LandsIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Lands!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("IridiumSkyBlock") != null) {
             register(IridiumSkyBlockIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into IridiumSkyBlock!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("KingdomsX") != null) {
             register(KingdomsXIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into KingdomsX!"))
         }
     }
 

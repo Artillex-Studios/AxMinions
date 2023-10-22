@@ -1,7 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -54,9 +53,7 @@ class MinionPlaceListener : Listener {
             }
 
             val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
-            val minion = Minion(location, event.player.uniqueId, event.player, minionType, 1, ItemStack(Material.AIR), null, Direction.NORTH, 0, 0.0, locationId, 0)
-            minion.setLevel(level)
-            minion.setActions(stats)
+            val minion = Minion(location, event.player.uniqueId, event.player, minionType, level, ItemStack(Material.AIR), null, Direction.NORTH, stats, 0.0, locationId, 0)
             minion.setTicking(true)
             event.item?.amount = event.item?.amount?.minus(1) ?: 0
             if (Config.DEBUG()) {

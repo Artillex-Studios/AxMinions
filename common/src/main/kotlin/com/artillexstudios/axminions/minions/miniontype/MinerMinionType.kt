@@ -29,7 +29,8 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
     override fun onToolDirty(minion: Minion) {
         val minionImpl = minion as com.artillexstudios.axminions.minions.Minion
         minionImpl.setRange(getDouble("range", minion.getLevel()))
-        val efficiency = 1.0 - (minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1)
+        val tool = minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1
+        val efficiency = 1.0 - if (tool > 0.9) 0.9 else tool
         minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
     }
 
@@ -60,7 +61,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                     if (isStoneGenerator) {
                         val drops = location.block.getDrops(minion.getTool())
-                        drops.fastFor {
+                        drops.forEach {
                             amount += it.amount
                         }
                         minion.addToContainerOrDrop(drops)
@@ -83,7 +84,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 if (isStoneGenerator) {
                                     Scheduler.get().run {
                                         val drops = location.block.getDrops(minion.getTool())
-                                        drops.fastFor {
+                                        drops.forEach {
                                             amount += it.amount
                                         }
                                         minion.addToContainerOrDrop(drops)
@@ -99,7 +100,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                             if (isStoneGenerator) {
                                 val drops = location.block.getDrops(minion.getTool())
-                                drops.fastFor {
+                                drops.forEach {
                                     amount += it.amount
                                 }
                                 minion.addToContainerOrDrop(drops)
@@ -116,8 +117,8 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (isStoneGenerator) {
                             val drops = location.block.getDrops(minion.getTool())
-                            drops.fastFor {
-                                amount += it.amount
+                            drops.forEach { item ->
+                                amount += item.amount
                             }
                             minion.addToContainerOrDrop(drops)
                             location.block.type = Material.AIR
@@ -133,7 +134,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (isStoneGenerator) {
                             val drops = location.block.getDrops(minion.getTool())
-                            drops.fastFor {
+                            drops.forEach {
                                 amount += it.amount
                             }
                             minion.addToContainerOrDrop(drops)
@@ -143,6 +144,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
         }
 
+        minion.setActions(minion.getActionAmount() + amount)
         minion.damageTool(amount)
     }
 }

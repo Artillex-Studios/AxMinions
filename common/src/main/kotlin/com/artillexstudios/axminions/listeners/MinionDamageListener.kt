@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
 import com.artillexstudios.axminions.api.utils.fastFor
@@ -18,18 +19,20 @@ class MinionDamageListener : Listener {
         event.minion.setActions(event.minion.getActionAmount() + entitySize)
         event.minion.setStorage(event.minion.getStorage() + ThreadLocalRandom.current().nextInt(1, 4) * entitySize)
 
-        event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0).filterIsInstance<Item>().fastFor { item ->
-            if (event.minion.getLinkedInventory()?.firstEmpty() == -1) {
-                Warnings.CONTAINER_FULL.display(event.minion)
-                return
+        Scheduler.get().runLaterAt(event.target.location, {
+            event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0).filterIsInstance<Item>().fastFor { item ->
+                if (event.minion.getLinkedInventory()?.firstEmpty() == -1) {
+                    Warnings.CONTAINER_FULL.display(event.minion)
+                    return@runLaterAt
+                }
+
+                val amount = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(item)
+                val stack = item.itemStack
+                stack.amount = amount.toInt()
+
+                event.minion.addToContainerOrDrop(stack)
+                item.remove()
             }
-
-            val amount = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(item)
-            val stack = item.itemStack
-            stack.amount = amount.toInt()
-
-            event.minion.addToContainerOrDrop(stack)
-            item.remove()
-        }
+        }, 2)
     }
 }

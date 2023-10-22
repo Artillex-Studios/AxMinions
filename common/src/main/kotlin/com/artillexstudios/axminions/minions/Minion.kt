@@ -6,7 +6,6 @@ import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
 import com.artillexstudios.axapi.hologram.HologramFactory
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axapi.utils.EquipmentSlot
@@ -20,12 +19,14 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
 import java.util.UUID
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -57,6 +58,7 @@ class Minion(
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
     private var range = 0.0
+
     @Volatile
     private var dirty = true
     private var armTick = 2.0
@@ -73,7 +75,7 @@ class Minion(
         Minions.load(this)
 
         if (linkedChest != null) {
-            Scheduler.get().executeAt(linkedChest) {
+            Scheduler.get().runAt(linkedChest) {
                 linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
             }
         }
@@ -95,11 +97,15 @@ class Minion(
             if (event.isAttack) {
                 if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
                     breakMinion(event)
-                } else if (AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+                } else if (AxMinionsPlugin.integrations.getProtectionIntegration()
+                        .canBuildAt(event.player, event.packetEntity.location)
+                ) {
                     breakMinion(event)
                 }
             } else {
-                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location)) {
+                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration()
+                        .canBuildAt(event.player, event.packetEntity.location)
+                ) {
                     Scheduler.get().run {
                         openInventory(event.player)
                     }
@@ -119,7 +125,7 @@ class Minion(
             debugHologram?.addLine(StringUtils.format("ticking: $ticking"))
         }
 
-        setDirection(direction)
+        setDirection(direction, false)
         updateArmour()
     }
 
@@ -128,6 +134,20 @@ class Minion(
         val tool = getTool()
         val asItem = getAsItem()
         val remaining = event.player.inventory.addItem(tool, asItem)
+        if (getType() == MinionTypes.getMinionTypes()["seller"]) {
+            AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
+                getOwner().let { player ->
+                    it.giveBalance(player, storage)
+                    setStorage(0.0)
+                }
+            }
+        } else {
+            owner.player?.let {
+                it.giveExp(storage.toInt())
+                setStorage(0.0)
+            }
+        }
+
         remove()
 
         remaining.fastFor { _, i ->
@@ -162,30 +182,66 @@ class Minion(
     }
 
     private fun updateInventory(inventory: Inventory) {
-        AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).fastFor {
-            if (it.equals("filler")) return@fastFor
+        AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
+            if (it.equals("filler")) return@forEach
             val item: ItemStack
             if (it.equals("upgrade", true) || it.equals("statistics", true)) {
-                val level = Placeholder.unparsed("level", level.toString())
-                val nextLevel = Placeholder.unparsed(
+                val level = Placeholder.parsed("level", level.toString())
+                val nextLevel = Placeholder.parsed(
                     "next_level", when (type.hasReachedMaxLevel(this)) {
                         true -> Messages.UPGRADES_MAX_LEVEL_REACHED()
                         else -> (this.level + 1).toString()
                     }
                 )
-                val range = Placeholder.unparsed("range", type.getDouble("range", this.level).toString())
-                val nextRange = Placeholder.unparsed("next_range", type.getDouble("range", this.level + 1).toString())
-                val extra = Placeholder.unparsed("extra", type.getDouble("extra", this.level).toString())
-                val nextExtra = Placeholder.unparsed("next_extra", type.getDouble("extra", this.level + 1).toString())
-                val speed = Placeholder.unparsed("speed", type.getDouble("speed", this.level).toString())
-                val nextSpeed = Placeholder.unparsed("next_speed", type.getDouble("speed", this.level + 1).toString())
-                val price = Placeholder.unparsed("price", type.getDouble("requirements.money", this.level + 1).toString())
+                val range = Placeholder.parsed("range", type.getDouble("range", this.level).toString())
+                val nextRange = Placeholder.parsed(
+                    "next_range",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "range",
+                        this.level + 1
+                    ).toString()
+                )
+                val extra = Placeholder.parsed("extra", type.getDouble("extra", this.level).toString())
+                val nextExtra = Placeholder.parsed(
+                    "next_extra",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "extra",
+                        this.level + 1
+                    ).toString()
+                )
+                val speed = Placeholder.parsed("speed", type.getDouble("speed", this.level).toString())
+                val nextSpeed = Placeholder.parsed(
+                    "next_speed",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "speed",
+                        this.level + 1
+                    ).toString()
+                )
+                val price = Placeholder.parsed(
+                    "price",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "requirements.money",
+                        this.level + 1
+                    ).toString()
+                )
                 val requiredActions =
-                    Placeholder.unparsed("required_actions", type.getDouble("requirements.actions", this.level + 1).toString())
-                val stored = Placeholder.unparsed("storage", storage.toString())
-                val actions = Placeholder.unparsed("actions", actions.toString())
-                val multiplier = Placeholder.unparsed("multiplier", type.getDouble("multiplier", this.level).toString())
-                val nextMultiplier = Placeholder.unparsed("next_multiplier", type.getDouble("multiplier", this.level + 1).toString())
+                    Placeholder.parsed(
+                        "required_actions",
+                        if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                            "requirements.actions",
+                            this.level + 1
+                        ).toString()
+                    )
+                val stored = Placeholder.parsed("storage", storage.toString())
+                val actions = Placeholder.parsed("actions", actions.toString())
+                val multiplier = Placeholder.parsed("multiplier", type.getDouble("multiplier", this.level).toString())
+                val nextMultiplier = Placeholder.parsed(
+                    "next_multiplier",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "multiplier",
+                        this.level + 1
+                    ).toString()
+                )
 
                 item = ItemBuilder(
                     type.getConfig().getSection("gui.$it"),
@@ -292,7 +348,7 @@ class Minion(
         return this.ownerUUID
     }
 
-    override fun setTool(tool: ItemStack) {
+    override fun setTool(tool: ItemStack, save: Boolean) {
         this.tool = tool.clone()
         dirty = true
 
@@ -302,8 +358,10 @@ class Minion(
             entity.setItem(EquipmentSlot.MAIN_HAND, tool.clone())
         }
 
-        AxMinionsPlugin.dataQueue.submit {
-            AxMinionsPlugin.dataHandler.saveMinion(this)
+        if (save) {
+            AxMinionsPlugin.dataQueue.submit {
+                AxMinionsPlugin.dataHandler.saveMinion(this)
+            }
         }
     }
 
@@ -386,13 +444,15 @@ class Minion(
         return this.linkedChest
     }
 
-    override fun setDirection(direction: Direction) {
+    override fun setDirection(direction: Direction, save: Boolean) {
         this.direction = direction
         location.yaw = direction.yaw
         entity.teleport(location)
 
-        AxMinionsPlugin.dataQueue.submit {
-            AxMinionsPlugin.dataHandler.saveMinion(this)
+        if (save) {
+            AxMinionsPlugin.dataQueue.submit {
+                AxMinionsPlugin.dataHandler.saveMinion(this)
+            }
         }
     }
 
@@ -438,7 +498,7 @@ class Minion(
             entity.setItem(entry, null)
         }
 
-        setTool(this.tool ?: ItemStack(Material.AIR))
+        setTool(this.tool ?: ItemStack(Material.AIR), false)
 
         type.getSection("items.helmet", level)?.let {
             entity.setItem(EquipmentSlot.HELMET, ItemBuilder(it).get())

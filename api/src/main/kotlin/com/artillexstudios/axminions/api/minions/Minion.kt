@@ -46,7 +46,7 @@ interface Minion : InventoryHolder {
 
     fun getOwnerUUID(): UUID
 
-    fun setTool(tool: ItemStack)
+    fun setTool(tool: ItemStack, save: Boolean = true)
 
     fun getTool(): ItemStack?
 
@@ -74,7 +74,7 @@ interface Minion : InventoryHolder {
 
     fun getLinkedChest(): Location?
 
-    fun setDirection(direction: Direction)
+    fun setDirection(direction: Direction, save: Boolean = true)
 
     fun getDirection(): Direction
 

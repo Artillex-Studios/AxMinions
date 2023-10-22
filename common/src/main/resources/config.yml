@@ -10,9 +10,6 @@ max-linking-distance: 30
 # This setting can be overwritten by setting the 'axminions.limit.<amount>' permission!
 default-minion-limit: 5
 
-# If we should allow floating minions to be created
-allow-floating-minions: false
-
 # If true, only the owner of this minion can break it
 # If false, everyone, who can break blocks at said location can break this minion
 # You should enable this, if you aren't using a supported protection plugin!
@@ -31,8 +28,7 @@ can-break-tools: true
 use-durability: true
 
 database:
-  # Can be H2 and SQLite.
-  # For most setups, H2 is recommended
+  # Can be H2 (SqLite support is planned)
   type: "H2"
 
 hooks:

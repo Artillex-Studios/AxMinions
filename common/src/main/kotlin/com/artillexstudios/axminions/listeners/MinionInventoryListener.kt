@@ -160,6 +160,7 @@ class MinionInventoryListener : Listener {
                     }
                 } else {
                     player.giveExp(stored.toInt())
+                    minion.setStorage(0.0)
                 }
             }
         }

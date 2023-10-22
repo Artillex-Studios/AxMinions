@@ -7,7 +7,6 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.integrations.Integrations
 import com.artillexstudios.axminions.api.minions.Minion
-import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.minions.Minions
 import org.bukkit.entity.Player
 import java.io.File
@@ -41,9 +40,13 @@ class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
     override fun getMinionLimit(player: Player): Int {
         var limit = Config.DEFAULT_MINION_LIMIT()
 
-        player.effectivePermissions.fastFor {
+        player.effectivePermissions.forEach {
             val permission = it.permission
-            if (!permission.startsWith("axminions.limit.")) return@fastFor
+            if (permission.equals("*", true)) {
+                return Int.MAX_VALUE
+            }
+
+            if (!permission.startsWith("axminions.limit.")) return@forEach
             if (permission.contains("*")) {
                 return Int.MAX_VALUE
             }

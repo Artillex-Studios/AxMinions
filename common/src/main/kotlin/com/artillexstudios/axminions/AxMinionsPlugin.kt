@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
 import com.artillexstudios.axapi.libs.libby.libby.BukkitLibraryManager
 import com.artillexstudios.axapi.libs.libby.libby.Library
+import com.artillexstudios.axapi.nms.v1_20_R2.entity.EntityTracker
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -22,6 +23,7 @@ import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.listeners.WorldListener
 import com.artillexstudios.axminions.minions.MinionTicker
+import com.artillexstudios.axminions.minions.Minions
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
 import com.artillexstudios.axminions.minions.miniontype.FarmerMinionType
 import com.artillexstudios.axminions.minions.miniontype.FisherMinionType
@@ -30,6 +32,8 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
 
@@ -100,9 +104,11 @@ class AxMinionsPlugin : AxPlugin() {
         }
 
         // Retroactively load minions for the already loaded worlds
-        Bukkit.getWorlds().fastFor { world ->
-            MinionTypes.getMinionTypes().fastFor { _, v ->
-                dataHandler.loadMinionsForWorld(v, world)
+        dataQueue.submit {
+            Bukkit.getWorlds().fastFor { world ->
+                MinionTypes.getMinionTypes().fastFor { _, v ->
+                    dataHandler.loadMinionsForWorld(v, world)
+                }
             }
         }
 
@@ -116,6 +122,16 @@ class AxMinionsPlugin : AxPlugin() {
         }
 
         MinionTicker.startTicking()
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
+            dataQueue.submit {
+                Minions.get().fastFor { pos ->
+                    pos.minions.fastFor { minion ->
+                        dataHandler.saveMinion(minion)
+                    }
+                }
+            }
+        },0, Config.AUTO_SAVE_MINUTES(), TimeUnit.MINUTES)
     }
 
     override fun disable() {

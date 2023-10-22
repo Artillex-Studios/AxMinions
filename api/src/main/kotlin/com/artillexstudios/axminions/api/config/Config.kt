@@ -20,8 +20,6 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun DEFAULT_MINION_LIMIT() = AxMinionsAPI.INSTANCE.getConfig().get("default-minion-limit", 5)
         @JvmStatic
-        fun ALLOW_FLOATING_MINIONS() = AxMinionsAPI.INSTANCE.getConfig().get("allow-floating-minions", false)
-        @JvmStatic
         fun ONLY_OWNER_BREAK() = AxMinionsAPI.INSTANCE.getConfig().get("only-owner-break", true)
         @JvmStatic
         fun DISPLAY_WARNINGS() = AxMinionsAPI.INSTANCE.getConfig().get("display-warnings", true)

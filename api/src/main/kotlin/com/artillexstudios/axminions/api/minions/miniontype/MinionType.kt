@@ -49,6 +49,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         val builder = ItemBuilder(config.getSection("item"), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("actions", actions.toString()))
         builder.storePersistentData(Keys.MINION_TYPE, PersistentDataType.STRING, name)
         builder.storePersistentData(Keys.LEVEL, PersistentDataType.INTEGER, level)
+        builder.storePersistentData(Keys.STATISTICS, PersistentDataType.LONG, actions)
 
         return builder.clonedGet()
     }
@@ -76,12 +77,12 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     private fun <T> get(key: String, level: Int, defaultValue: T?, clazz: Class<T>): T? {
         var n = defaultValue
 
-        config.getSection("upgrades").getRoutesAsStrings(false).fastFor {
+        config.getSection("upgrades").getRoutesAsStrings(false).forEach {
             if (it.toInt() > level) {
                 return n
             }
 
-            if (config.backingDocument.getAsOptional("upgrades.$it.$key", clazz).isEmpty) return@fastFor
+            if (config.backingDocument.getAsOptional("upgrades.$it.$key", clazz).isEmpty) return@forEach
 
             n = config.get("upgrades.$it.$key")
         }
