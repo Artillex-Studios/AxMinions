@@ -1,6 +1,10 @@
 group = 'com.artillexstudios.axminions'
 version = rootProject.version
 
+shadowJar {
+    archiveClassifier.set("")
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
