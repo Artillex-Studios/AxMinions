@@ -7,12 +7,17 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.nms.NMSHandler
+import java.util.UUID
 import kotlin.math.roundToInt
+import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.block.Skull
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Tameable
+import org.bukkit.profile.PlayerProfile
+import org.bukkit.profile.PlayerTextures
 
 class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResource("minions/slayer.yml")!!) {
 

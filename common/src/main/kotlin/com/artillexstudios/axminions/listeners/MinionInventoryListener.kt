@@ -169,7 +169,7 @@ class MinionInventoryListener : Listener {
     }
 
     @EventHandler
-    fun onInventoryClosEvent(event: InventoryCloseEvent) {
+    fun onInventoryCloseEvent(event: InventoryCloseEvent) {
         val holder = event.inventory.holder as? Minion ?: return
 
         holder.removeOpenInventory(event.inventory)

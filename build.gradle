@@ -120,9 +120,6 @@ allprojects {
         relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.libs.axapi")
         relocate("org.h2", "com.artillexstudios.axminions.libs.h2")
         relocate("org.jetbrains.kotlin", "com.artillexstudios.axminions.libs.kotlin")
-        relocate("net.kyori", "com.artillexstudios.axminions.libs.kyori")
-        relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
-        relocate("org.apache.commons.math3", "com.artillexstudios.axminions.libs.math")
     }
 }
 

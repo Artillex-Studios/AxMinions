@@ -28,6 +28,7 @@ class MinionPlaceListener : Listener {
         if (event.item == null) return
         if (!event.item!!.hasItemMeta()) return
 
+        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
         val type = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
