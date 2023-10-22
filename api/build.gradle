@@ -1,2 +1,10 @@
 group = 'com.artillexstudios.axminions'
 version = rootProject.version
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

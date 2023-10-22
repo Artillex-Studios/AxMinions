@@ -27,6 +27,8 @@ interface AxMinionsAPI {
 
     fun getIntegrations(): Integrations
 
+    fun getTick(): Long
+
     companion object {
         @JvmStatic
         lateinit var INSTANCE: AxMinionsAPI

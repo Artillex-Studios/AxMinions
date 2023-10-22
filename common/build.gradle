@@ -1,6 +1,11 @@
 group = 'com.artillexstudios.axminions'
 version = rootProject.version
 
+processResources {
+    filesMatching("plugin.yml") {
+        expand(version: version)
+    }
+}
 
 dependencies {
     implementation project(':api')

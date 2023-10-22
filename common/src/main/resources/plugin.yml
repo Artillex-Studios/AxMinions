@@ -1,6 +1,6 @@
 name: "AxMinions"
 main: "com.artillexstudios.axminions.AxMinionsPlugin"
-version: "1.0"
+version: "$version"
 api-version: 1.18
 folia-supported: true
 softdepend:
