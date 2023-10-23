@@ -55,6 +55,8 @@ class AxMinionsCommand {
             it.markDirty()
         }
 
+        AxMinionsPlugin.integrations.reload()
+
         sender.sendMessage(
             StringUtils.formatToString(
                 Messages.PREFIX() + Messages.RELOAD_SUCCESS(),
