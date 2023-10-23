@@ -94,20 +94,22 @@ class Minion(
         entity.setHasArms(true)
 
         entity.onClick { event ->
-            if (event.isAttack) {
-                if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
-                    breakMinion(event)
-                } else if (AxMinionsPlugin.integrations.getProtectionIntegration()
-                        .canBuildAt(event.player, event.packetEntity.location)
-                ) {
-                    breakMinion(event)
-                }
-            } else {
-                if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration()
-                        .canBuildAt(event.player, event.packetEntity.location)
-                ) {
-                    Scheduler.get().run {
-                        openInventory(event.player)
+            Scheduler.get().execute {
+                if (event.isAttack) {
+                    if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
+                        breakMinion(event)
+                    } else if (AxMinionsPlugin.integrations.getProtectionIntegration()
+                            .canBuildAt(event.player, event.packetEntity.location) || event.player.hasPermission("axminions.*")
+                    ) {
+                        breakMinion(event)
+                    }
+                } else {
+                    if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration()
+                            .canBuildAt(event.player, event.packetEntity.location) || event.player.hasPermission("axminions.*")
+                    ) {
+                        Scheduler.get().run {
+                            openInventory(event.player)
+                        }
                     }
                 }
             }
