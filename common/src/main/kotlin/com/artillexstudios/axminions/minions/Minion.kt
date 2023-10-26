@@ -552,6 +552,8 @@ class Minion(
     }
 
     override fun damageTool(amount: Int) {
+        if (!Config.USE_DURABILITY()) return
+
         val meta = this.tool?.itemMeta as? Damageable ?: return
 
         if (Math.random() > 1f / (meta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
