@@ -12,11 +12,12 @@ object Minions {
     fun addTicking(chunk: Chunk) {
         val chunkX = chunk.x
         val chunkZ = chunk.z
+        val world = chunk.world
 
         run breaking@{
             synchronized(mutex) {
                 minions.forEach {
-                    if (it.x == chunkX && it.z == chunkZ) {
+                    if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(true)
                         return@breaking
                     }
@@ -28,10 +29,11 @@ object Minions {
     fun isTicking(chunk: Chunk): Boolean {
         val chunkX = chunk.x
         val chunkZ = chunk.z
+        val world = chunk.world
 
         synchronized(mutex) {
             minions.forEach {
-                if (it.x == chunkX && it.z == chunkZ) {
+                if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                     return true
                 }
             }
@@ -43,11 +45,12 @@ object Minions {
     fun removeTicking(chunk: Chunk) {
         val chunkX = chunk.x
         val chunkZ = chunk.z
+        val world = chunk.world
 
         run breaking@{
             synchronized(mutex) {
                 minions.forEach {
-                    if (it.x == chunkX && it.z == chunkZ) {
+                    if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(false)
                         return@breaking
                     }
@@ -59,13 +62,14 @@ object Minions {
     fun load(minion: Minion) {
         val chunkX = round(minion.getLocation().x) shr 4
         val chunkZ = round(minion.getLocation().z) shr 4
+        val world = minion.getLocation().world ?: return
 
         synchronized(mutex) {
             var pos: ChunkPos? = null
             run breaking@{
 
                 minions.forEach {
-                    if (it.x == chunkX && it.z == chunkZ) {
+                    if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         pos = it
                         return@breaking
                     }
@@ -73,7 +77,7 @@ object Minions {
             }
 
             if (pos === null) {
-                pos = ChunkPos(chunkX, chunkZ)
+                pos = ChunkPos(world, chunkX, chunkZ)
                 minions.add(pos!!)
             }
 
@@ -85,13 +89,14 @@ object Minions {
     fun remove(minion: Minion) {
         val chunkX = round(minion.getLocation().x) shr 4
         val chunkZ = round(minion.getLocation().z) shr 4
+        val world = minion.getLocation().world ?: return
 
         synchronized(mutex) {
             val iterator = minions.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                if (next.x == chunkX && next.z == chunkZ) {
+                if (world.uid == next.worldUUID && next.x == chunkX && next.z == chunkZ) {
                     if (next.removeMinion(minion)) {
                         iterator.remove()
                     }
