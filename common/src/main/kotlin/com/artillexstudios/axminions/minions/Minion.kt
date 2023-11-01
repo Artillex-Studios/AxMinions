@@ -99,13 +99,19 @@ class Minion(
                     if (ownerUUID == event.player.uniqueId && Config.ONLY_OWNER_BREAK()) {
                         breakMinion(event)
                     } else if (AxMinionsPlugin.integrations.getProtectionIntegration()
-                            .canBuildAt(event.player, event.packetEntity.location) || event.player.hasPermission("axminions.*")
+                            .canBuildAt(
+                                event.player,
+                                event.packetEntity.location
+                            ) || event.player.hasPermission("axminions.*")
                     ) {
                         breakMinion(event)
                     }
                 } else {
                     if (ownerUUID == event.player.uniqueId || AxMinionsPlugin.integrations.getProtectionIntegration()
-                            .canBuildAt(event.player, event.packetEntity.location) || event.player.hasPermission("axminions.*")
+                            .canBuildAt(
+                                event.player,
+                                event.packetEntity.location
+                            ) || event.player.hasPermission("axminions.*")
                     ) {
                         Scheduler.get().run {
                             openInventory(event.player)
@@ -133,9 +139,11 @@ class Minion(
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
         setTicking(false)
+        openInventories.fastFor { it.viewers.fastFor { viewer -> viewer.closeInventory() } }
         val tool = getTool()
         val asItem = getAsItem()
         val remaining = event.player.inventory.addItem(tool, asItem)
+
         if (getType() == MinionTypes.getMinionTypes()["seller"]) {
             AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                 getOwner().let { player ->

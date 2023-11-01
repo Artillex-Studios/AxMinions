@@ -70,6 +70,7 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
 
         minion.addToContainerOrDrop(loot)
         minion.setStorage(minion.getStorage() + xp)
+        minion.setActions(minion.getActionAmount() + 1)
         minion.damageTool()
     }
 }
