@@ -35,7 +35,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
     }
 
     override fun run(minion: Minion) {
-        Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+            Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        }
 
         if (minion.getLinkedChest() != null) {
             val type = minion.getLinkedChest()!!.block.type

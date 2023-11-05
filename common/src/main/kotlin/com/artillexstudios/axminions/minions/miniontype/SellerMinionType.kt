@@ -24,7 +24,9 @@ class SellerMinionType : MinionType("seller", AxMinionsPlugin.INSTANCE.getResour
     }
 
     override fun run(minion: Minion) {
-        Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+            Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        }
 
         if (minion.getLinkedChest() == null) {
             Warnings.NO_CONTAINER.display(minion)

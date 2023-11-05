@@ -22,6 +22,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun ONLY_OWNER_BREAK() = AxMinionsAPI.INSTANCE.getConfig().get("only-owner-break", true)
         @JvmStatic
+        fun ONLY_OWNER_GUI() = AxMinionsAPI.INSTANCE.getConfig().get("only-owner-gui", true)
+        @JvmStatic
         fun DISPLAY_WARNINGS() = AxMinionsAPI.INSTANCE.getConfig().get("display-warnings", true)
         @JvmStatic
         fun CAN_BREAK_TOOLS() = AxMinionsAPI.INSTANCE.getConfig().get("can-break-tools", true)

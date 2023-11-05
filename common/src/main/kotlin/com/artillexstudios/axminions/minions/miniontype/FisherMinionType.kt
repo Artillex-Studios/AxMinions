@@ -29,7 +29,9 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
     }
 
     override fun run(minion: Minion) {
-        Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+            Warnings.remove(minion, Warnings.CONTAINER_FULL)
+        }
 
         if (minion.getLinkedChest() != null) {
             val type = minion.getLinkedChest()!!.block.type

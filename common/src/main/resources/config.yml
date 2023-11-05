@@ -15,6 +15,11 @@ default-minion-limit: 5
 # You should enable this, if you aren't using a supported protection plugin!
 only-owner-break: true
 
+# If true, only the owner of this minion can open it's GUI
+# If false, everyone, who can break blocks at said location can open the GUI of this minion
+# You should enable this, if you aren't using a supported protection plugin!
+only-owner-gui: true
+
 # Should minions show holograms if they have an issue?
 # (They won't complain about not having a girlfriend, though!)
 # You can configure these messages in the messages.yml
