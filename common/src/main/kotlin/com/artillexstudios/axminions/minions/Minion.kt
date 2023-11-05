@@ -128,6 +128,7 @@ class Minion(
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
+        remove()
         setTicking(false)
         openInventories.fastFor { it.viewers.fastFor { viewer -> viewer.closeInventory() } }
         val tool = getTool()
@@ -147,8 +148,6 @@ class Minion(
                 setStorage(0.0)
             }
         }
-
-        remove()
 
         remaining.fastFor { _, i ->
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(i, i.amount, location)
