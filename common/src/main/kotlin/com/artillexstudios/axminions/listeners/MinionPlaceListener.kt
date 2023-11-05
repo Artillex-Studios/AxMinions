@@ -1,6 +1,5 @@
 package com.artillexstudios.axminions.listeners
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -11,6 +10,7 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.minions.Minion
 import com.artillexstudios.axminions.minions.Minions
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -28,11 +28,11 @@ class MinionPlaceListener : Listener {
         if (event.item == null) return
         if (!event.item!!.hasItemMeta()) return
 
-        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
         val type = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
+        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
         val level = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
         val stats = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
 
@@ -44,7 +44,13 @@ class MinionPlaceListener : Listener {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
 
             if (placed >= maxMinions && !event.player.hasPermission("axminions.limit.*")) {
-                event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_LIMIT_REACHED(), Placeholder.unparsed("placed", placed.toString()), Placeholder.unparsed("max", maxMinions.toString())))
+                event.player.sendMessage(
+                    StringUtils.formatToString(
+                        Messages.PREFIX() + Messages.PLACE_LIMIT_REACHED(),
+                        Placeholder.unparsed("placed", placed.toString()),
+                        Placeholder.unparsed("max", maxMinions.toString())
+                    )
+                )
                 return@submit
             }
 
@@ -54,16 +60,42 @@ class MinionPlaceListener : Listener {
             }
 
             val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
-            val minion = Minion(location, event.player.uniqueId, event.player, minionType, level, ItemStack(Material.AIR), null, Direction.NORTH, stats, 0.0, locationId, 0)
+            val minion = Minion(
+                location,
+                event.player.uniqueId,
+                event.player,
+                minionType,
+                level,
+                ItemStack(Material.AIR),
+                null,
+                Direction.NORTH,
+                stats,
+                0.0,
+                locationId,
+                0
+            )
             minion.setTicking(true)
             event.item?.amount = event.item?.amount?.minus(1) ?: 0
             if (Config.DEBUG()) {
-                event.player.sendMessage("Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${Minions.isTicking(location.chunk)}")
+                event.player.sendMessage(
+                    "Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${
+                        Minions.isTicking(
+                            location.chunk
+                        )
+                    }"
+                )
             }
 
             AxMinionsPlugin.dataHandler.saveMinion(minion)
 
-            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_SUCCESS(), Placeholder.unparsed("type", minionType.getName()), Placeholder.unparsed("placed", (placed + 1).toString()), Placeholder.unparsed("max", (maxMinions).toString())))
+            event.player.sendMessage(
+                StringUtils.formatToString(
+                    Messages.PREFIX() + Messages.PLACE_SUCCESS(),
+                    Placeholder.unparsed("type", minionType.getName()),
+                    Placeholder.unparsed("placed", (placed + 1).toString()),
+                    Placeholder.unparsed("max", (maxMinions).toString())
+                )
+            )
         }
     }
 }
