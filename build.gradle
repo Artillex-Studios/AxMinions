@@ -21,6 +21,7 @@ dependencies {
     implementation project(path: ":api")
     implementation project(path: ":common")
     implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
+    implementation project(path: ":nms:v1_20_R2", configuration: "reobf")
 }
 
 allprojects {
