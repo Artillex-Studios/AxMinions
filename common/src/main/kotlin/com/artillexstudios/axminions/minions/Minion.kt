@@ -26,6 +26,7 @@ import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -66,9 +67,10 @@ class Minion(
     private var hologram: Hologram? = null
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
-    private val openInventories = mutableListOf<Inventory>()
+    internal val openInventories = mutableListOf<Inventory>()
     private var ticking = false
     private var debugHologram: Hologram? = null
+    private var broken = false
 
     init {
         spawn()
@@ -94,17 +96,37 @@ class Minion(
         entity.setHasArms(true)
 
         entity.onClick { event ->
-            Scheduler.get().run {
-                if (event.isAttack) {
-                    if (ownerUUID == event.player.uniqueId) {
-                        breakMinion(event)
-                    } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location) && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")) {
+            if (broken) {
+                return@onClick
+            }
+
+            if (event.isAttack) {
+                if (ownerUUID == event.player.uniqueId) {
+                    broken = true
+                    Scheduler.get().runAt(location) {
                         breakMinion(event)
                     }
-                } else {
-                    if (ownerUUID == event.player.uniqueId) {
+                } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
+                        event.player,
+                        event.packetEntity.location
+                    ) && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")
+                ) {
+                    broken = true
+                    Scheduler.get().runAt(location) {
+                        breakMinion(event)
+                    }
+                }
+            } else {
+                if (ownerUUID == event.player.uniqueId) {
+                    Scheduler.get().runAt(location) {
                         openInventory(event.player)
-                    } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.packetEntity.location) && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")) {
+                    }
+                } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
+                        event.player,
+                        event.packetEntity.location
+                    ) && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")
+                ) {
+                    Scheduler.get().runAt(location) {
                         openInventory(event.player)
                     }
                 }
@@ -128,6 +150,7 @@ class Minion(
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
+        LinkingListener.linking.remove(event.player.uniqueId)
         remove()
         setTicking(false)
         openInventories.fastFor { it.viewers.fastFor { viewer -> viewer.closeInventory() } }

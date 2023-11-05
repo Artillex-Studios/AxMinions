@@ -22,6 +22,7 @@ import com.artillexstudios.axminions.listeners.MinionDamageListener
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.listeners.WorldListener
+import com.artillexstudios.axminions.minions.Minion
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.Minions
 import com.artillexstudios.axminions.minions.miniontype.CollectorMinionType
@@ -135,6 +136,18 @@ class AxMinionsPlugin : AxPlugin() {
     }
 
     override fun disable() {
+        Minions.get().fastFor { pos ->
+            pos.minions.fastFor { minion ->
+                val minionImp = minion as Minion
+
+                minionImp.openInventories.fastFor { inventory ->
+                    inventory.viewers.fastFor { player ->
+                        player.closeInventory()
+                    }
+                }
+            }
+        }
+
         dataHandler.disable()
     }
 
