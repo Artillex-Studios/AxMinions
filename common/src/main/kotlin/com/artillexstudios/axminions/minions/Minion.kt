@@ -512,7 +512,6 @@ class Minion(
 
     override fun addWithRemaining(itemStack: ItemStack): HashMap<Int, ItemStack>? {
         if (linkedInventory == null) {
-            AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(itemStack, itemStack.amount, location)
             return null
         }
 
