@@ -24,6 +24,7 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPotionEffectEvent
 
 object DamageHandler {
