@@ -131,7 +131,7 @@ object DamageHandler {
                         val f4 =
                             1.0f + if (sweep > 0) SweepingEdgeEnchantment.getSweepingDamageRatio(sweep) else 0.0f * f
                         val list: List<LivingEntity> = (source.getLocation().world as CraftWorld).handle
-                            .getEntitiesOfClass(LivingEntity::class.java, nmsEntity.boundingBox.inflate(1.0, 0.25, 1.0))
+                            .getEntitiesOfClass(LivingEntity::class.java, nmsEntity.boundingBox.inflate(1.0, 0.25, 1.0)).filter { it !is Player }
                         val iterator: Iterator<*> = list.iterator()
 
                         while (iterator.hasNext()) {
