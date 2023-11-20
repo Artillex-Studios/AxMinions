@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -32,9 +33,14 @@ class MinionPlaceListener : Listener {
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
+        val item = event.item ?: return
+        val meta = item.itemMeta ?: return
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
-        val level = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
-        val stats = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
+        val level = meta.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
+        val stats = meta.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
+        if (meta.persistentDataContainer.has(Keys.PLACED, PersistentDataType.BYTE)) return
+        meta.persistentDataContainer.set(Keys.PLACED, PersistentDataType.BYTE, 0)
+        item.itemMeta = meta
 
         val location = event.clickedBlock!!.getRelative(event.blockFace).location
 
@@ -75,7 +81,12 @@ class MinionPlaceListener : Listener {
                 0
             )
             minion.setTicking(true)
-            event.item?.amount = event.item?.amount?.minus(1) ?: 0
+            Scheduler.get().execute {
+                meta.persistentDataContainer.remove(Keys.PLACED)
+                item.itemMeta = meta
+                item.amount = item.amount.minus(1)
+            }
+
             if (Config.DEBUG()) {
                 event.player.sendMessage(
                     "Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${

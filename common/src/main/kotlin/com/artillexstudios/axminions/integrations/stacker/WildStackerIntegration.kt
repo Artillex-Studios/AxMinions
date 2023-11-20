@@ -17,6 +17,16 @@ class WildStackerIntegration : StackerIntegration {
         return WildStackerAPI.getStackedItem(item)?.stackAmount?.toLong() ?: 1
     }
 
+    override fun setStackSize(item: Item, amount: Int) {
+        val stackedItem = WildStackerAPI.getStackedItem(item)
+
+        if (stackedItem != null) {
+            stackedItem.setStackAmount(amount, true)
+        } else {
+            item.itemStack.amount = amount
+        }
+    }
+
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
         WildStackerAPI.getWildStacker().systemManager.spawnItemWithAmount(location, itemStack, amount);
     }

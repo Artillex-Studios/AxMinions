@@ -12,5 +12,7 @@ interface StackerIntegration : Integration {
 
     fun getStackSize(item: Item): Long
 
+    fun setStackSize(item: Item, amount: Int)
+
     fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location)
 }

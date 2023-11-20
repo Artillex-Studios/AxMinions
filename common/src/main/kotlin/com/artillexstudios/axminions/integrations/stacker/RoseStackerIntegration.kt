@@ -18,6 +18,16 @@ class RoseStackerIntegration : StackerIntegration {
         return instance.getStackedItem(item)?.stackSize?.toLong() ?: 1
     }
 
+    override fun setStackSize(item: Item, amount: Int) {
+        val stackedItem = instance.getStackedItem(item)
+
+        if (stackedItem != null) {
+            stackedItem.stackSize = amount
+        } else {
+            item.itemStack.amount = amount
+        }
+    }
+
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
         instance.dropItemStack(itemStack, amount, location, false)
     }

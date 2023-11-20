@@ -25,6 +25,7 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
+import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -507,6 +508,15 @@ class Minion(
         remaining?.fastFor { _, u ->
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(u, u.amount, location)
         }
+    }
+
+    override fun addWithRemaining(itemStack: ItemStack): HashMap<Int, ItemStack>? {
+        if (linkedInventory == null) {
+            AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(itemStack, itemStack.amount, location)
+            return null
+        }
+
+        return linkedInventory?.addItem(itemStack)
     }
 
     override fun addToContainerOrDrop(itemStack: Iterable<ItemStack>) {

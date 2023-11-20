@@ -2,9 +2,6 @@ package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
-import com.artillexstudios.axapi.libs.libby.libby.BukkitLibraryManager
-import com.artillexstudios.axapi.libs.libby.libby.Library
-import com.artillexstudios.axapi.nms.v1_20_R2.entity.EntityTracker
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -35,6 +32,8 @@ import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import net.byteflux.libby.BukkitLibraryManager
+import net.byteflux.libby.Library
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
 

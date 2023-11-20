@@ -84,6 +84,8 @@ interface Minion : InventoryHolder {
 
     fun addToContainerOrDrop(itemStack: ItemStack)
 
+    fun addWithRemaining(itemStack: ItemStack): HashMap<Int, ItemStack>?
+
     fun addToContainerOrDrop(itemStack: Iterable<ItemStack>)
 
     fun updateArmour()

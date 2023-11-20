@@ -3,10 +3,13 @@ package com.artillexstudios.axminions.minions
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.utils.ChunkPos
 import java.util.Collections
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 import org.bukkit.Chunk
 
 object Minions {
-    private val mutex = Object()
+    private val lock = ReentrantReadWriteLock()
     private val minions = arrayListOf<ChunkPos>()
 
     fun addTicking(chunk: Chunk) {
@@ -15,7 +18,7 @@ object Minions {
         val world = chunk.world
 
         run breaking@{
-            synchronized(mutex) {
+            lock.read {
                 minions.forEach {
                     if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(true)
@@ -31,7 +34,7 @@ object Minions {
         val chunkZ = chunk.z
         val world = chunk.world
 
-        synchronized(mutex) {
+        lock.read {
             minions.forEach {
                 if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                     return true
@@ -48,7 +51,7 @@ object Minions {
         val world = chunk.world
 
         run breaking@{
-            synchronized(mutex) {
+            lock.read {
                 minions.forEach {
                     if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(false)
@@ -64,7 +67,7 @@ object Minions {
         val chunkZ = round(minion.getLocation().z) shr 4
         val world = minion.getLocation().world ?: return
 
-        synchronized(mutex) {
+        lock.write {
             var pos: ChunkPos? = null
             run breaking@{
 
@@ -91,7 +94,7 @@ object Minions {
         val chunkZ = round(minion.getLocation().z) shr 4
         val world = minion.getLocation().world ?: return
 
-        synchronized(mutex) {
+        lock.write {
             val iterator = minions.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
@@ -108,7 +111,7 @@ object Minions {
 
     fun getMinions(): List<Minion> {
         val list = mutableListOf<Minion>()
-        synchronized(mutex) {
+        lock.read {
             minions.forEach {
                 list.addAll(it.minions)
             }
@@ -118,7 +121,7 @@ object Minions {
     }
 
     internal fun get(): ArrayList<ChunkPos> {
-        synchronized(mutex) {
+        lock.read {
             return minions
         }
     }

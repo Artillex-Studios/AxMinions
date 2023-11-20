@@ -17,6 +17,10 @@ class DefaultStackerIntegration : StackerIntegration {
         return item.itemStack.amount.toLong()
     }
 
+    override fun setStackSize(item: Item, amount: Int) {
+        item.itemStack.amount = amount
+    }
+
     override fun dropItemAt(itemStack: ItemStack, amount: Int, location: Location) {
         Scheduler.get().executeAt(location) {
             location.world!!.dropItem(location, itemStack)

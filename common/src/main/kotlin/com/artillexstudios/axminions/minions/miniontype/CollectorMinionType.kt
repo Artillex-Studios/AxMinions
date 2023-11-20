@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.miniontype
 
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.utils.fastFor
@@ -74,10 +75,16 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
             val stack = item.itemStack.clone()
             stack.amount = amount.toInt()
 
-            minion.addToContainerOrDrop(stack)
+
+            val map = minion.addWithRemaining(stack) ?: return@fastFor
+            if (map.isEmpty() || stack.amount <= 0) {
+                item.remove()
+            } else {
+                AxMinionsAPI.INSTANCE.getIntegrations().getStackerIntegration().setStackSize(item, stack.amount)
+            }
+
             minion.setActions(minion.getActionAmount() + amount)
             minion.damageTool()
-            item.remove()
         }
     }
 }

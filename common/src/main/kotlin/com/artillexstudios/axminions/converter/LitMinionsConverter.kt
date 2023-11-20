@@ -15,7 +15,6 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-
 class LitMinionsConverter : Converter {
     private lateinit var connection: Connection
 

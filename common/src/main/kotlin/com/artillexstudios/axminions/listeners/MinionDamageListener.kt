@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.listeners
 
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
@@ -30,8 +31,12 @@ class MinionDamageListener : Listener {
                 val stack = item.itemStack
                 stack.amount = amount.toInt()
 
-                event.minion.addToContainerOrDrop(stack)
-                item.remove()
+                val map = event.minion.addWithRemaining(stack) ?: return@fastFor
+                if (map.isEmpty() || stack.amount <= 0) {
+                    item.remove()
+                } else {
+                    AxMinionsAPI.INSTANCE.getIntegrations().getStackerIntegration().setStackSize(item, stack.amount)
+                }
             }
         }, 2)
     }

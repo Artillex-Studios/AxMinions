@@ -12,4 +12,6 @@ object Keys {
     val GUI = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "gui_item")
     @JvmField
     val STATISTICS = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "statistics")
+    @JvmField
+    val PLACED = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "placed")
 }
