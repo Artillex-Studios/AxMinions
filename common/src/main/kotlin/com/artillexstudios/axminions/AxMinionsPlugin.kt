@@ -16,6 +16,7 @@ import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionDamageListener
+import com.artillexstudios.axminions.listeners.MinionDropListener
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.listeners.WorldListener
@@ -119,6 +120,7 @@ class AxMinionsPlugin : AxPlugin() {
             it.registerEvents(ChunkListener(), this)
             it.registerEvents(MinionDamageListener(), this)
             it.registerEvents(WorldListener(), this)
+            it.registerEvents(MinionDropListener(), this)
         }
 
         MinionTicker.startTicking()

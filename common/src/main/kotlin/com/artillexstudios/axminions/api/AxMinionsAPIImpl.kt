@@ -51,8 +51,10 @@ class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
             if (permission.contains("*")) {
                 return Int.MAX_VALUE
             }
+            val subString = permission.substring(permission.lastIndexOf('.') + 1)
+            if (subString.isBlank()) return@forEach
 
-            val value = permission.substring(permission.lastIndexOf('.') + 1).toInt()
+            val value = subString.toInt()
 
             if (value > limit) {
                 limit = value

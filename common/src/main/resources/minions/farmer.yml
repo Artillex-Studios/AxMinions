@@ -46,7 +46,7 @@ gui:
     name: "<#33FF33><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Crops harvested: <#33FF33><statistic_collected>"
+      - " <gray>- <white>Crops harvested: <#33FF33><actions>"
       - ""
 
 upgrades:

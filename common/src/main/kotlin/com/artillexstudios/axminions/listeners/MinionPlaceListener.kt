@@ -81,7 +81,7 @@ class MinionPlaceListener : Listener {
                 0
             )
             minion.setTicking(true)
-            Scheduler.get().execute {
+            Scheduler.get().run {
                 meta.persistentDataContainer.remove(Keys.PLACED)
                 item.itemMeta = meta
                 item.amount = item.amount.minus(1)
