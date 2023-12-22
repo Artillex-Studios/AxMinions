@@ -1,0 +1,20 @@
+plugins {
+    id("io.papermc.paperweight.userdev")
+}
+
+group = 'com.artillexstudios.axminions.nms'
+version = '1.0-SNAPSHOT'
+
+dependencies {
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+}
+
+tasks {
+    build {
+        dependsOn(reobfJar)
+    }
+
+    reobfJar {
+        mustRunAfter(shadowJar)
+    }
+}

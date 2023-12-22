@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
 
-class MinionKillEntityEvent(minion: Minion, val target: LivingEntity, val loot: List<ItemStack>) : MinionEvent(minion) {
+class MinionKillEntityEvent(minion: Minion, val target: LivingEntity) : MinionEvent(minion) {
     companion object {
         private val handlerList = HandlerList()
 

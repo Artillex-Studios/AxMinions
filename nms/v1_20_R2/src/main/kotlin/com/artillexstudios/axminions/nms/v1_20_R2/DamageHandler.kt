@@ -107,7 +107,7 @@ object DamageHandler {
 
                 if (flag5) {
                     if ((nmsEntity as LivingEntity).isDeadOrDying) {
-                        val killEvent = MinionKillEntityEvent(source, entity, nmsEntity.drops)
+                        val killEvent = MinionKillEntityEvent(source, entity)
                         Bukkit.getPluginManager().callEvent(killEvent)
                     }
 
@@ -156,7 +156,7 @@ object DamageHandler {
                                 // CraftBukkit start - Only apply knockback if the damage hits
                                 if (entityliving.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY!!), f4)) {
                                     if (entityliving.isDeadOrDying) {
-                                        val killEvent = MinionKillEntityEvent(source, entity, entityliving.drops)
+                                        val killEvent = MinionKillEntityEvent(source, entity)
                                         Bukkit.getPluginManager().callEvent(killEvent)
                                     }
                                     entityliving.knockback(

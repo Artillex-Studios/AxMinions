@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.nms.v1_20_R1
+package com.artillexstudios.axminions.nms.v1_20_R3
 
 import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
@@ -19,9 +19,9 @@ import net.minecraft.world.item.TridentItem
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.item.enchantment.SweepingEdgeEnchantment
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
