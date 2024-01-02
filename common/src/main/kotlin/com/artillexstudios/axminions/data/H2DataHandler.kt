@@ -24,6 +24,7 @@ class H2DataHandler : DataHandler {
     }
 
     override fun setup() {
+        Class.forName("org.h2.Driver")
         connection =
             JdbcConnection("jdbc:h2:./${AxMinionsPlugin.INSTANCE.dataFolder}/data", Properties(), null, null, false)
 
