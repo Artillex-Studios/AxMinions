@@ -34,7 +34,7 @@ class MinionPlaceListener : Listener {
         event.isCancelled = true
 
         val item = event.item ?: return
-        val meta = item.itemMeta ?: return
+        var meta = item.itemMeta ?: return
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
         val level = meta.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
         val stats = meta.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
@@ -81,7 +81,8 @@ class MinionPlaceListener : Listener {
                 0
             )
             minion.setTicking(true)
-            Scheduler.get().run {
+            Scheduler.get().run { task ->
+                meta = item.itemMeta!!
                 meta.persistentDataContainer.remove(Keys.PLACED)
                 item.itemMeta = meta
                 item.amount = item.amount.minus(1)

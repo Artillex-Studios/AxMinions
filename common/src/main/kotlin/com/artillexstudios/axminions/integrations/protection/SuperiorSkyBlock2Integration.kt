@@ -12,7 +12,7 @@ class SuperiorSkyBlock2Integration : ProtectionIntegration {
 
         val island = SuperiorSkyblockAPI.getIslandAt(location) ?: return true
 
-        return island.isMember(localPlayer)
+        return island.isMember(localPlayer) || localPlayer.hasBypassModeEnabled()
     }
 
     override fun register() {

@@ -498,7 +498,7 @@ class Minion(
     }
 
     override fun addToContainerOrDrop(itemStack: ItemStack) {
-        if (linkedInventory == null) {
+        if (linkedInventory == null) {  
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(itemStack, itemStack.amount, location)
             return
         }
@@ -566,6 +566,12 @@ class Minion(
 
     override fun setTicking(ticking: Boolean) {
         this.ticking = ticking
+
+        if (ticking && linkedChest != null) {
+            Scheduler.get().runAt(linkedChest) {
+                linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+            }
+        }
     }
 
     override fun setRange(range: Double) {
