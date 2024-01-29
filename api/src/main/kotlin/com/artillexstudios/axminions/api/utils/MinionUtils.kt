@@ -41,8 +41,10 @@ object MinionUtils {
         var lava = false
         var water = false
 
+        val locBlock = location.block
+
         FACES.fastFor {
-            val relative = location.block.getRelative(it)
+            val relative = locBlock.getRelative(it)
             val type = relative.type
             if (!lava) {
                 lava = type == Material.LAVA

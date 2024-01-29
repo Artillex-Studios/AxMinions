@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axminions.api.minions.Minion
-import com.artillexstudios.axminions.api.minions.utils.ChunkPos
+import com.artillexstudios.axminions.api.utils.ChunkPos
 import java.util.Collections
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -9,8 +9,8 @@ import kotlin.concurrent.write
 import org.bukkit.Chunk
 
 object Minions {
-    private val lock = ReentrantReadWriteLock()
-    private val minions = arrayListOf<ChunkPos>()
+    val lock = ReentrantReadWriteLock()
+    val minions = arrayListOf<ChunkPos>()
 
     fun addTicking(chunk: Chunk) {
         val chunkX = chunk.x
@@ -120,9 +120,9 @@ object Minions {
         }
     }
 
-    internal fun get(): ArrayList<ChunkPos> {
+    internal inline fun get(use: (ArrayList<ChunkPos>) -> Unit) {
         lock.read {
-            return minions
+            use(minions)
         }
     }
 

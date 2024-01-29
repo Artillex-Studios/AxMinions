@@ -9,4 +9,8 @@ processResources {
 
 dependencies {
     implementation project(':api')
+    compileOnly files('../libs/CMI-API9.5.0.8.jar')
+    compileOnly files('../libs/IridiumSkyblock-4.0.9.jar')
+    compileOnly files('../libs/KingdomsX-1.16.12.jar')
+    compileOnly files('../libs/KGenerators-7.3-b161.jar')
 }

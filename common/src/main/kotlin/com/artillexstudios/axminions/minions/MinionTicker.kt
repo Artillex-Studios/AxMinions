@@ -7,9 +7,11 @@ object MinionTicker {
     private var tick = 0L
 
     private inline fun tickAll() {
-        Minions.get().fastFor { pos ->
-            pos.minions.fastFor {
-                it.tick()
+        Minions.get { minions ->
+            minions.fastFor { pos ->
+                pos.minions.fastFor {
+                    it.tick()
+                }
             }
         }
 

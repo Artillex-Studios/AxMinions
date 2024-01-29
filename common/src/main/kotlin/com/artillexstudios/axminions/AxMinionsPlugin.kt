@@ -2,6 +2,7 @@ package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -10,9 +11,12 @@ import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
+import com.artillexstudios.axminions.cache.Caches
+import com.artillexstudios.axminions.cache.ChunkCache
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
 import com.artillexstudios.axminions.integrations.Integrations
+import com.artillexstudios.axminions.listeners.CacheListener
 import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionDamageListener
@@ -107,6 +111,7 @@ class AxMinionsPlugin : AxPlugin() {
         // Retroactively load minions for the already loaded worlds
         dataQueue.submit {
             Bukkit.getWorlds().fastFor { world ->
+                Caches.add(ChunkCache(world))
                 MinionTypes.getMinionTypes().fastFor { _, v ->
                     dataHandler.loadMinionsForWorld(v, world)
                 }
@@ -121,29 +126,34 @@ class AxMinionsPlugin : AxPlugin() {
             it.registerEvents(MinionDamageListener(), this)
             it.registerEvents(WorldListener(), this)
             it.registerEvents(MinionDropListener(), this)
+            it.registerEvents(CacheListener(), this)
         }
 
         MinionTicker.startTicking()
 
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
+        Scheduler.get().runTimer({
             dataQueue.submit {
-                Minions.get().fastFor { pos ->
-                    pos.minions.fastFor { minion ->
-                        dataHandler.saveMinion(minion)
+                Minions.get {
+                    it.fastFor { pos ->
+                        pos.minions.fastFor { minion ->
+                            dataHandler.saveMinion(minion)
+                        }
                     }
                 }
             }
-        },0, Config.AUTO_SAVE_MINUTES(), TimeUnit.MINUTES)
+        }, 0, Config.AUTO_SAVE_MINUTES() * 20 * 60)
     }
 
     override fun disable() {
-        Minions.get().fastFor { pos ->
-            pos.minions.fastFor { minion ->
-                val minionImp = minion as Minion
+        Minions.get {
+            it.fastFor { pos ->
+                pos.minions.fastFor { minion ->
+                    val minionImp = minion as Minion
 
-                minionImp.openInventories.fastFor { inventory ->
-                    inventory.viewers.fastFor { player ->
-                        player.closeInventory()
+                    minionImp.openInventories.fastFor { inventory ->
+                        inventory.viewers.fastFor { player ->
+                            player.closeInventory()
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
+import com.artillexstudios.axminions.cache.Caches
 import com.artillexstudios.axminions.minions.Minions
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,6 +16,9 @@ class ChunkListener : Listener {
 
     @EventHandler
     fun onChunkUnloadEvent(event: ChunkUnloadEvent) {
-        Minions.removeTicking(event.chunk)
+        val chunk = event.chunk
+        Minions.removeTicking(chunk)
+
+        Caches.get(event.world)?.invalidate(chunk.x, chunk.z)
     }
 }

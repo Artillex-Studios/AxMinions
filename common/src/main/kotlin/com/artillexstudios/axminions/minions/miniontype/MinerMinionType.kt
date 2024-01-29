@@ -9,11 +9,14 @@ import com.artillexstudios.axminions.api.utils.LocationUtils
 import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.minions.MinionTicker
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.roundToInt
+import me.kryniowesegryderiusz.kgenerators.Main
+import me.kryniowesegryderiusz.kgenerators.api.KGeneratorsAPI
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.enchantments.Enchantment
@@ -83,6 +86,16 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     asyncExecutor!!.execute {
                         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
                             .fastFor { location ->
+                                if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                                    val gen = Main.getPlacedGenerators().getLoaded(location)
+                                    val possible = gen?.isBlockPossibleToMine(location) ?: false
+
+                                    if (possible) {
+                                        gen?.scheduleGeneratorRegeneration()
+                                        return@fastFor
+                                    }
+                                }
+
                                 val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                                 if (isStoneGenerator) {
@@ -100,6 +113,16 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                 } else {
                     LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
                         .fastFor { location ->
+                            if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                                val gen = Main.getPlacedGenerators().getLoaded(location)
+                                val possible = gen?.isBlockPossibleToMine(location) ?: false
+
+                                if (possible) {
+                                    gen?.scheduleGeneratorRegeneration()
+                                    return@fastFor
+                                }
+                            }
+
                             val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                             if (isStoneGenerator) {
@@ -117,6 +140,16 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             "line" -> {
                 faces.fastFor {
                     LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), it).fastFor { location ->
+                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                            val gen = Main.getPlacedGenerators().getLoaded(location)
+                            val possible = gen?.isBlockPossibleToMine(location) ?: false
+
+                            if (possible) {
+                                gen?.scheduleGeneratorRegeneration()
+                                return@fastFor
+                            }
+                        }
+
                         val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                         if (isStoneGenerator) {
@@ -134,6 +167,16 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             "face" -> {
                 LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing)
                     .fastFor { location ->
+                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                            val gen = Main.getPlacedGenerators().getLoaded(location)
+                            val possible = gen?.isBlockPossibleToMine(location) ?: false
+
+                            if (possible) {
+                                gen?.scheduleGeneratorRegeneration()
+                                return@fastFor
+                            }
+                        }
+
                         val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                         if (isStoneGenerator) {

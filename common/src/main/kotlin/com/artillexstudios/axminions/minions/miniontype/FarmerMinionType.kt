@@ -7,6 +7,7 @@ import com.artillexstudios.axminions.api.utils.LocationUtils
 import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.cache.Caches
 import com.artillexstudios.axminions.minions.MinionTicker
 import kotlin.math.roundToInt
 import org.bukkit.Material
@@ -53,12 +54,14 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
         var size = 0
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
-            val block = location.block
+            val block = Caches.get(location.world!!)?.get(location.x.toInt(), location.y.toInt(), location.z.toInt())
+            if (block !is Material) return@fastFor
+            val locationBlock = location.block
             val drops = arrayListOf<ItemStack>()
 
-            when (block.type) {
+            when (block) {
                 Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
-                    MinionUtils.getPlant(block).fastFor {
+                    MinionUtils.getPlant(locationBlock).fastFor {
                         val blockDrops = it.getDrops(minion.getTool())
                         blockDrops.forEach { itemStack ->
                             size += itemStack.amount
@@ -69,36 +72,36 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
                 }
 
                 Material.MELON, Material.PUMPKIN -> {
-                    val blockDrops = block.getDrops(minion.getTool())
+                    val blockDrops = locationBlock.getDrops(minion.getTool())
                     blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
-                    block.type = Material.AIR
+                    locationBlock.type = Material.AIR
                 }
 
                 Material.COCOA_BEANS, Material.COCOA, Material.NETHER_WART, Material.WHEAT, Material.CARROTS, Material.BEETROOTS, Material.POTATOES -> {
-                    val ageable = block.blockData as Ageable
+                    val ageable = locationBlock.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
-                    val blockDrops = block.getDrops(minion.getTool())
+                    val blockDrops = locationBlock.getDrops(minion.getTool())
                     blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
                     ageable.age = 0
-                    block.blockData = ageable
+                    locationBlock.blockData = ageable
                 }
 
                 Material.SWEET_BERRY_BUSH -> {
-                    val ageable = block.blockData as Ageable
+                    val ageable = locationBlock.blockData as Ageable
                     if (ageable.age != ageable.maximumAge) return@fastFor
-                    val blockDrops = block.getDrops(minion.getTool())
+                    val blockDrops = locationBlock.getDrops(minion.getTool())
                     blockDrops.forEach { itemStack ->
                         size += itemStack.amount
                     }
                     drops.addAll(blockDrops)
                     ageable.age = 1
-                    block.blockData = ageable
+                    locationBlock.blockData = ageable
                 }
 
                 else -> return@fastFor
