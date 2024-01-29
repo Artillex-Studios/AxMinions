@@ -3,11 +3,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version "8.1.1"
     id 'maven-publish'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.1.9.22'
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
@@ -20,7 +20,6 @@ repositories {
 dependencies {
     implementation project(path: ":api")
     implementation project(path: ":common")
-    implementation project(path: ":nms:v1_19_R3", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R2", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R3", configuration: "reobf")
@@ -45,6 +44,10 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+
+        maven {
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
 
         maven {
             url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
@@ -107,7 +110,6 @@ allprojects {
         compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
         compileOnly 'com.h2database:h2:2.2.220'
-        compileOnly 'dev.rosewood:rosestacker:1.5.9'
         compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
         compileOnly 'net.essentialsx:EssentialsX:2.19.0'
         compileOnly 'com.github.Gypopo:EconomyShopGUI-API:1.6.0'
@@ -124,9 +126,7 @@ allprojects {
         implementation("com.artillexstudios.axapi:axapi:1.4.22")
         implementation("net.byteflux:libby-bukkit:1.3.0")
         implementation("com.zaxxer:HikariCP:5.1.0")
-        compileOnly files('../libs/CMI-API9.5.0.8.jar')
-        compileOnly files('../libs/IridiumSkyblock-3.2.12.jar')
-        compileOnly files('../libs/KingdomsX-1.16.12.jar')
+        compileOnly 'org.black_ixx:playerpoints:3.2.6'
     }
 
     shadowJar {

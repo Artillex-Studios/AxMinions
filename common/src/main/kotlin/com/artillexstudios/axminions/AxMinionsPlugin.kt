@@ -127,23 +127,27 @@ class AxMinionsPlugin : AxPlugin() {
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
             dataQueue.submit {
-                Minions.get().fastFor { pos ->
-                    pos.minions.fastFor { minion ->
-                        dataHandler.saveMinion(minion)
+                Minions.get {
+                    it.fastFor { pos ->
+                        pos.minions.fastFor { minion ->
+                            dataHandler.saveMinion(minion)
+                        }
                     }
                 }
             }
-        },0, Config.AUTO_SAVE_MINUTES(), TimeUnit.MINUTES)
+        }, 0, Config.AUTO_SAVE_MINUTES(), TimeUnit.MINUTES)
     }
 
     override fun disable() {
-        Minions.get().fastFor { pos ->
-            pos.minions.fastFor { minion ->
-                val minionImp = minion as Minion
+        Minions.get {
+            it.fastFor { pos ->
+                pos.minions.fastFor { minion ->
+                    val minionImp = minion as Minion
 
-                minionImp.openInventories.fastFor { inventory ->
-                    inventory.viewers.fastFor { player ->
-                        player.closeInventory()
+                    minionImp.openInventories.fastFor { inventory ->
+                        inventory.viewers.fastFor { player ->
+                            player.closeInventory()
+                        }
                     }
                 }
             }

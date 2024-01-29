@@ -9,8 +9,8 @@ import kotlin.concurrent.write
 import org.bukkit.Chunk
 
 object Minions {
-    private val lock = ReentrantReadWriteLock()
-    private val minions = arrayListOf<ChunkPos>()
+    internal val lock = ReentrantReadWriteLock()
+    internal val minions = arrayListOf<ChunkPos>()
 
     fun addTicking(chunk: Chunk) {
         val chunkX = chunk.x
@@ -120,9 +120,9 @@ object Minions {
         }
     }
 
-    internal fun get(): ArrayList<ChunkPos> {
+    internal inline fun get(minions: (ArrayList<ChunkPos>) -> Unit) {
         lock.read {
-            return minions
+            minions(this.minions)
         }
     }
 
