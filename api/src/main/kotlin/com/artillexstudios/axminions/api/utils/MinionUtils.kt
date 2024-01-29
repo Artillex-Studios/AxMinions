@@ -8,7 +8,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 
 object MinionUtils {
-    private val FACES =
+    val FACES =
         arrayOf(BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
 
     @JvmStatic
@@ -36,58 +36,7 @@ object MinionUtils {
         return blocks
     }
 
-    @JvmStatic
-    fun isStoneGenerator(location: Location): Boolean {
-        var lava = false
-        var water = false
-
-        val locBlock = location.block
-
-        FACES.fastFor {
-            val relative = locBlock.getRelative(it)
-            val type = relative.type
-            if (!lava) {
-                lava = type == Material.LAVA
-            }
-
-            if (!water) {
-                water = type == Material.WATER
-            }
-
-            if (water && lava) {
-                return true
-            }
-        }
-
-
-        return false
-    }
-
-    @JvmStatic
-    fun getTree(startBlock: Block): Set<Block> {
-        val queue: Queue<Block> = LinkedList()
-        val visited = mutableSetOf<Block>()
-        val tree = mutableSetOf<Block>()
-
-        queue.add(startBlock)
-
-        while (queue.isNotEmpty()) {
-            val block = queue.poll()
-
-            val type = block.type.toString()
-            if (type.endsWith("_WOOD") || type.endsWith("_LOG")) {
-                tree.add(block)
-
-                FACES.fastFor {
-                    val relative = block.getRelative(it)
-                    if (!visited.contains(relative)) {
-                        queue.add(relative)
-                        visited.add(relative)
-                    }
-                }
-            }
-        }
-
-        return tree
+    fun Location.relative(face: BlockFace): Location {
+        return this.clone().add(face.modX.toDouble(), face.modY.toDouble(), face.modZ.toDouble())
     }
 }
