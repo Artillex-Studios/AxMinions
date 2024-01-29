@@ -50,7 +50,7 @@ class AxMinionsPlugin : AxPlugin() {
 
     init {
         val manager = BukkitLibraryManager(this)
-        val stdLib = Library.builder().groupId("org{}jetbrains{}kotlin").artifactId("kotlin-stdlib").version("1.9.0")
+        val stdLib = Library.builder().groupId("org{}jetbrains{}kotlin").artifactId("kotlin-stdlib").version("1.9.22")
             .relocate("org{}jetbrains{}kotlin", "com{}artillexstudios{}axminions{}libs{}kotlin").build()
         val h2 = Library.builder().groupId("com{}h2database").artifactId("h2").version("2.2.220")
             .relocate("org{}h2", "com{}artillexstudios{}axminions{}libs{}h2").build()
