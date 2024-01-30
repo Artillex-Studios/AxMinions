@@ -642,7 +642,21 @@ class Minion(
             if ((tool?.type?.maxDurability ?: return false) <= meta.damage + 1) {
                 if (Config.CAN_BREAK_TOOLS()) {
                     setTool(ItemStack(Material.AIR))
-                }
+                } else if (Config.PULL_FROM_CHEST()) {
+                    val allowedTools = arrayListOf<Material>()
+                    getType().getConfig().getStringList("tool.material").fastFor {
+                        allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+                    }
+
+                    linkedInventory?.contents?.fastFor {
+                        if (it == null || it.type !in allowedTools) return@fastFor
+
+                        linkedInventory?.addItem(getTool())
+                        setTool(it)
+                        linkedInventory?.remove(it)
+                        return canUseTool()
+                        }
+                    }
                 return false
             } else {
                 return true
