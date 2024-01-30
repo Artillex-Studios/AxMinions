@@ -6,6 +6,7 @@ place:
   success: "<green>Successfully placed a new <type> minion! <gray>(<placed>/<max>)"
   limit-reached: "<red>Could not place minion! You have reached the limit! <gray>(<placed>/<max>)"
   minion-at-location: "<red>Could not place minion! There already is a minion at that location!"
+  missing-permission: "<red>You do not have the required permissions to place this minion!"
 
 pickup:
   success: "<green>Successfully picked up a minion! <gray>(<placed>/<max>)"
@@ -61,4 +62,4 @@ tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 # Do not change!
-config-version: 1
+config-version: 2

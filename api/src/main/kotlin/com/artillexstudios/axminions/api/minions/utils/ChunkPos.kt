@@ -4,7 +4,7 @@ import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.utils.fastFor
 import org.bukkit.World
 
-data class ChunkPos(val world: World, var x: Int, var z: Int) {
+data class ChunkPos(val world: World, val x: Int, val z: Int) {
     val minions = arrayListOf<Minion>()
     val worldUUID = world.uid
 

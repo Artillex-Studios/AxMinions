@@ -135,6 +135,7 @@ class MinionInventoryListener : Listener {
 
                 AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                     if (it.getBalance(player) < money) {
+                        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.UPGRADE_FAIL()))
                         return
                     }
 

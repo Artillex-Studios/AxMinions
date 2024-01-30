@@ -35,6 +35,8 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun PLACE_MINION_AT_LOCATION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.minion-at-location")
         @JvmStatic
+        fun PLACE_MISSING_PERMISSION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.missing-permission")
+        @JvmStatic
         fun STATISTICS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("statistics")
         @JvmStatic
         fun LEVEL_COLOR(level: Int = 1) = AxMinionsAPI.INSTANCE.getMessages().get("levels.$level", "<#33FF33>")

@@ -6,6 +6,10 @@ auto-save-minutes: 3
 # How far the storage chest can be from the minion
 max-linking-distance: 30
 
+# If players need to have 'axminions.place.<minion>' permission
+# to be able to place this minion
+place-permissions: false
+
 # The default amount of minions a player can have.
 # This setting can be overwritten by setting the 'axminions.limit.<amount>' permission!
 default-minion-limit: 5
@@ -31,6 +35,9 @@ can-break-tools: true
 
 # If the minion should be able to take durability from it's held item
 use-durability: true
+
+# If the minion should pull new tools from the chest it's connected to
+pull-tools-from-chest: false
 
 database:
   # Can be H2 (SqLite support is planned)
@@ -83,4 +90,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 1
+config-version: 2

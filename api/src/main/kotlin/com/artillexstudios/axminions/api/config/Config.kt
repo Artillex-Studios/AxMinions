@@ -40,6 +40,10 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
         @JvmStatic
+        fun PULL_FROM_CHEST() = AxMinionsAPI.INSTANCE.getConfig().get("pull-tools-from-chest", false)
+        @JvmStatic
+        fun PLACE_PERMISSION() = AxMinionsAPI.INSTANCE.getConfig().get("place-permissions", false)
+        @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {
                 debug = AxMinionsAPI.INSTANCE.getConfig().get("debug", false)

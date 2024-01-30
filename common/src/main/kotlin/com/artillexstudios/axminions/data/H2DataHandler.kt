@@ -356,8 +356,6 @@ class H2DataHandler : DataHandler {
     }
 
     override fun disable() {
-        dataSource.connection.use { connection ->
-            connection.prepareStatement("SHUTDOWN DEFRAG;").executeUpdate()
-        }
+        dataSource.connection.prepareStatement("SHUTDOWN DEFRAG;").executeUpdate()
     }
 }

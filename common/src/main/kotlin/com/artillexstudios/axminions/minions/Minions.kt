@@ -70,7 +70,6 @@ object Minions {
         lock.write {
             var pos: ChunkPos? = null
             run breaking@{
-
                 minions.forEach {
                     if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         pos = it

@@ -2,6 +2,7 @@ package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -31,10 +32,9 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import net.byteflux.libby.BukkitLibraryManager
 import net.byteflux.libby.Library
+import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
 
@@ -65,6 +65,8 @@ class AxMinionsPlugin : AxPlugin() {
     }
 
     override fun enable() {
+        Metrics(this, 19043)
+
         AxMinionsPlugin.config = Config(File(dataFolder, "config.yml"), getResource("config.yml")!!)
         messages = Messages(File(dataFolder, "messages.yml"), getResource("messages.yml")!!)
         integrations = Integrations()
@@ -125,7 +127,7 @@ class AxMinionsPlugin : AxPlugin() {
 
         MinionTicker.startTicking()
 
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
+        Scheduler.get().runTimer({
             dataQueue.submit {
                 Minions.get {
                     it.fastFor { pos ->
@@ -135,7 +137,7 @@ class AxMinionsPlugin : AxPlugin() {
                     }
                 }
             }
-        }, 0, Config.AUTO_SAVE_MINUTES(), TimeUnit.MINUTES)
+        }, 0, Config.AUTO_SAVE_MINUTES() * 20 * 60)
     }
 
     override fun disable() {

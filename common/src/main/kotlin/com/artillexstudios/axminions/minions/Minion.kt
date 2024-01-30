@@ -25,9 +25,7 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
-import java.util.HashMap
 import java.util.UUID
-import java.util.concurrent.atomic.AtomicBoolean
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -498,7 +496,7 @@ class Minion(
     }
 
     override fun addToContainerOrDrop(itemStack: ItemStack) {
-        if (linkedInventory == null) {  
+        if (linkedInventory == null) {
             AxMinionsPlugin.integrations.getStackerIntegration().dropItemAt(itemStack, itemStack.amount, location)
             return
         }
@@ -595,7 +593,36 @@ class Minion(
 
         if ((tool?.type?.maxDurability ?: return) <= meta.damage + amount) {
             if (Config.CAN_BREAK_TOOLS()) {
+                if (Config.PULL_FROM_CHEST()) {
+                    val allowedTools = arrayListOf<Material>()
+                    getType().getConfig().getStringList("tool.material").fastFor {
+                        allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+                    }
+
+                    linkedInventory?.contents?.fastFor {
+                        if (it == null || it.type !in allowedTools) return@fastFor
+
+                        setTool(it)
+                        linkedInventory?.remove(it)
+                        return
+                    }
+                }
+
                 setTool(ItemStack(Material.AIR))
+            } else if (Config.PULL_FROM_CHEST()) {
+                val allowedTools = arrayListOf<Material>()
+                getType().getConfig().getStringList("tool.material").fastFor {
+                    allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+                }
+
+                linkedInventory?.contents?.fastFor {
+                    if (it == null || it.type !in allowedTools) return@fastFor
+
+                    linkedInventory?.addItem(getTool())
+                    setTool(it)
+                    linkedInventory?.remove(it)
+                    return
+                }
             }
         } else {
             meta.damage += amount
