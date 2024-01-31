@@ -136,6 +136,7 @@ allprojects {
         relocate("org.jetbrains.kotlin", "com.artillexstudios.axminions.libs.kotlin")
         relocate("com.zaxxer", "com.artillexstudios.axminions.libs.hikaricp")
         relocate("org.bstats", "com.artillexstudios.axminions.libs.bstats")
+        relocate("net.byteflux", "com.artillexstudios.axminions.libs.libby")
     }
 }
 
