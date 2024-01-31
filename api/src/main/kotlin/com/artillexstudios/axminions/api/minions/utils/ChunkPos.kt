@@ -3,7 +3,7 @@ package com.artillexstudios.axminions.api.minions.utils
 import com.artillexstudios.axminions.api.minions.Minion
 import org.bukkit.World
 
-data class ChunkPos(val world: World, val x: Int, val z: Int, @Volatile var ticking: Boolean) {
+data class ChunkPos(val world: World, val x: Int, val z: Int, @Volatile @JvmField var ticking: Boolean) {
     val minions = arrayListOf<Minion>()
     val worldUUID = world.uid
 
