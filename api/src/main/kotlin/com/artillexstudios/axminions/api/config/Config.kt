@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.U
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import java.io.File
 import java.io.InputStream
+import java.util.Locale
 
 class Config(file: File, stream: InputStream) {
     companion object {
@@ -41,6 +42,8 @@ class Config(file: File, stream: InputStream) {
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
         @JvmStatic
         fun PULL_FROM_CHEST() = AxMinionsAPI.INSTANCE.getConfig().get("pull-tools-from-chest", false)
+        @JvmStatic
+        fun UPGRADE_FAIL() = AxMinionsAPI.INSTANCE.getConfig().get("upgrade-fail", "chat").lowercase(Locale.ENGLISH)
         @JvmStatic
         fun PLACE_PERMISSION() = AxMinionsAPI.INSTANCE.getConfig().get("place-permissions", false)
         @JvmStatic

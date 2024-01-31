@@ -37,7 +37,7 @@ object Minions {
         lock.read {
             minions.forEach {
                 if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
-                    return true
+                    return it.ticking
                 }
             }
         }
@@ -63,8 +63,8 @@ object Minions {
     }
 
     fun load(minion: Minion) {
-        val chunkX = round(minion.getLocation().x) shr 4
-        val chunkZ = round(minion.getLocation().z) shr 4
+        val chunkX = (Math.round(minion.getLocation().x) shr 4).toInt()
+        val chunkZ = (Math.round(minion.getLocation().z) shr 4).toInt()
         val world = minion.getLocation().world ?: return
 
         lock.write {
@@ -79,7 +79,7 @@ object Minions {
             }
 
             if (pos === null) {
-                pos = ChunkPos(world, chunkX, chunkZ)
+                pos = ChunkPos(world, chunkX, chunkZ, false)
                 minions.add(pos!!)
             }
 
@@ -89,8 +89,8 @@ object Minions {
     }
 
     fun remove(minion: Minion) {
-        val chunkX = round(minion.getLocation().x) shr 4
-        val chunkZ = round(minion.getLocation().z) shr 4
+        val chunkX = (Math.round(minion.getLocation().x) shr 4).toInt()
+        val chunkZ = (Math.round(minion.getLocation().z) shr 4).toInt()
         val world = minion.getLocation().world ?: return
 
         lock.write {
@@ -123,9 +123,5 @@ object Minions {
         lock.read {
             minions(this.minions)
         }
-    }
-
-    private infix fun round(double: Double): Int {
-        return (double + 0.5).toInt()
     }
 }

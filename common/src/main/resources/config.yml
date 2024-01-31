@@ -39,6 +39,11 @@ use-durability: true
 # If the minion should pull new tools from the chest it's connected to
 pull-tools-from-chest: false
 
+# What type of message we should send when the upgrade fails
+# due to insufficient funds
+# Possible options: chat, title, subtitle, actionbar
+upgrade-fail: "chat"
+
 database:
   # Can be H2 (SqLite support is planned)
   type: "H2"
@@ -90,4 +95,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 2
+config-version: 3

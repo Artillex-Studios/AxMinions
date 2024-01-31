@@ -1,7 +1,9 @@
 package com.artillexstudios.axminions.api.utils
 
+import java.util.WeakHashMap
+
 class CoolDown<T> {
-    private val map = HashMap<T, Long>()
+    private val map = WeakHashMap<T, Long>()
 
     fun add(value: T, time: Long) {
         expire()

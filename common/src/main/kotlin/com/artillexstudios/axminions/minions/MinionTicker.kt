@@ -9,6 +9,7 @@ object MinionTicker {
     private inline fun tickAll() {
         Minions.get { minions ->
             minions.fastFor { pos ->
+                if (!pos.ticking) return@fastFor
                 pos.minions.fastFor {
                     it.tick()
                 }

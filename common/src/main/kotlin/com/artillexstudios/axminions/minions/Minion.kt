@@ -67,6 +67,7 @@ class Minion(
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     internal val openInventories = mutableListOf<Inventory>()
+    @Volatile
     private var ticking = false
     private var debugHologram: Hologram? = null
     private var broken = false
@@ -74,12 +75,6 @@ class Minion(
     init {
         spawn()
         Minions.load(this)
-
-        if (linkedChest != null) {
-            Scheduler.get().runAt(linkedChest) {
-                linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
-            }
-        }
     }
 
     override fun getType(): MinionType {
@@ -149,7 +144,7 @@ class Minion(
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
-        LinkingListener.linking.remove(event.player.uniqueId)
+        LinkingListener.linking.remove(event.player)
         remove()
         setTicking(false)
         openInventories.fastFor { it.viewers.fastFor { viewer -> viewer.closeInventory() } }
@@ -307,7 +302,7 @@ class Minion(
     }
 
     override fun openInventory(player: Player) {
-        LinkingListener.linking.remove(player.uniqueId)
+        LinkingListener.linking.remove(player)
         val inventory = Bukkit.createInventory(
             this,
             Config.GUI_SIZE(),
@@ -565,10 +560,14 @@ class Minion(
     override fun setTicking(ticking: Boolean) {
         this.ticking = ticking
 
-        if (ticking && linkedChest != null) {
+        if (linkedChest == null) return
+
+        if (ticking) {
             Scheduler.get().runAt(linkedChest) {
                 linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
             }
+        } else {
+            linkedInventory = null
         }
     }
 

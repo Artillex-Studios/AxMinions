@@ -51,6 +51,7 @@ class MinionPlaceListener : Listener {
 
         val maxMinions = AxMinionsAPI.INSTANCE.getMinionLimit(event.player)
 
+        val chunk = location.chunk
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
 
@@ -85,7 +86,8 @@ class MinionPlaceListener : Listener {
                 locationId,
                 0
             )
-            minion.setTicking(true)
+            Minions.addTicking(chunk)
+
             Scheduler.get().run { task ->
                 meta = item.itemMeta!!
                 meta.persistentDataContainer.remove(Keys.PLACED)
@@ -97,7 +99,7 @@ class MinionPlaceListener : Listener {
                 event.player.sendMessage(
                     "Placed minion $minion. Ticking? ${minion.isTicking()} Is chunk ticking? ${
                         Minions.isTicking(
-                            location.chunk
+                            chunk
                         )
                     }"
                 )

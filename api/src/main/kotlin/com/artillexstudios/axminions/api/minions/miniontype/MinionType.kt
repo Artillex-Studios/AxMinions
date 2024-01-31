@@ -7,7 +7,6 @@ import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.utils.Keys
-import com.artillexstudios.axminions.api.utils.fastFor
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import java.io.File
@@ -33,12 +32,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         return true
     }
 
-    fun isTicking(minion: Minion): Boolean {
-        return minion.isTicking()
-    }
-
     fun tick(minion: Minion) {
-        if (!minion.isTicking()) return
         if (!shouldRun(minion)) return
 
         minion.resetAnimation()

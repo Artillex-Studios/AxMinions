@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.listeners
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
@@ -10,7 +11,8 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.CoolDown
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
-import java.util.UUID
+import net.md_5.bungee.api.ChatMessageType
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -22,7 +24,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 class MinionInventoryListener : Listener {
-    private val coolDown = CoolDown<UUID>()
+    private val coolDown = CoolDown<Player>()
 
     @EventHandler
     fun onInventoryDragEvent(event: InventoryDragEvent) {
@@ -38,11 +40,11 @@ class MinionInventoryListener : Listener {
         event.isCancelled = true
         val player = event.whoClicked as Player
 
-        if (coolDown.contains(player.uniqueId)) {
+        if (coolDown.contains(player)) {
             return
         }
 
-        coolDown.add(player.uniqueId, 250)
+        coolDown.add(player, 250)
 
         val allowedTools = arrayListOf<Material>()
         minion.getType().getConfig().getStringList("tool.material").fastFor {
@@ -116,7 +118,7 @@ class MinionInventoryListener : Listener {
                 }
 
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_START()))
-                LinkingListener.linking[player.uniqueId] = minion
+                LinkingListener.linking[player] = minion
                 player.closeInventory()
             }
 
@@ -129,13 +131,13 @@ class MinionInventoryListener : Listener {
                 }
 
                 if (minion.getActionAmount() < actions) {
-                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.UPGRADE_FAIL()))
+                    sendFail(player)
                     return
                 }
 
                 AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                     if (it.getBalance(player) < money) {
-                        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.UPGRADE_FAIL()))
+                        sendFail(player)
                         return
                     }
 
@@ -154,8 +156,8 @@ class MinionInventoryListener : Listener {
 
                 if (minion.getType() == MinionTypes.getMinionTypes()["seller"]) {
                     AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
-                        minion.getOwner()?.let {
-                            player -> it.giveBalance(player, stored)
+                        minion.getOwner()?.let { player ->
+                            it.giveBalance(player, stored)
                             minion.setStorage(0.0)
                         }
                     }
@@ -174,5 +176,31 @@ class MinionInventoryListener : Listener {
         val holder = event.inventory.holder as? Minion ?: return
 
         holder.removeOpenInventory(event.inventory)
+    }
+
+    private fun sendFail(player: Player) {
+        when (Config.UPGRADE_FAIL()) {
+            "title" -> {
+                player.closeInventory()
+                player.sendTitle(StringUtils.formatToString(Messages.UPGRADE_FAIL()), "", 10, 70, 20)
+            }
+
+            "subtitle" -> {
+                player.closeInventory()
+                player.sendTitle("", StringUtils.formatToString(Messages.UPGRADE_FAIL()), 10, 70, 20)
+            }
+
+            "actionbar" -> {
+                player.closeInventory()
+                player.spigot().sendMessage(
+                    ChatMessageType.ACTION_BAR,
+                    *TextComponent.fromLegacyText(StringUtils.formatToString(Messages.UPGRADE_FAIL()))
+                )
+            }
+
+            else -> {
+                player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.UPGRADE_FAIL()))
+            }
+        }
     }
 }

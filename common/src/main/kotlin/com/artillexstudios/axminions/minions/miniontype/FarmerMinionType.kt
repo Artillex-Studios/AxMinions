@@ -52,9 +52,9 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
         Warnings.remove(minion, Warnings.NO_TOOL)
 
         var size = 0
+        val drops = arrayListOf<ItemStack>()
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
             val block = location.block
-            val drops = arrayListOf<ItemStack>()
 
             when (block.type) {
                 Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
@@ -95,10 +95,10 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
                 else -> return@fastFor
             }
-
-            minion.addToContainerOrDrop(drops)
-            minion.damageTool(size)
-            minion.setActions(minion.getActionAmount() + size)
         }
+
+        minion.addToContainerOrDrop(drops)
+        minion.damageTool(size)
+        minion.setActions(minion.getActionAmount() + size)
     }
 }
