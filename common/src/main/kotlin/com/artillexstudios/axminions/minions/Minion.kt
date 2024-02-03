@@ -605,9 +605,9 @@ class Minion(
                         linkedInventory?.remove(it)
                         return
                     }
+                } else {
+                    setTool(ItemStack(Material.AIR))
                 }
-
-                setTool(ItemStack(Material.AIR))
             } else if (Config.PULL_FROM_CHEST()) {
                 val allowedTools = arrayListOf<Material>()
                 getType().getConfig().getStringList("tool.material").fastFor {
@@ -640,7 +640,22 @@ class Minion(
         if (meta is Damageable) {
             if ((tool?.type?.maxDurability ?: return false) <= meta.damage + 1) {
                 if (Config.CAN_BREAK_TOOLS()) {
-                    setTool(ItemStack(Material.AIR))
+                    if (Config.PULL_FROM_CHEST()) {
+                        val allowedTools = arrayListOf<Material>()
+                        getType().getConfig().getStringList("tool.material").fastFor {
+                            allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+                        }
+
+                        linkedInventory?.contents?.fastFor {
+                            if (it == null || it.type !in allowedTools) return@fastFor
+
+                            setTool(it)
+                            linkedInventory?.remove(it)
+                            return canUseTool()
+                        }
+                    } else {
+                        setTool(ItemStack(Material.AIR))
+                    }
                 } else if (Config.PULL_FROM_CHEST()) {
                     val allowedTools = arrayListOf<Material>()
                     getType().getConfig().getStringList("tool.material").fastFor {
