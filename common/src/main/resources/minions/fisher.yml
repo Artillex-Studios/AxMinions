@@ -41,7 +41,7 @@ gui:
     name: "<#00EEFF><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Killed mobs: <#00EEFF><actions>"
+      - " <gray>- <white>Fish caught: <#00EEFF><actions>"
       - ""
 
 upgrades:
