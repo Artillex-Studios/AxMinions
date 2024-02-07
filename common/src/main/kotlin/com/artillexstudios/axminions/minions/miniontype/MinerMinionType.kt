@@ -10,6 +10,7 @@ import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
+import dev.lone.itemsadder.api.CustomBlock
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -181,6 +182,19 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                             if (possible) {
                                 gen?.scheduleGeneratorRegeneration()
+                                return@fastFor
+                            }
+                        }
+
+                        if (AxMinionsPlugin.integrations.itemsAdderIntegration) {
+                            val block = CustomBlock.byAlreadyPlaced(location.block)
+                            if (block !== null) {
+                                val drops = block.getLoot(minion.getTool(), false)
+                                drops.forEach {
+                                    amount += it.amount
+                                }
+                                minion.addToContainerOrDrop(drops)
+                                block.remove()
                                 return@fastFor
                             }
                         }

@@ -8,6 +8,7 @@ import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
+import dev.lone.itemsadder.api.CustomBlock
 import kotlin.math.roundToInt
 import org.bukkit.Material
 import org.bukkit.block.data.Ageable
@@ -55,6 +56,17 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
         val drops = arrayListOf<ItemStack>()
         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
             val block = location.block
+
+            if (AxMinionsPlugin.integrations.itemsAdderIntegration) {
+                val customBlock = CustomBlock.byAlreadyPlaced(block)
+                if (customBlock !== null) {
+                    val blockDrops = customBlock.getLoot(minion.getTool(), false)
+                    size += blockDrops.size
+                    drops.addAll(blockDrops)
+                    customBlock.remove()
+                    return@fastFor
+                }
+            }
 
             when (block.type) {
                 Material.CACTUS, Material.SUGAR_CANE, Material.BAMBOO -> {
