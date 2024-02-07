@@ -6,6 +6,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Waterlogged
 
 object MinionUtils {
     private val FACES =
@@ -44,13 +45,14 @@ object MinionUtils {
         val locBlock = location.block
         FACES.fastFor {
             val relative = locBlock.getRelative(it)
-            val type = relative.type
+            val state = relative.state
+            val type = state.type
             if (!lava) {
                 lava = type == Material.LAVA
             }
 
             if (!water) {
-                water = type == Material.WATER
+                water = type == Material.WATER || (state as? Waterlogged)?.isWaterlogged ?: return@fastFor
             }
 
             if (water && lava) {
