@@ -86,9 +86,9 @@ class MinionPlaceListener : Listener {
                 locationId,
                 0
             )
-            Minions.addTicking(chunk)
+            Minions.startTicking(chunk)
 
-            Scheduler.get().run { task ->
+            Scheduler.get().run { _ ->
                 meta = item.itemMeta!!
                 meta.persistentDataContainer.remove(Keys.PLACED)
                 item.itemMeta = meta

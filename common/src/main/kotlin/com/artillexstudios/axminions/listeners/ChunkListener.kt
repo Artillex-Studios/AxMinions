@@ -10,11 +10,11 @@ class ChunkListener : Listener {
 
     @EventHandler
     fun onChunkLoadEvent(event: ChunkLoadEvent) {
-        Minions.addTicking(event.chunk)
+        Minions.startTicking(event.chunk)
     }
 
     @EventHandler
     fun onChunkUnloadEvent(event: ChunkUnloadEvent) {
-        Minions.removeTicking(event.chunk)
+        Minions.stopTicking(event.chunk)
     }
 }

@@ -106,15 +106,6 @@ class AxMinionsPlugin : AxPlugin() {
             handler.registerBrigadier()
         }
 
-        // Retroactively load minions for the already loaded worlds
-        dataQueue.submit {
-            Bukkit.getWorlds().fastFor { world ->
-                MinionTypes.getMinionTypes().fastFor { _, v ->
-                    dataHandler.loadMinionsForWorld(v, world)
-                }
-            }
-        }
-
         Bukkit.getPluginManager().also {
             it.registerEvents(MinionPlaceListener(), this)
             it.registerEvents(LinkingListener(), this)
@@ -123,6 +114,17 @@ class AxMinionsPlugin : AxPlugin() {
             it.registerEvents(MinionDamageListener(), this)
             it.registerEvents(WorldListener(), this)
             it.registerEvents(MinionDropListener(), this)
+        }
+
+        // Retroactively load minions for the already loaded worlds
+        Bukkit.getWorlds().fastFor { world ->
+            MinionTypes.getMinionTypes().fastFor { _, v ->
+                dataHandler.loadMinionsForWorld(v, world)
+            }
+
+            world.loadedChunks.fastFor {
+                Minions.startTicking(it)
+            }
         }
 
         MinionTicker.startTicking()

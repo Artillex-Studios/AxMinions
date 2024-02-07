@@ -12,7 +12,7 @@ object Minions {
     internal val lock = ReentrantReadWriteLock()
     internal val minions = arrayListOf<ChunkPos>()
 
-    fun addTicking(chunk: Chunk) {
+    fun startTicking(chunk: Chunk) {
         val chunkX = chunk.x
         val chunkZ = chunk.z
         val world = chunk.world
@@ -45,7 +45,7 @@ object Minions {
         return false
     }
 
-    fun removeTicking(chunk: Chunk) {
+    fun stopTicking(chunk: Chunk) {
         val chunkX = chunk.x
         val chunkZ = chunk.z
         val world = chunk.world
