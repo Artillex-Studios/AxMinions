@@ -45,8 +45,8 @@ object MinionUtils {
         val locBlock = location.block
         FACES.fastFor {
             val relative = locBlock.getRelative(it)
-            val state = relative.state
-            val type = state.type
+            val type = relative.type
+            val state = relative.blockData
             if (!lava) {
                 lava = type == Material.LAVA
             }
