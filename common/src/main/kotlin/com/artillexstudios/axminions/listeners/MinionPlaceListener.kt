@@ -35,7 +35,14 @@ class MinionPlaceListener : Listener {
 
         val item = event.item ?: return
         var meta = item.itemMeta ?: return
-        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
+        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) {
+            if (Config.DEBUG()) {
+                event.player.sendMessage(
+                    "Could not place due to protection hook!"
+                )
+            }
+            return
+        }
         val level = meta.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
         val stats = meta.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
         if (Config.PLACE_PERMISSION() && !event.player.hasPermission("axminions.place.${minionType.getName()}")) {

@@ -605,6 +605,7 @@ class Minion(
                         linkedInventory?.remove(it)
                         return
                     }
+                    setTool(ItemStack(Material.AIR))
                 } else {
                     setTool(ItemStack(Material.AIR))
                 }
@@ -653,6 +654,7 @@ class Minion(
                             linkedInventory?.remove(it)
                             return canUseTool()
                         }
+                        setTool(ItemStack(Material.AIR))
                     } else {
                         setTool(ItemStack(Material.AIR))
                     }
