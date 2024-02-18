@@ -49,6 +49,11 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
             return
         }
 
+        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            Warnings.CONTAINER_FULL.display(minion)
+            return
+        }
+
         Warnings.remove(minion, Warnings.NO_TOOL)
 
         minion.getLocation().world!!.getNearbyEntities(

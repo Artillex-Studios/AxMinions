@@ -39,6 +39,9 @@ use-durability: true
 # If the minion should pull new tools from the chest it's connected to
 pull-tools-from-chest: false
 
+# If the minion should work when the owner is offline (only if the chunk is loaded)
+work-when-owner-offline: true
+
 # What type of message we should send when the upgrade fails
 # due to insufficient funds
 # Possible options: chat, title, subtitle, actionbar
@@ -95,4 +98,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 3
+config-version: 4

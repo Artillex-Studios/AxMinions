@@ -57,6 +57,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             return
         }
 
+        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            Warnings.CONTAINER_FULL.display(minion)
+            return
+        }
+
         Warnings.remove(minion, Warnings.NO_TOOL)
 
         var amount = 0

@@ -49,6 +49,11 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
             return
         }
 
+        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            Warnings.CONTAINER_FULL.display(minion)
+            return
+        }
+
         Warnings.remove(minion, Warnings.NO_TOOL)
 
         val loot = ArrayList<ItemStack>()

@@ -44,6 +44,11 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
             minion.setLinkedChest(null)
         }
 
+        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            Warnings.CONTAINER_FULL.display(minion)
+            return
+        }
+
         var waterLocation: Location? = null
         run breaking@{
             LocationUtils.getAllBlocksInRadius(minion.getLocation(), 2.0, false).fastFor {

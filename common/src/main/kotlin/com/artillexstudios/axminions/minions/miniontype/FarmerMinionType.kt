@@ -45,6 +45,11 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
             minion.setLinkedChest(null)
         }
 
+        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            Warnings.CONTAINER_FULL.display(minion)
+            return
+        }
+
         if (!minion.canUseTool()) {
             Warnings.NO_TOOL.display(minion)
             return

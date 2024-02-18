@@ -33,6 +33,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     }
 
     fun tick(minion: Minion) {
+        if (!com.artillexstudios.axminions.api.config.Config.WORK_WHEN_OWNER_OFFLINE() && !minion.isOwnerOnline()) return
         if (!shouldRun(minion)) return
 
         minion.resetAnimation()

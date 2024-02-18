@@ -47,6 +47,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun PLACE_PERMISSION() = AxMinionsAPI.INSTANCE.getConfig().get("place-permissions", false)
         @JvmStatic
+        fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get("work-when-owner-offline", true)
+        @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {
                 debug = AxMinionsAPI.INSTANCE.getConfig().get("debug", false)

@@ -109,4 +109,8 @@ interface Minion : InventoryHolder {
     fun damageTool(amount: Int = 1)
 
     fun canUseTool(): Boolean
+
+    fun isOwnerOnline(): Boolean
+
+    fun setOwnerOnline(online: Boolean)
 }

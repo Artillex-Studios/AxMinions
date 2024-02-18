@@ -67,10 +67,12 @@ class Minion(
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     internal val openInventories = mutableListOf<Inventory>()
+
     @Volatile
     private var ticking = false
     private var debugHologram: Hologram? = null
     private var broken = false
+    private var ownerOnline = false
 
     init {
         spawn()
@@ -671,8 +673,8 @@ class Minion(
                         setTool(it)
                         linkedInventory?.remove(it)
                         return canUseTool()
-                        }
                     }
+                }
                 return false
             } else {
                 return true
@@ -680,6 +682,14 @@ class Minion(
         }
 
         return false
+    }
+
+    override fun isOwnerOnline(): Boolean {
+        return ownerOnline
+    }
+
+    override fun setOwnerOnline(online: Boolean) {
+        ownerOnline = online
     }
 
     override fun getInventory(): Inventory {
