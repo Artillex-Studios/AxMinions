@@ -112,6 +112,7 @@ class MinionPlaceListener : Listener {
                 )
             }
 
+            minion.setOwnerOnline(true)
             AxMinionsPlugin.dataHandler.saveMinion(minion)
 
             event.player.sendMessage(

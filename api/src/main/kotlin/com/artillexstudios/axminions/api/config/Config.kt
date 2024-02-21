@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.U
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import java.io.File
 import java.io.InputStream
+import java.lang.ClassCastException
 import java.util.Locale
 
 class Config(file: File, stream: InputStream) {
@@ -47,7 +48,7 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun PLACE_PERMISSION() = AxMinionsAPI.INSTANCE.getConfig().get("place-permissions", false)
         @JvmStatic
-        fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get("work-when-owner-offline", true)
+        fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get<Boolean>("work-when-owner-offline", true)
         @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {
@@ -68,7 +69,22 @@ class Config(file: File, stream: InputStream) {
     )
 
     fun <T> get(route: String?, default: T): T {
-        return this.config.get(route, default)
+        try {
+            return this.config.get(route, default)
+        } catch (exception: ClassCastException) {
+            val value = this.config.getString(route, default.toString())
+            return when (default!!::class) {
+                Int::class -> {
+                    value.toInt() as T
+                }
+                Double::class -> {
+                    value.toDouble() as T
+                }
+                else -> {
+                    value.toBoolean() as T
+                }
+            }
+        }
     }
 
     fun <T> get(route: String?): T {
