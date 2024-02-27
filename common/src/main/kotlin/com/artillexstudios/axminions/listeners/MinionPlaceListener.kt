@@ -19,6 +19,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.event.block.BlockPlaceEvent
 
 class MinionPlaceListener : Listener {
 
@@ -123,6 +124,13 @@ class MinionPlaceListener : Listener {
                     Placeholder.unparsed("max", (maxMinions).toString())
                 )
             )
+        }
+    }
+    @EventHandler
+    fun onBlockPlace(event: BlockPlaceEvent) {
+        val blockLocation = event.block.location
+        if (AxMinionsPlugin.dataHandler.isMinion(blockLocation)) {
+            event.isCancelled = true
         }
     }
 }
