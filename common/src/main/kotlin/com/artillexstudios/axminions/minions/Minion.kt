@@ -566,7 +566,9 @@ class Minion(
 
         if (ticking) {
             Scheduler.get().runAt(linkedChest) {
-                linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+                if (linkedChest!!.world!!.isChunkLoaded(linkedChest!!.blockX shr 4, linkedChest!!.blockZ shr 4)) {
+                    linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
+                }
             }
         } else {
             linkedInventory = null
