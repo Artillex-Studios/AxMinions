@@ -3,6 +3,7 @@ package com.artillexstudios.axminions
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
 import com.artillexstudios.axapi.scheduler.Scheduler
+import com.artillexstudios.axapi.utils.FeatureFlags
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -58,6 +59,10 @@ class AxMinionsPlugin : AxPlugin() {
         manager.addMavenCentral()
         manager.loadLibrary(stdLib)
         manager.loadLibrary(h2)
+    }
+
+    override fun updateFlags() {
+        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
     }
 
     override fun load() {
