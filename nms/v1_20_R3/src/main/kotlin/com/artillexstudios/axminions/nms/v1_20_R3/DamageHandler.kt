@@ -8,9 +8,11 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.MobType
+import net.minecraft.world.entity.animal.Fox
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.AxeItem
 import net.minecraft.world.item.ItemStack
@@ -28,13 +30,13 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPotionEffectEvent
 
 object DamageHandler {
-    private var DUMMY_ENTITY: LivingEntity? = null
+    private var DUMMY_ENTITY: Fox? = null
 
     fun damage(source: Minion, entity: Entity) {
         val nmsEntity = (entity as CraftEntity).handle
         if (DUMMY_ENTITY === null) {
             DUMMY_ENTITY =
-                ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsEntity.level() as ServerLevel)
+                Fox(EntityType.FOX, nmsEntity.level() as ServerLevel)
         }
 
         synchronized(DUMMY_ENTITY!!) {

@@ -11,6 +11,7 @@ import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.MobType
+import net.minecraft.world.entity.animal.Fox
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.AxeItem
 import net.minecraft.world.item.ItemStack
@@ -28,13 +29,13 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPotionEffectEvent
 
 object DamageHandler {
-    private var DUMMY_ENTITY: LivingEntity? = null
+    private var DUMMY_ENTITY: Fox? = null
 
     fun damage(source: Minion, entity: Entity) {
         val nmsEntity = (entity as CraftEntity).handle
         if (DUMMY_ENTITY === null) {
             DUMMY_ENTITY =
-                ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsEntity.level() as ServerLevel)
+                Fox(net.minecraft.world.entity.EntityType.FOX, nmsEntity.level() as ServerLevel)
         }
 
         synchronized(DUMMY_ENTITY!!) {
@@ -132,7 +133,8 @@ object DamageHandler {
                         val f4 =
                             1.0f + if (sweep > 0) SweepingEdgeEnchantment.getSweepingDamageRatio(sweep) else 0.0f * f
                         val list: List<LivingEntity> = (source.getLocation().world as CraftWorld).handle
-                            .getEntitiesOfClass(LivingEntity::class.java, nmsEntity.boundingBox.inflate(1.0, 0.25, 1.0)).filter { it !is Player }
+                            .getEntitiesOfClass(LivingEntity::class.java, nmsEntity.boundingBox.inflate(1.0, 0.25, 1.0))
+                            .filter { it !is Player }
                         val iterator: Iterator<*> = list.iterator()
 
                         while (iterator.hasNext()) {
