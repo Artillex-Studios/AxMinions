@@ -27,10 +27,10 @@ class MinionPlaceListener : Listener {
     fun onPlayerInteractEvent(event: PlayerInteractEvent) {
         if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
         if (event.clickedBlock == null) return
-        val item = event.item ?: return
+        val item = event.player.inventory.itemInMainHand ?: return
         var meta = item.itemMeta ?: return
 
-        val type = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return
+        val type = meta.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
@@ -59,11 +59,6 @@ class MinionPlaceListener : Listener {
 
         val maxMinions = AxMinionsAPI.INSTANCE.getMinionLimit(event.player)
 
-        if (Minions.getMinionAt(location) != null) {
-            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MINION_AT_LOCATION()))
-            return
-        }
-
         val chunk = location.chunk
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
@@ -76,6 +71,11 @@ class MinionPlaceListener : Listener {
                         Placeholder.unparsed("max", maxMinions.toString())
                     )
                 )
+                return@submit
+            }
+
+            if (AxMinionsPlugin.dataHandler.isMinion(location)) {
+                event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MINION_AT_LOCATION()))
                 return@submit
             }
 
@@ -131,7 +131,7 @@ class MinionPlaceListener : Listener {
     fun onBlockPlace(event: BlockPlaceEvent) {
         val blockLocation = event.block.location
 
-        if (Minions.getMinionAt(blockLocation) != null) {
+        if (AxMinionsPlugin.dataHandler.isMinion(blockLocation)) {
             event.isCancelled = true
         }
     }

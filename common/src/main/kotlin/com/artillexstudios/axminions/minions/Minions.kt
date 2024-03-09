@@ -121,36 +121,6 @@ object Minions {
         }
     }
 
-    fun getMinionAt(location: Location): Minion? {
-        val world = location.world ?: return null
-
-        val worldUUID = world.uid
-        val x = Math.round(location.x).toInt() shr 4
-        val z = Math.round(location.z).toInt() shr 4
-
-        lock.read {
-            for (pos in minions) {
-                if (!pos.ticking) continue
-
-                if (pos.x == x && pos.z == z && pos.worldUUID == worldUUID) {
-                    val minions: ArrayList<Minion> = pos.minions
-                    val minionSize = minions.size
-
-                    for (j in 0..<minionSize) {
-                        val minion = minions[j]
-                        if (minion.getLocation() != location) continue
-
-                        return minion
-                    }
-
-                    return null
-                }
-            }
-        }
-
-        return null
-    }
-
     internal inline fun get(minions: (ArrayList<ChunkPos>) -> Unit) {
         lock.read {
             minions(this.minions)
