@@ -22,6 +22,7 @@ import com.artillexstudios.axminions.integrations.protection.IridiumSkyBlockInte
 import com.artillexstudios.axminions.integrations.protection.KingdomsXIntegration
 import com.artillexstudios.axminions.integrations.protection.LandsIntegration
 import com.artillexstudios.axminions.integrations.protection.SuperiorSkyBlock2Integration
+import com.artillexstudios.axminions.integrations.protection.TownyIntegration
 import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegration
 import com.artillexstudios.axminions.integrations.stacker.DefaultStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
@@ -96,9 +97,10 @@ class Integrations : Integrations {
             }
 
             "economyshopgui" -> {
-                if (isPluginLoaded("EconomyShopGUI") || isPluginLoaded("EconomyShopGUI-Premium")) {
+                if (Bukkit.getPluginManager().getPlugin("EconomyShopGUI") != null || Bukkit.getPluginManager().getPlugin("EconomyShopGUI-Premium") != null) {
                     register(EconomyShopGUIIntegration())
-                }
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into EconomyShopGUI!"))}
             }
         }
 
@@ -170,6 +172,16 @@ class Integrations : Integrations {
             itemsAdderIntegration = true
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+            itemsAdderIntegration = true
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
+            register(TownyIntegration())
         }
     }
 

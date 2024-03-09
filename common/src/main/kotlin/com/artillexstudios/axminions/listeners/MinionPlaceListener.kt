@@ -27,15 +27,13 @@ class MinionPlaceListener : Listener {
     fun onPlayerInteractEvent(event: PlayerInteractEvent) {
         if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
         if (event.clickedBlock == null) return
-        if (event.item == null) return
-        if (!event.item!!.hasItemMeta()) return
+        val item = event.item ?: return
+        var meta = item.itemMeta ?: return
 
         val type = event.item!!.itemMeta!!.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
-        val item = event.item ?: return
-        var meta = item.itemMeta ?: return
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) {
             if (Config.DEBUG()) {
                 event.player.sendMessage(
@@ -44,8 +42,10 @@ class MinionPlaceListener : Listener {
             }
             return
         }
+
         val level = meta.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
         val stats = meta.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
+
         if (Config.PLACE_PERMISSION() && !event.player.hasPermission("axminions.place.${minionType.getName()}")) {
             event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MISSING_PERMISSION()))
             return
@@ -59,6 +59,11 @@ class MinionPlaceListener : Listener {
 
         val maxMinions = AxMinionsAPI.INSTANCE.getMinionLimit(event.player)
 
+        if (Minions.getMinionAt(location) != null) {
+            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MINION_AT_LOCATION()))
+            return
+        }
+
         val chunk = location.chunk
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
@@ -71,11 +76,6 @@ class MinionPlaceListener : Listener {
                         Placeholder.unparsed("max", maxMinions.toString())
                     )
                 )
-                return@submit
-            }
-
-            if (AxMinionsPlugin.dataHandler.isMinion(location)) {
-                event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MINION_AT_LOCATION()))
                 return@submit
             }
 
@@ -126,10 +126,12 @@ class MinionPlaceListener : Listener {
             )
         }
     }
+
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
         val blockLocation = event.block.location
-        if (AxMinionsPlugin.dataHandler.isMinion(blockLocation)) {
+
+        if (Minions.getMinionAt(blockLocation) != null) {
             event.isCancelled = true
         }
     }
