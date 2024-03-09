@@ -96,7 +96,7 @@ class Integrations : Integrations {
             }
 
             "economyshopgui" -> {
-                if (isPluginLoaded("EconomyShopGUI")) {
+                if (isPluginLoaded("EconomyShopGUI") || isPluginLoaded("EconomyShopGUI-Premium")) {
                     register(EconomyShopGUIIntegration())
                 }
             }
