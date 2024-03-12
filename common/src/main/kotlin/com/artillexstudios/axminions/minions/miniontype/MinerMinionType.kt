@@ -68,7 +68,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         when (getConfig().getString("mode").lowercase(Locale.ENGLISH)) {
             "sphere" -> {
                 LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
-                    if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                    if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators()
+                            .isChunkFullyLoaded(location)
+                    ) {
                         val gen = Main.getPlacedGenerators().getLoaded(location)
                         val possible = gen?.isBlockPossibleToMine(location) ?: false
 
@@ -100,7 +102,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     asyncExecutor!!.execute {
                         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
                             .fastFor { location ->
-                                if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                                if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators()
+                                        .isChunkFullyLoaded(location)
+                                ) {
                                     val gen = Main.getPlacedGenerators().getLoaded(location)
                                     val possible = gen?.isBlockPossibleToMine(location) ?: false
 
@@ -127,7 +131,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                 } else {
                     LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
                         .fastFor { location ->
-                            if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                            if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators()
+                                    .isChunkFullyLoaded(location)
+                            ) {
                                 val gen = Main.getPlacedGenerators().getLoaded(location)
                                 val possible = gen?.isBlockPossibleToMine(location) ?: false
 
@@ -154,7 +160,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             "line" -> {
                 faces.fastFor {
                     LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), it).fastFor { location ->
-                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators()
+                                .isChunkFullyLoaded(location)
+                        ) {
                             val gen = Main.getPlacedGenerators().getLoaded(location)
                             val possible = gen?.isBlockPossibleToMine(location) ?: false
 
@@ -181,7 +189,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             "face" -> {
                 LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing)
                     .fastFor { location ->
-                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration && Main.getPlacedGenerators()
+                                .isChunkFullyLoaded(location)
+                        ) {
                             val gen = Main.getPlacedGenerators().getLoaded(location)
                             val possible = gen?.isBlockPossibleToMine(location) ?: false
 

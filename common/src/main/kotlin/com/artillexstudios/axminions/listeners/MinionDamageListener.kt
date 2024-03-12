@@ -17,8 +17,11 @@ class MinionDamageListener : Listener {
     fun onMinionKillEntityEvent(event: MinionKillEntityEvent) {
         val entitySize = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(event.target)
 
+        val amount = ThreadLocalRandom.current().nextInt(1, 4) * entitySize
         event.minion.setActions(event.minion.getActionAmount() + entitySize)
-        event.minion.setStorage(event.minion.getStorage() + ThreadLocalRandom.current().nextInt(1, 4) * entitySize)
+        if (event.minion.getStorage() + amount < event.minion.getType().getDouble("storage", event.minion.getLevel())) {
+            event.minion.setStorage(event.minion.getStorage() + amount * entitySize)
+        }
 
         Scheduler.get().runLaterAt(event.target.location, {
             event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0).filterIsInstance<Item>().fastFor { item ->
