@@ -50,6 +50,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get<Boolean>("work-when-owner-offline", true)
         @JvmStatic
+        fun MAX_BREAKS_PER_TICK() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("max-breaks-per-tick", 200)
+        @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {
                 debug = AxMinionsAPI.INSTANCE.getConfig().get("debug", false)

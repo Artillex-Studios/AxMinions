@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.api.utils
 
+import com.artillexstudios.axminions.api.config.Config
 import java.util.LinkedList
 import java.util.Queue
 import org.bukkit.Location
@@ -65,6 +66,8 @@ object MinionUtils {
 
     @JvmStatic
     fun getTree(startBlock: Block): Set<Block> {
+        val max: Int = Config.MAX_BREAKS_PER_TICK()
+        var count: Int = 0
         val queue: Queue<Block> = LinkedList()
         val visited = mutableSetOf<Block>()
         val tree = mutableSetOf<Block>()
@@ -76,6 +79,10 @@ object MinionUtils {
 
             val type = block.type.toString()
             if (type.endsWith("_WOOD") || type.endsWith("_LOG")) {
+                if (count >= max) {
+                    return tree
+                }
+                count++
                 tree.add(block)
 
                 FACES.fastFor {

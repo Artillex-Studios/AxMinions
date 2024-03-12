@@ -42,6 +42,9 @@ pull-tools-from-chest: false
 # If the minion should work when the owner is offline (only if the chunk is loaded)
 work-when-owner-offline: true
 
+# The maximum amount of blocks a single lumber minion may break at a time
+max-breaks-per-tick: 200
+
 # What type of message we should send when the upgrade fails
 # due to insufficient funds
 # Possible options: chat, title, subtitle, actionbar
@@ -98,4 +101,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 4
+config-version: 5

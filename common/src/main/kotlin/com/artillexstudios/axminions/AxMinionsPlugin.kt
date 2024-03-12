@@ -34,8 +34,8 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
-import net.byteflux.libby.BukkitLibraryManager
-import net.byteflux.libby.Library
+import com.artillexstudios.axapi.libs.libby.BukkitLibraryManager
+import com.artillexstudios.axapi.libs.libby.Library
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
