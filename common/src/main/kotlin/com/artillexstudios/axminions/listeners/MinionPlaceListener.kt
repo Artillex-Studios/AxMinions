@@ -109,7 +109,7 @@ class MinionPlaceListener : Listener {
                         Minions.isTicking(
                             chunk
                         )
-                    }"
+                    } Chunk x: ${chunk.x} z: ${chunk.z} location x: ${location.x} y: ${location.y} z: ${location.z}"
                 )
             }
 

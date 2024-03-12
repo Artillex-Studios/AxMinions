@@ -65,8 +65,8 @@ object Minions {
     }
 
     fun load(minion: Minion) {
-        val chunkX = (Math.round(minion.getLocation().x) shr 4).toInt()
-        val chunkZ = (Math.round(minion.getLocation().z) shr 4).toInt()
+        val chunkX = minion.getLocation().blockX shr 4
+        val chunkZ = minion.getLocation().blockZ shr 4
         val world = minion.getLocation().world ?: return
 
         lock.write {
@@ -80,7 +80,7 @@ object Minions {
                 }
             }
 
-            if (pos === null) {
+            if (pos == null) {
                 pos = ChunkPos(world, chunkX, chunkZ, false)
                 minions.add(pos!!)
             }
@@ -91,8 +91,8 @@ object Minions {
     }
 
     fun remove(minion: Minion) {
-        val chunkX = (Math.round(minion.getLocation().x) shr 4).toInt()
-        val chunkZ = (Math.round(minion.getLocation().z) shr 4).toInt()
+        val chunkX = minion.getLocation().blockX shr 4
+        val chunkZ = minion.getLocation().blockZ shr 4
         val world = minion.getLocation().world ?: return
 
         lock.write {
