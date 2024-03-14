@@ -53,15 +53,29 @@ gui:
       - " <gray>- <white>Killed mobs: <#FF3333><actions>"
       - " <gray>- <white>Stored exp: <#CC00FF><storage>"
       - ""
+  autosmelt:
+    enabled: true
+    slot: 9
+    material: "lava_bucket"
+    name: "<gold>Autosmelt"
+    lore:
+      - ""
+      - "<gray> Click to purchase! "
+      - ""
+      - "<white>Price: <green>$1,000"
+    requirements:
+      money: 1000
+      actions: 100
 
 upgrades:
   1:
     range: 3
     speed: 200
+    storage: 200
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI 6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
       chestplate:
         type: "leather_chestplate"
         color: "0, 150, 255"

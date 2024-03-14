@@ -10,19 +10,52 @@ import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
+import com.artillexstudios.axminions.nms.NMSHandler
 import dev.lone.itemsadder.api.CustomBlock
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.roundToInt
 import me.kryniowesegryderiusz.kgenerators.Main
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.FurnaceRecipe
+import org.bukkit.inventory.ItemStack
 
 class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource("minions/miner.yml")!!) {
-    private var asyncExecutor: ExecutorService? = null
-    private val faces = arrayOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
+    companion object {
+        private var asyncExecutor: ExecutorService? = null
+        private val smeltingRecipes = ArrayList<FurnaceRecipe>()
+        private val faces = arrayOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
+
+        init {
+            Bukkit.recipeIterator().forEachRemaining {
+                if (it is FurnaceRecipe) {
+                    smeltingRecipes.add(it)
+                }
+            }
+        }
+    }
+
+//    private fun toSmelted(minion: Minion, drops: Collection<ItemStack>): MutableList<ItemStack> {
+//        if (minion.getType().getConfig().getBoolean("gui.autosmelt.enabled")) {
+//            val dropsList = ArrayList<ItemStack>(drops.size)
+//            drops.forEach { item ->
+//                smeltingRecipes.fastFor {
+//                    if (it.inputChoice.test(item)) {
+//                        dropsList.add(it.result)
+//                    } else {
+//                        dropsList.add(item)
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        return dropsList
+//    }
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
@@ -65,6 +98,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         Warnings.remove(minion, Warnings.NO_TOOL)
 
         var amount = 0
+        var xp = 0
         when (getConfig().getString("mode").lowercase(Locale.ENGLISH)) {
             "sphere" -> {
                 LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
@@ -83,7 +117,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                     if (isStoneGenerator) {
-                        val drops = location.block.getDrops(minion.getTool())
+                        val block = location.block
+                        val drops = block.getDrops(minion.getTool())
+                        xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                         drops.forEach {
                             amount += it.amount
                         }
@@ -118,7 +154,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                                 if (isStoneGenerator) {
                                     Scheduler.get().run {
-                                        val drops = location.block.getDrops(minion.getTool())
+                                        val block = location.block
+                                        val drops = block.getDrops(minion.getTool())
+                                        xp += NMSHandler.get().getExp(block, minion.getTool() ?: return@run)
                                         drops.forEach {
                                             amount += it.amount
                                         }
@@ -146,7 +184,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                             if (isStoneGenerator) {
-                                val drops = location.block.getDrops(minion.getTool())
+                                val block = location.block
+                                val drops = block.getDrops(minion.getTool())
+                                xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                                 drops.forEach {
                                     amount += it.amount
                                 }
@@ -175,7 +215,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                         if (isStoneGenerator) {
-                            val drops = location.block.getDrops(minion.getTool())
+                            val block = location.block
+                            val drops = block.getDrops(minion.getTool())
+                            xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach { item ->
                                 amount += item.amount
                             }
@@ -217,10 +259,13 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                         if (isStoneGenerator) {
-                            val drops = location.block.getDrops(minion.getTool())
+                            val block = location.block
+                            val drops = block.getDrops(minion.getTool())
+                            xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach {
                                 amount += it.amount
                             }
+
                             minion.addToContainerOrDrop(drops)
                             location.block.type = Material.AIR
                         }
@@ -228,6 +273,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
         }
 
+        val coerced =
+            (minion.getStorage() + xp).coerceIn(0.0, minion.getType().getLong("storage", minion.getLevel()).toDouble())
+        minion.setStorage(coerced)
         minion.setActions(minion.getActionAmount() + amount)
         minion.damageTool(amount)
     }

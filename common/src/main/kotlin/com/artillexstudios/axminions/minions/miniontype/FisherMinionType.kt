@@ -76,9 +76,9 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
         val xp = ThreadLocalRandom.current().nextInt(6) + 1
 
         minion.addToContainerOrDrop(loot)
-        if (minion.getStorage() + xp < minion.getType().getDouble("storage", minion.getLevel())) {
-            minion.setStorage(minion.getStorage() + xp)
-        }
+        val coerced = (minion.getStorage() + xp).coerceIn(0.0, minion.getType().getLong("storage", minion.getLevel()).toDouble())
+        minion.setStorage(coerced)
+
         minion.setActions(minion.getActionAmount() + 1)
         minion.damageTool()
     }
