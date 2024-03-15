@@ -48,9 +48,11 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun PLACE_PERMISSION() = AxMinionsAPI.INSTANCE.getConfig().get("place-permissions", false)
         @JvmStatic
-        fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get<Boolean>("work-when-owner-offline", true)
+        fun WORK_WHEN_OWNER_OFFLINE() = AxMinionsAPI.INSTANCE.getConfig().get("work-when-owner-offline", true)
         @JvmStatic
-        fun MAX_BREAKS_PER_TICK() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("max-breaks-per-tick", 200)
+        fun MAX_BREAKS_PER_TICK() = AxMinionsAPI.INSTANCE.getConfig().get("max-breaks-per-tick", 200)
+        @JvmStatic
+        fun UPGRADE_SOUND() = AxMinionsAPI.INSTANCE.getConfig().get("upgrade-sound", "ENTITY_PLAYER_LEVELUP")
         @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {

@@ -7,8 +7,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import org.bukkit.Chunk
-import org.bukkit.Location
-
 
 object Minions {
     internal val lock = ReentrantReadWriteLock()

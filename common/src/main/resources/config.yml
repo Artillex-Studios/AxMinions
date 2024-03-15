@@ -50,6 +50,11 @@ max-breaks-per-tick: 200
 # Possible options: chat, title, subtitle, actionbar
 upgrade-fail: "chat"
 
+# The sound played when you upgrade a minion
+# set to "" to disable!
+# For a list of sounds visit: https://jd.papermc.io/paper/1.20/org/bukkit/Sound.html
+upgrade-sound: "ENTITY_PLAYER_LEVELUP"
+
 database:
   # Can be H2 (SqLite support is planned)
   type: "H2"
@@ -101,4 +106,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 5
+config-version: 6

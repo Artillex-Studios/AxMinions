@@ -2,21 +2,32 @@ package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axapi.config.Config
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.DumperSettings
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.utils.Keys
-import org.bukkit.inventory.ItemStack
-import org.bukkit.persistence.PersistentDataType
 import java.io.File
 import java.io.InputStream
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 abstract class MinionType(private val name: String, private val defaults: InputStream) {
     private lateinit var config: Config
 
     fun load() {
-        config = Config(File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"), defaults)
+        config = Config(
+            File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"),
+            defaults,
+            GeneralSettings.builder().setUseDefaults(false).build(),
+            LoaderSettings.DEFAULT,
+            DumperSettings.DEFAULT,
+            UpdaterSettings.DEFAULT
+        )
         AxMinionsAPI.INSTANCE.getDataHandler().insertType(this)
     }
 
@@ -41,7 +52,11 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     }
 
     fun getItem(level: Int = 1, actions: Long = 0): ItemStack {
-        val builder = ItemBuilder(config.getSection("item"), Placeholder.unparsed("level", level.toString()), Placeholder.unparsed("actions", actions.toString()))
+        val builder = ItemBuilder(
+            config.getSection("item"),
+            Placeholder.unparsed("level", level.toString()),
+            Placeholder.unparsed("actions", actions.toString())
+        )
         builder.storePersistentData(Keys.MINION_TYPE, PersistentDataType.STRING, name)
         builder.storePersistentData(Keys.LEVEL, PersistentDataType.INTEGER, level)
         builder.storePersistentData(Keys.STATISTICS, PersistentDataType.LONG, actions)

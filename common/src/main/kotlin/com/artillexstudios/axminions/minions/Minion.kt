@@ -25,6 +25,8 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
+import java.text.NumberFormat
+import java.util.Locale
 import java.util.UUID
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
@@ -55,6 +57,9 @@ class Minion(
     private val locationID: Int,
     private var chestLocationId: Int
 ) : Minion {
+    companion object {
+        private val numberFormat = NumberFormat.getCompactNumberInstance(Locale.ENGLISH, NumberFormat.Style.SHORT)
+    }
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
     private var range = 0.0
@@ -250,7 +255,7 @@ class Minion(
                             this.level + 1
                         ).toString()
                     )
-                val stored = Placeholder.parsed("storage", storage.toString())
+                val stored = Placeholder.parsed("storage", numberFormat.format(storage))
                 val actions = Placeholder.parsed("actions", actions.toString())
                 val multiplier = Placeholder.parsed("multiplier", type.getDouble("multiplier", this.level).toString())
                 val nextMultiplier = Placeholder.parsed(

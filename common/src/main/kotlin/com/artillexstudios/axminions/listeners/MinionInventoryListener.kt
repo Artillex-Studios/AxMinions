@@ -14,6 +14,7 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -142,6 +143,10 @@ class MinionInventoryListener : Listener {
                     }
 
                     it.takeBalance(player, money)
+                }
+
+                if (Config.UPGRADE_SOUND().isNotBlank()) {
+                    player.playSound(player, Config.UPGRADE_SOUND(), 1.0f, 1.0f)
                 }
 
                 minion.setLevel(minion.getLevel() + 1)
