@@ -146,7 +146,7 @@ class AxMinionsPlugin : AxPlugin() {
                     }
                 }
             }
-        }, 0, Config.AUTO_SAVE_MINUTES() * 20 * 60)
+        }, 1, Config.AUTO_SAVE_MINUTES() * 20 * 60)
     }
 
     override fun disable() {

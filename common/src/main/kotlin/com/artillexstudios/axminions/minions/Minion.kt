@@ -301,7 +301,7 @@ class Minion(
             } else if (it.equals("charge")) {
                 if (Config.CHARGE_ENABLED()) {
                     val charge = Placeholder.parsed("charge", TimeUtils.format(charge - System.currentTimeMillis()))
-                    item = ItemBuilder(type.getConfig().getSection("gui.$it"), charge).storePersistentData(
+                    item = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"), charge).storePersistentData(
                         Keys.GUI, PersistentDataType.STRING, it
                     ).get()
                 } else {
