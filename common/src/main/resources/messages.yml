@@ -23,6 +23,13 @@ warnings:
   no-tool: "<#FF3333>⚠ <#FFAAAA>The minion needs a tool </#FFAAAA>⚠"
   no-water-nearby: "<#FF3333>⚠ <#FFAAAA>The minion needs water nearby </#FFAAAA>⚠"
   container-full: "<#FF3333>⚠ <#FFAAAA>The container of this minion is full </#FFAAAA>⚠"
+  no-charge: "<#FF3333>⚠ <#FFAAAA>The minion ran out of charge! Refuel it!</#FFAAAA>⚠"
+
+time:
+  day: "d"
+  hour: "h"
+  minute: "m"
+  second: "s"
 
 statistics: |
   <white>Ticking minions: <gradient:#00aaff:#00ccff><ticking></gradient>
@@ -58,8 +65,12 @@ directions:
   south: "South"
   west: "West"
 
+charge:
+  charge: "<green>You have added <white>30 minutes</white> of charge to your minion!"
+  not-enough-money: "<red>You don't have enough money to charge this minion!"
+
 tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 # Do not change!
-config-version: 2
+config-version: 3

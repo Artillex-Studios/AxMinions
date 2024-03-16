@@ -40,6 +40,16 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun PRICES_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
         @JvmStatic
+        fun CHARGE_ENABLED() = AxMinionsAPI.INSTANCE.getConfig().get("charge.enabled", false)
+        @JvmStatic
+        fun CHARGE_AMOUNT() = AxMinionsAPI.INSTANCE.getConfig().get("charge.amount", 1800)
+        @JvmStatic
+        fun MAX_CHARGE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.max-charge", 1440)
+        @JvmStatic
+        fun CHARGE_PRICE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.price", 10000.0)
+        @JvmStatic
+        fun TIMER_FORMAT() = AxMinionsAPI.INSTANCE.getConfig().get("timer-format", 1)
+        @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
         @JvmStatic
         fun PULL_FROM_CHEST() = AxMinionsAPI.INSTANCE.getConfig().get("pull-tools-from-chest", false)

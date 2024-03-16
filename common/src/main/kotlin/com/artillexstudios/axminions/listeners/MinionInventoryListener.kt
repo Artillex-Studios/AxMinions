@@ -11,6 +11,7 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.CoolDown
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
+import java.util.Locale
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Material
@@ -146,7 +147,7 @@ class MinionInventoryListener : Listener {
                 }
 
                 if (Config.UPGRADE_SOUND().isNotBlank()) {
-                    player.playSound(player, Config.UPGRADE_SOUND(), 1.0f, 1.0f)
+                    player.playSound(player, Sound.valueOf(Config.UPGRADE_SOUND().uppercase(Locale.ENGLISH)), 1.0f, 1.0f)
                 }
 
                 minion.setLevel(minion.getLevel() + 1)
@@ -169,6 +170,38 @@ class MinionInventoryListener : Listener {
                 } else {
                     player.giveExp(stored.toInt())
                     minion.setStorage(0.0)
+                }
+            }
+
+            "charge" -> {
+                if ((AxMinionsPlugin.integrations.getEconomyIntegration()?.getBalance(player)
+                        ?: return) < Config.CHARGE_PRICE()
+                ) {
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE_FAIL()))
+                    return
+                }
+
+                AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
+                    minion.getOwner()?.let { player ->
+                        it.takeBalance(player, Config.CHARGE_PRICE())
+                    }
+                }
+
+                val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
+
+                if (chargeSeconds + Config.CHARGE_AMOUNT() > Config.MAX_CHARGE() * 60L) {
+                    minion.setCharge(System.currentTimeMillis() + Config.MAX_CHARGE() * 60L * 1000L)
+                    return
+                }
+
+                if (minion.getCharge() < System.currentTimeMillis()) {
+                    minion.setCharge(System.currentTimeMillis() + Config.CHARGE_AMOUNT() * 1000)
+                } else {
+                    minion.setCharge(minion.getCharge() + Config.CHARGE_AMOUNT() * 1000)
+                }
+
+                if (Messages.CHARGE().isNotBlank()) {
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE()))
                 }
             }
         }

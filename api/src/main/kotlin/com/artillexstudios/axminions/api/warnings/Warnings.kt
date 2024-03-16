@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.api.warnings
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.warnings.impl.WarningContainerFull
+import com.artillexstudios.axminions.api.warnings.impl.WarningNoCharge
 import com.artillexstudios.axminions.api.warnings.impl.WarningNoContainer
 import com.artillexstudios.axminions.api.warnings.impl.WarningNoTool
 import com.artillexstudios.axminions.api.warnings.impl.WarningNoWaterNearby
@@ -20,6 +21,9 @@ object Warnings {
 
     @JvmField
     val NO_WATER_NEARBY = register(WarningNoWaterNearby())
+
+    @JvmField
+    val NO_CHARGE = register(WarningNoCharge())
 
     @JvmStatic
     fun register(warning: Warning): Warning {

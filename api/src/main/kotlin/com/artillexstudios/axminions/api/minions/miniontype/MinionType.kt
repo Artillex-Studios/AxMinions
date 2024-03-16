@@ -73,11 +73,11 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     }
 
     fun getDouble(key: String, level: Int): Double {
-        return get(key, level, -1.0, Double::class.java)!!
+        return get(key, level, 0.0, Double::class.java)!!
     }
 
     fun getLong(key: String, level: Int): Long {
-        return get(key, level, -1, Long::class.java)!!
+        return get(key, level, 0, Long::class.java)!!
     }
 
     fun getSection(key: String, level: Int): Section? {

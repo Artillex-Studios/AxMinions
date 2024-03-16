@@ -21,6 +21,7 @@ import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.TimeUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
@@ -40,6 +41,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.EulerAngle
 
@@ -55,7 +57,8 @@ class Minion(
     private var actions: Long,
     private var storage: Double,
     private val locationID: Int,
-    private var chestLocationId: Int
+    private var chestLocationId: Int,
+    private var charge: Long
 ) : Minion {
     companion object {
         private val numberFormat = NumberFormat.getCompactNumberInstance(Locale.ENGLISH, NumberFormat.Style.SHORT)
@@ -72,6 +75,7 @@ class Minion(
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     internal val openInventories = mutableListOf<Inventory>()
+    private var toolMeta: ItemMeta? = null
 
     @Volatile
     private var ticking = false
@@ -188,6 +192,13 @@ class Minion(
             debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking"))
         }
 
+        if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {
+            Warnings.NO_CHARGE.display(this)
+            return
+        }
+
+        Warnings.remove(this, Warnings.NO_CHARGE)
+
         Scheduler.get().executeAt(location) {
             type.tick(this)
         }
@@ -207,7 +218,7 @@ class Minion(
     private fun updateInventory(inventory: Inventory) {
         AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items").getRoutesAsStrings(false).forEach {
             if (it.equals("filler")) return@forEach
-            val item: ItemStack
+            val item: ItemStack?
             if (it.equals("upgrade", true) || it.equals("statistics", true)) {
                 val level = Placeholder.parsed("level", level.toString())
                 val nextLevel = Placeholder.parsed(
@@ -287,6 +298,15 @@ class Minion(
                 ).get()
             } else if (it.equals("item")) {
                 item = tool?.clone() ?: ItemStack(Material.AIR)
+            } else if (it.equals("charge")) {
+                if (Config.CHARGE_ENABLED()) {
+                    val charge = Placeholder.parsed("charge", TimeUtils.format(charge - System.currentTimeMillis()))
+                    item = ItemBuilder(type.getConfig().getSection("gui.$it"), charge).storePersistentData(
+                        Keys.GUI, PersistentDataType.STRING, it
+                    ).get()
+                } else {
+                    item = null
+                }
             } else {
                 val rotation = Placeholder.unparsed("direction", Messages.ROTATION_NAME(direction))
                 val linked = Placeholder.unparsed(
@@ -304,7 +324,9 @@ class Minion(
                 ).get()
             }
 
-            inventory.setItem(AxMinionsAPI.INSTANCE.getConfig().get("gui.items.$it.slot"), item)
+            if (item != null) {
+                inventory.setItem(AxMinionsAPI.INSTANCE.getConfig().get("gui.items.$it.slot"), item)
+            }
         }
     }
 
@@ -373,6 +395,12 @@ class Minion(
 
     override fun setTool(tool: ItemStack, save: Boolean) {
         this.tool = tool.clone()
+        toolMeta = if (!tool.type.isAir) {
+            tool.itemMeta
+        } else {
+            null
+        }
+
         dirty = true
 
         if (this.tool?.type == Material.AIR) {
@@ -456,6 +484,8 @@ class Minion(
 
                 updateInventories()
             }
+        } else {
+            linkedInventory = null
         }
 
         AxMinionsPlugin.dataQueue.submit {
@@ -595,7 +625,7 @@ class Minion(
     override fun damageTool(amount: Int) {
         if (!Config.USE_DURABILITY()) return
 
-        val meta = this.tool?.itemMeta as? Damageable ?: return
+        val meta = toolMeta as? Damageable ?: return
 
         if (Math.random() > 1f / (meta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
 
@@ -641,7 +671,7 @@ class Minion(
     }
 
     override fun canUseTool(): Boolean {
-        val meta = this.tool?.itemMeta ?: return false
+        val meta = toolMeta ?: return false
 
         if (!Config.USE_DURABILITY() && meta is Damageable) {
             return true
@@ -688,7 +718,7 @@ class Minion(
             }
         }
 
-        return false
+        return true
     }
 
     override fun isOwnerOnline(): Boolean {
@@ -697,6 +727,18 @@ class Minion(
 
     override fun setOwnerOnline(online: Boolean) {
         ownerOnline = online
+    }
+
+    override fun getCharge(): Long {
+        return charge
+    }
+
+    override fun setCharge(charge: Long) {
+        this.charge = charge
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun getInventory(): Inventory {

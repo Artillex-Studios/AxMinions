@@ -27,6 +27,16 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun CONTAINER_FULL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
         @JvmStatic
+        fun TIME_DAY() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.day")
+        @JvmStatic
+        fun TIME_HOUR() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.hour")
+        @JvmStatic
+        fun TIME_MINUTE() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.minute")
+        @JvmStatic
+        fun TIME_SECOND() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.second")
+        @JvmStatic
+        fun NO_CHARGE_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-charge")
+        @JvmStatic
         fun RELOAD_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("reload")
         @JvmStatic
         fun PLACE_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.success")
@@ -45,6 +55,10 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun ROTATION_NAME(direction: Direction) = AxMinionsAPI.INSTANCE.getMessages().get("directions.${direction.name.lowercase(
             Locale.ENGLISH)}", direction.name)
+        @JvmStatic
+        fun CHARGE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("charge.charge")
+        @JvmStatic
+        fun CHARGE_FAIL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("charge.not-enough-money")
         @JvmStatic
         fun WRONG_TOOL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("tools.wrong-tool")
         @JvmStatic

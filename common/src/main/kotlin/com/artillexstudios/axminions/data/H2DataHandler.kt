@@ -67,6 +67,12 @@ class H2DataHandler : DataHandler {
                     it.executeUpdate()
                 }
         }
+
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("ALTER TABLE `axminions_minions` ADD COLUMN IF NOT EXISTS `charge` BIGINT DEFAULT(0);").use {
+                it.executeUpdate()
+            }
+        }
     }
 
     override fun insertType(minionType: MinionType) {
@@ -105,6 +111,7 @@ class H2DataHandler : DataHandler {
                         val storage = resultSet.getDouble("storage")
                         val actions = resultSet.getLong("actions")
                         val tool = resultSet.getString("tool")
+                        val charge = resultSet.getLong("charge")
 
                         val location = getLocation(locationId)
                         var chestLocation: Location? = null
@@ -129,7 +136,8 @@ class H2DataHandler : DataHandler {
                             actions,
                             storage,
                             locationId,
-                            chestLocationId
+                            chestLocationId,
+                            charge
                         )
                     }
                 }
@@ -255,7 +263,7 @@ class H2DataHandler : DataHandler {
         }
 
         dataSource.connection.use { connection ->
-            connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?)")
+            connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`, `charge`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?,?)")
                 .use { statement ->
                     statement.setInt(1, locationId)
                     if (linkedChestId == null) {
@@ -274,6 +282,7 @@ class H2DataHandler : DataHandler {
                     } else {
                         statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
                     }
+                    statement.setLong(10, minion.getCharge())
                     statement.executeUpdate()
                 }
         }

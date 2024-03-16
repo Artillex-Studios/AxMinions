@@ -67,6 +67,17 @@ hooks:
   # Supported prices providers: ShopGUIPlus, Essentials, EconomyShopGUI, CMI, custom
   prices: "ShopGUIPlus"
 
+charge:
+  enabled: false
+  amount: 1800 # in seconds
+  max-charge: 1440 # in minutes
+  price: 10000
+
+# 1 - HH:MM:SS, for example 01:25:35
+# 2 - short format, for example 20m
+# 3 - text format, for example 01h 25m 35s
+timer-format: 1
+
 gui:
   size: 27
   items:
@@ -100,10 +111,19 @@ gui:
       slot: 15
     statistics:
       slot: 16
+    charge:
+      type: "lava_bucket"
+      name: "<#FB8E08><b>Charge"
+      lore:
+        - ""
+        - " <gray>- <white>Current charge: <#FFCC00><charge>"
+        - ""
+        - "<#FB8E08><b>(!)</b> Click here to charge your minion for <white>10 minutes</white> for <white>$10,000</white>!"
+      slot: 9
 
 # Only change this, if you are asked to! This will make your performance worse, and will spam messages in your console!
 # Requires restart!
 debug: false
 
 # Do not change!
-config-version: 6
+config-version: 7

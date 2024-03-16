@@ -63,7 +63,7 @@ object DamageHandler {
 
             DUMMY_ENTITY?.setItemSlot(EquipmentSlot.MAINHAND, nmsItem)
 
-            if (!nmsEntity.isAttackable) return
+            if (!nmsEntity.isAttackable || entity is Player) return
             val f2 = 1.0f
 
             var f1 = if (nmsEntity is LivingEntity) {

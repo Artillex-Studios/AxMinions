@@ -113,4 +113,8 @@ interface Minion : InventoryHolder {
     fun isOwnerOnline(): Boolean
 
     fun setOwnerOnline(online: Boolean)
+
+    fun getCharge(): Long
+
+    fun setCharge(charge: Long)
 }
