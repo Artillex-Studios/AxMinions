@@ -59,7 +59,7 @@ class LitMinionsConverter : Converter {
 
                         val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
                         val chestLocationId = if (chestLocation != null) AxMinionsPlugin.dataHandler.getLocationID(chestLocation) else 0
-                        val minion = Minion(location, uuid, Bukkit.getOfflinePlayer(uuid), type, level, ItemStack(Material.AIR), chestLocation, direction, statistics, storage, locationId, chestLocationId)
+                        val minion = Minion(location, uuid, Bukkit.getOfflinePlayer(uuid), type, level, ItemStack(Material.AIR), chestLocation, direction, statistics, storage, locationId, chestLocationId, 0)
                         minion.setTicking(true)
                         AxMinionsPlugin.dataHandler.saveMinion(minion)
                     }

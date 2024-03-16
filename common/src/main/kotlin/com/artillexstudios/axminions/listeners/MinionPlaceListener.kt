@@ -92,6 +92,7 @@ class MinionPlaceListener : Listener {
                 stats,
                 0.0,
                 locationId,
+                0,
                 0
             )
             Minions.startTicking(chunk)
