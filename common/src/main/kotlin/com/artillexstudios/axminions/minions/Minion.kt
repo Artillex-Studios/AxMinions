@@ -38,6 +38,7 @@ import org.bukkit.block.Container
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.inventory.CreativeCategory
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
@@ -62,7 +63,17 @@ class Minion(
 ) : Minion {
     companion object {
         private val numberFormat = NumberFormat.getCompactNumberInstance(Locale.ENGLISH, NumberFormat.Style.SHORT)
+        private val notDurable = arrayListOf<Material>()
+
+        init {
+            for (value in Material.entries) {
+                if (value.maxDurability == 1.toShort() || value.maxDurability == 0.toShort()) {
+                    notDurable.add(value)
+                }
+            }
+        }
     }
+
     private lateinit var entity: PacketArmorStand
     private var nextAction = 0
     private var range = 0.0
@@ -671,6 +682,10 @@ class Minion(
     }
 
     override fun canUseTool(): Boolean {
+        if (notDurable.contains(tool?.type)) {
+            return true
+        }
+
         val meta = toolMeta ?: return false
 
         if (!Config.USE_DURABILITY() && meta is Damageable) {
