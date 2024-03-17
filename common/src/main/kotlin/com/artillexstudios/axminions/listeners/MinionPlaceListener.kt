@@ -45,6 +45,7 @@ class MinionPlaceListener : Listener {
 
         val level = meta.persistentDataContainer.get(Keys.LEVEL, PersistentDataType.INTEGER) ?: 0
         val stats = meta.persistentDataContainer.get(Keys.STATISTICS, PersistentDataType.LONG) ?: 0
+        val charge = meta.persistentDataContainer.get(Keys.CHARGE, PersistentDataType.LONG) ?: 0
 
         if (Config.PLACE_PERMISSION() && !event.player.hasPermission("axminions.place.${minionType.getName()}")) {
             event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MISSING_PERMISSION()))
@@ -93,7 +94,7 @@ class MinionPlaceListener : Listener {
                 0.0,
                 locationId,
                 0,
-                0
+                charge
             )
             Minions.startTicking(chunk)
 

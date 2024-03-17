@@ -51,7 +51,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         run(minion)
     }
 
-    fun getItem(level: Int = 1, actions: Long = 0): ItemStack {
+    fun getItem(level: Int = 1, actions: Long = 0, charge: Long = 0): ItemStack {
         val builder = ItemBuilder(
             config.getSection("item"),
             Placeholder.unparsed("level", level.toString()),
@@ -60,6 +60,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         builder.storePersistentData(Keys.MINION_TYPE, PersistentDataType.STRING, name)
         builder.storePersistentData(Keys.LEVEL, PersistentDataType.INTEGER, level)
         builder.storePersistentData(Keys.STATISTICS, PersistentDataType.LONG, actions)
+        builder.storePersistentData(Keys.CHARGE, PersistentDataType.LONG, charge)
 
         return builder.clonedGet()
     }

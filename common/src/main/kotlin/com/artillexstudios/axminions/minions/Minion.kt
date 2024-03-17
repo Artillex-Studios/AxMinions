@@ -365,7 +365,7 @@ class Minion(
     }
 
     override fun getAsItem(): ItemStack {
-        return type.getItem(level, actions)
+        return type.getItem(level, actions, charge)
     }
 
     override fun getLevel(): Int {

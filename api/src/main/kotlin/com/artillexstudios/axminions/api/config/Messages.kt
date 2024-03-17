@@ -27,13 +27,13 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun CONTAINER_FULL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
         @JvmStatic
-        fun TIME_DAY() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.day")
+        fun TIME_DAY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.day")
         @JvmStatic
-        fun TIME_HOUR() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.hour")
+        fun TIME_HOUR() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.hour")
         @JvmStatic
-        fun TIME_MINUTE() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.minute")
+        fun TIME_MINUTE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.minute")
         @JvmStatic
-        fun TIME_SECOND() = AxMinionsAPI.INSTANCE.getMessages().get<Long>("time.second")
+        fun TIME_SECOND() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.second")
         @JvmStatic
         fun NO_CHARGE_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.no-charge")
         @JvmStatic

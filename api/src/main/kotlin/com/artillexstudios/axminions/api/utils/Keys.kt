@@ -14,4 +14,6 @@ object Keys {
     val STATISTICS = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "statistics")
     @JvmField
     val PLACED = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "placed")
+    @JvmField
+    val CHARGE = NamespacedKey(AxMinionsAPI.INSTANCE.getAxMinionsInstance(), "charge")
 }

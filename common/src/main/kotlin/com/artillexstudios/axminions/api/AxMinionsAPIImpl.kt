@@ -7,10 +7,12 @@ import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.integrations.Integrations
 import com.artillexstudios.axminions.api.minions.Minion
+import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.minions.Minions
 import org.bukkit.entity.Player
 import java.io.File
+import java.util.Locale
 
 class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
 
