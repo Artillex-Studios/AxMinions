@@ -72,11 +72,25 @@ class MinionPlaceListener : Listener {
                         Placeholder.unparsed("max", maxMinions.toString())
                     )
                 )
+
+                Scheduler.get().run { _ ->
+                    meta = item.itemMeta!!
+                    meta.persistentDataContainer.remove(Keys.PLACED)
+                    item.itemMeta = meta
+                    item.amount = item.amount.minus(1)
+                }
                 return@submit
             }
 
             if (AxMinionsPlugin.dataHandler.isMinion(location)) {
                 event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.PLACE_MINION_AT_LOCATION()))
+
+                Scheduler.get().run { _ ->
+                    meta = item.itemMeta!!
+                    meta.persistentDataContainer.remove(Keys.PLACED)
+                    item.itemMeta = meta
+                    item.amount = item.amount.minus(1)
+                }
                 return@submit
             }
 
