@@ -13,6 +13,7 @@ import com.artillexstudios.axminions.minions.Minion
 import com.artillexstudios.axminions.minions.Minions
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -34,7 +35,9 @@ class MinionPlaceListener : Listener {
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
-        if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) {
+        if (!AxMinionsPlugin.integrations.getProtectionIntegration()
+                .canBuildAt(event.player, event.clickedBlock!!.location)
+        ) {
             if (Config.DEBUG()) {
                 event.player.sendMessage(
                     "Could not place due to protection hook!"
@@ -93,7 +96,7 @@ class MinionPlaceListener : Listener {
                 }
                 return@submit
             }
-
+            
             val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
             val minion = Minion(
                 location,

@@ -66,7 +66,7 @@ class SellerMinionType : MinionType("seller", AxMinionsPlugin.INSTANCE.getResour
 
             var price = AxMinionsPlugin.integrations.getPricesIntegration()!!.getPrice(it)
 
-            if (price == -1.0) {
+            if (price <= 0) {
                 if (getConfig().get("delete-unsellable")) {
                     it.amount = 0
                 }

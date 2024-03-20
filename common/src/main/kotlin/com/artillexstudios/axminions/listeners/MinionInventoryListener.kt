@@ -181,13 +181,18 @@ class MinionInventoryListener : Listener {
                     return
                 }
 
+                val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
+
+                if ((Config.MAX_CHARGE() * 60) - chargeSeconds < 10) {
+                    println("Not enough time has passed!")
+                    return
+                }
+
                 AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                     minion.getOwner()?.let { player ->
                         it.takeBalance(player, Config.CHARGE_PRICE())
                     }
                 }
-
-                val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
 
                 if (chargeSeconds + Config.CHARGE_AMOUNT() > Config.MAX_CHARGE() * 60L) {
                     minion.setCharge(System.currentTimeMillis() + Config.MAX_CHARGE() * 60L * 1000L)

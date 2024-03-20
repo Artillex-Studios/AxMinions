@@ -636,7 +636,7 @@ class Minion(
     override fun damageTool(amount: Int) {
         if (!Config.USE_DURABILITY()) return
 
-        if (notDurable.contains(tool?.type)) {
+        if (notDurable.contains(tool?.type) && !(tool?.type?.isAir ?: return)) {
             return
         }
 
@@ -686,7 +686,7 @@ class Minion(
     }
 
     override fun canUseTool(): Boolean {
-        if (notDurable.contains(tool?.type)) {
+        if (notDurable.contains(tool?.type) && !(tool?.type?.isAir ?: return false)) {
             return true
         }
 
