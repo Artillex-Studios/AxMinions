@@ -68,9 +68,10 @@ directions:
 charge:
   charge: "<green>You have added <white>30 minutes</white> of charge to your minion!"
   not-enough-money: "<red>You don't have enough money to charge this minion!"
+  not-enough-time-passed: "<red>Your minion is nearly fully charged! Wait a bit before charging it again!"
 
 tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 # Do not change!
-config-version: 3
+config-version: 4

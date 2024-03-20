@@ -183,8 +183,8 @@ class MinionInventoryListener : Listener {
 
                 val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
 
-                if ((Config.MAX_CHARGE() * 60) - chargeSeconds < 10) {
-                    println("Not enough time has passed!")
+                if ((Config.MAX_CHARGE() * 60) - chargeSeconds < Config.MINIMUM_CHARGE()) {
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE_NOT_ENOUGH_TIME_PASSED()))
                     return
                 }
 

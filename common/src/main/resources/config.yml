@@ -72,6 +72,7 @@ charge:
   amount: 1800 # in seconds
   max-charge: 1440 # in minutes
   price: 10000
+  minimum-charge: 30 # in seconds
 
 # 1 - HH:MM:SS, for example 01:25:35
 # 2 - short format, for example 20m
@@ -125,4 +126,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 7
+config-version: 8

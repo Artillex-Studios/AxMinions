@@ -48,6 +48,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun CHARGE_PRICE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.price", 10000.0)
         @JvmStatic
+        fun MINIMUM_CHARGE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.minimum-charge", 30)
+        @JvmStatic
         fun TIMER_FORMAT() = AxMinionsAPI.INSTANCE.getConfig().get("timer-format", 1)
         @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
