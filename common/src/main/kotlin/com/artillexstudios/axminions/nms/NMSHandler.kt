@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.nms
 
 import com.artillexstudios.axapi.utils.Version
 import com.artillexstudios.axminions.api.minions.Minion
+import java.util.UUID
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
@@ -22,6 +23,8 @@ interface NMSHandler {
     fun generateRandomFishingLoot(minion: Minion, waterLocation: Location): List<ItemStack>
 
     fun isAnimal(entity: Entity): Boolean
+
+    fun getAnimalUUID(): UUID
 
     fun getExp(block: Block, itemStack: ItemStack): Int
 }

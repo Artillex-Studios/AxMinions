@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.nms.v1_20_R2
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.nms.NMSHandler
+import java.util.UUID
 import net.minecraft.world.entity.MobCategory
 import org.bukkit.Location
 import org.bukkit.block.Block
@@ -25,6 +26,10 @@ class NMSHandler : NMSHandler {
 
     override fun isAnimal(entity: Entity): Boolean {
         return (entity as CraftEntity).handle.type.category == MobCategory.CREATURE
+    }
+
+    override fun getAnimalUUID(): UUID {
+        return DamageHandler.getUUID()
     }
 
     override fun getExp(block: Block, itemStack: ItemStack): Int {

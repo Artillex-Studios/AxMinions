@@ -6,10 +6,13 @@ import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.nms.NMSHandler
 import java.util.concurrent.ThreadLocalRandom
 import org.bukkit.entity.Item
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 class MinionDamageListener : Listener {
 
@@ -44,5 +47,13 @@ class MinionDamageListener : Listener {
                 }
             }
         }, 2)
+    }
+
+    @EventHandler
+    fun onEntityDamageByEntityEvent(event: EntityDamageByEntityEvent) {
+        if (event.damager.uniqueId == NMSHandler.get().getAnimalUUID() && event.entity is Player) {
+            event.isCancelled = true
+            event.damage = 0.0
+        }
     }
 }
