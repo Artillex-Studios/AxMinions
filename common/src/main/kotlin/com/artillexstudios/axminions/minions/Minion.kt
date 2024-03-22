@@ -29,6 +29,7 @@ import com.artillexstudios.axminions.listeners.LinkingListener
 import java.text.NumberFormat
 import java.util.Locale
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -91,7 +92,7 @@ class Minion(
     @Volatile
     private var ticking = false
     private var debugHologram: Hologram? = null
-    private var broken = false
+    private val broken = AtomicBoolean(false)
     private var ownerOnline = false
 
     init {
@@ -112,37 +113,34 @@ class Minion(
         entity.setHasArms(true)
 
         entity.onClick { event ->
-            if (broken) {
+            if (broken.get()) {
                 return@onClick
             }
 
+            // We want to do this, so we don't accidentally cause dupes...
+            // Atomic variable; we don't want the scheduler to mess up the state
             if (event.isAttack) {
-                if (ownerUUID == event.player.uniqueId) {
-                    broken = true
-                    Scheduler.get().runAt(location) {
+                broken.set(true)
+            }
+
+            Scheduler.get().runAt(location) {
+                val canBuildAt = AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
+                    event.player,
+                    event.packetEntity.location
+                )
+
+                if (event.isAttack) {
+                    if (ownerUUID == event.player.uniqueId) {
                         breakMinion(event)
-                    }
-                } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
-                        event.player,
-                        event.packetEntity.location
-                    ) && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")
-                ) {
-                    broken = true
-                    Scheduler.get().runAt(location) {
+                    } else if ((canBuildAt && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")) {
                         breakMinion(event)
+                    } else {
+                        broken.set(false)
                     }
-                }
-            } else {
-                if (ownerUUID == event.player.uniqueId) {
-                    Scheduler.get().runAt(location) {
+                } else {
+                    if (ownerUUID == event.player.uniqueId) {
                         openInventory(event.player)
-                    }
-                } else if ((AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
-                        event.player,
-                        event.packetEntity.location
-                    ) && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")
-                ) {
-                    Scheduler.get().runAt(location) {
+                    } else if ((canBuildAt && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")) {
                         openInventory(event.player)
                     }
                 }
