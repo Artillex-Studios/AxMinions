@@ -80,7 +80,6 @@ class MinionPlaceListener : Listener {
                     meta = item.itemMeta!!
                     meta.persistentDataContainer.remove(Keys.PLACED)
                     item.itemMeta = meta
-                    item.amount = item.amount.minus(1)
                 }
                 return@submit
             }
@@ -92,7 +91,6 @@ class MinionPlaceListener : Listener {
                     meta = item.itemMeta!!
                     meta.persistentDataContainer.remove(Keys.PLACED)
                     item.itemMeta = meta
-                    item.amount = item.amount.minus(1)
                 }
                 return@submit
             }
