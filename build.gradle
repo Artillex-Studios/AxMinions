@@ -128,7 +128,7 @@ allprojects {
         compileOnly 'com.github.LoneDev6:api-itemsadder:3.6.1'
         compileOnly 'com.palmergames.bukkit.towny:towny:0.100.1.0'
         implementation platform('com.intellectualsites.bom:bom-newest:1.35')
-        implementation("com.artillexstudios.axapi:axapi:1.4.87")
+        implementation("com.artillexstudios.axapi:axapi:1.4.100")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("org.bstats:bstats-bukkit:3.0.2")
         compileOnly 'org.black_ixx:playerpoints:3.2.6'
@@ -141,6 +141,11 @@ allprojects {
         relocate("com.zaxxer", "com.artillexstudios.axminions.libs.hikaricp")
         relocate("org.bstats", "com.artillexstudios.axminions.libs.bstats")
         relocate("net.byteflux", "com.artillexstudios.axminions.libs.libby")
+        relocate("net.kyori", "com.artillexstudios.axminions.libs.kyori")
+        relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
+        relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
+        relocate("org.slf4j", "com.artillexstudios.axminions.libs.slf4j")
+        relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
     }
 }
 
