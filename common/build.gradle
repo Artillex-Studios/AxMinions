@@ -1,4 +1,4 @@
-group = 'com.artillexstudios.axminions'
+group = 'com.artillexstudios.axminions.common'
 version = rootProject.version
 
 processResources {

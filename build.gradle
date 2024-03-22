@@ -134,19 +134,26 @@ allprojects {
         compileOnly 'org.black_ixx:playerpoints:3.2.6'
     }
 
-    shadowJar {
-        relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.libs.axapi")
-        relocate("org.h2", "com.artillexstudios.axminions.libs.h2")
-        relocate("org.jetbrains.kotlin", "com.artillexstudios.axminions.libs.kotlin")
-        relocate("com.zaxxer", "com.artillexstudios.axminions.libs.hikaricp")
-        relocate("org.bstats", "com.artillexstudios.axminions.libs.bstats")
-        relocate("net.byteflux", "com.artillexstudios.axminions.libs.libby")
-        relocate("net.kyori", "com.artillexstudios.axminions.libs.kyori")
-        relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
-        relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
-        relocate("org.slf4j", "com.artillexstudios.axminions.libs.slf4j")
-        relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
+    compileKotlin {
+        kotlinOptions {
+            javaParameters = true
+        }
     }
+}
+
+
+shadowJar {
+    relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.libs.axapi")
+    relocate("org.h2", "com.artillexstudios.axminions.libs.h2")
+    relocate("org.jetbrains.kotlin", "com.artillexstudios.axminions.libs.kotlin")
+    relocate("com.zaxxer", "com.artillexstudios.axminions.libs.hikaricp")
+    relocate("org.bstats", "com.artillexstudios.axminions.libs.bstats")
+    relocate("net.byteflux", "com.artillexstudios.axminions.libs.libby")
+    relocate("net.kyori", "com.artillexstudios.axminions.libs.kyori")
+    relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
+    relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
+    relocate("org.slf4j", "com.artillexstudios.axminions.libs.slf4j")
+    relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
 }
 
 kotlin {
