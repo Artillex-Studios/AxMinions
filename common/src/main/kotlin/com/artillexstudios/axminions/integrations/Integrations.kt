@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.integrations
 
 import com.artillexstudios.axapi.utils.StringUtils
+import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.exception.InvalidIntegrationException
 import com.artillexstudios.axminions.api.integrations.Integration
@@ -28,6 +29,7 @@ import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegrati
 import com.artillexstudios.axminions.integrations.stacker.DefaultStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.WildStackerIntegration
+import com.artillexstudios.axminions.listeners.SuperiorSkyBlock2Listener
 import java.util.Locale
 import org.bukkit.Bukkit
 
@@ -131,6 +133,7 @@ class Integrations : Integrations {
             register(SuperiorSkyBlock2Integration())
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into SuperiorSkyblock2!"))
+            Bukkit.getPluginManager().registerEvents(SuperiorSkyBlock2Listener(), AxMinionsPlugin.INSTANCE)
         }
 
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
