@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.7'
+version = '1.0.8'
 
 repositories {
     mavenCentral()
@@ -20,6 +20,9 @@ repositories {
 dependencies {
     implementation project(path: ":api")
     implementation project(path: ":common")
+    implementation project(path: ":nms:v1_19_R1", configuration: "reobf")
+    implementation project(path: ":nms:v1_19_R2", configuration: "reobf")
+    implementation project(path: ":nms:v1_19_R3", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R2", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R3", configuration: "reobf")
@@ -128,7 +131,7 @@ allprojects {
         compileOnly 'com.github.LoneDev6:api-itemsadder:3.6.1'
         compileOnly 'com.palmergames.bukkit.towny:towny:0.100.1.0'
         implementation platform('com.intellectualsites.bom:bom-newest:1.35')
-        implementation("com.artillexstudios.axapi:axapi:1.4.100")
+        implementation("com.artillexstudios.axapi:axapi:1.4.134")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("org.bstats:bstats-bukkit:3.0.2")
         compileOnly 'org.black_ixx:playerpoints:3.2.6'
