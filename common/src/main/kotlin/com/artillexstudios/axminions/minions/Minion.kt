@@ -640,6 +640,8 @@ class Minion(
 
         val meta = toolMeta as? Damageable ?: return
 
+        if (tool?.itemMeta?.isUnbreakable == true) return
+
         if (Math.random() > 1f / (meta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
 
         if ((tool?.type?.maxDurability ?: return) <= meta.damage + amount) {
