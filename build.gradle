@@ -156,7 +156,6 @@ shadowJar {
     relocate("net.kyori", "com.artillexstudios.axminions.libs.kyori")
     relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
     relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
-    relocate("org.slf4j", "com.artillexstudios.axminions.libs.slf4j")
     relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
 }
 
