@@ -39,6 +39,21 @@ class AxMinionsCommand {
         receiver.inventory.addItem(item)
     }
 
+    @Subcommand("reset")
+    @CommandPermission("axminions.command.reset")
+    @Description("Reset player's minion")
+    @AutoComplete("*")
+    fun reset(
+        sender: CommandSender,
+        receiver: Player
+    ) {
+        AxMinionsAPI.INSTANCE.getMinions().fastFor {
+            if(it.getOwnerUUID() == receiver.uniqueId) {
+                it.remove()
+            }
+        }
+    }
+
     @Subcommand("reload")
     @CommandPermission("axminions.command.reload")
     @Description("Reload the configurations of the plugin")
