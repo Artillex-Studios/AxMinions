@@ -10,6 +10,7 @@ import com.artillexstudios.axminions.nms.NMSHandler
 import kotlin.math.roundToInt
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Tameable
@@ -56,6 +57,7 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
 
         Warnings.remove(minion, Warnings.NO_TOOL)
 
+        var amount = 0;
         minion.getLocation().world!!.getNearbyEntities(
             minion.getLocation(),
             minion.getRange(),
@@ -63,6 +65,8 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
             minion.getRange()
         ).filterIsInstance<LivingEntity>().fastFor {
             if (it is Player) return@fastFor
+
+            if(it.type == EntityType.ARMOR_STAND) return@fastFor
 
             if (!getConfig().getBoolean("damage-animals") && NMSHandler.get().isAnimal(it)) {
                 return@fastFor
@@ -78,6 +82,9 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
 
             NMSHandler.get().attack(minion, it)
             minion.damageTool()
+            amount++
         }
+
+        minion.setActions(minion.getActionAmount() + amount)
     }
 }
