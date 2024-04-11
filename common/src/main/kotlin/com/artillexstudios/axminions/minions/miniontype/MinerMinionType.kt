@@ -3,6 +3,8 @@ package com.artillexstudios.axminions.minions.miniontype
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.scheduler.impl.FoliaScheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
+import com.artillexstudios.axminions.api.events.MinionMineBlockEvent
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.utils.LocationUtils
@@ -109,6 +111,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         val possible = gen?.isBlockPossibleToMine(location) ?: false
 
                         if (possible) {
+                            val blockEvent = MinionMineBlockEvent(minion, location.block)
+                            Bukkit.getPluginManager().callEvent(blockEvent)
+
+                            if(blockEvent.isCancelled) return;
+
                             gen?.scheduleGeneratorRegeneration()
                             return@fastFor
                         }
@@ -118,6 +125,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                     if (isStoneGenerator) {
                         val block = location.block
+                        val blockEvent = MinionMineBlockEvent(minion, block)
+                        Bukkit.getPluginManager().callEvent(blockEvent)
+
+                        if(blockEvent.isCancelled) return;
+
                         val drops = block.getDrops(minion.getTool())
                         xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                         drops.forEach {
@@ -145,6 +157,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                     val possible = gen?.isBlockPossibleToMine(location) ?: false
 
                                     if (possible) {
+                                        val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                        Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                        if(blockEvent.isCancelled) return@fastFor
+
                                         gen?.scheduleGeneratorRegeneration()
                                         return@fastFor
                                     }
@@ -153,6 +170,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 val isStoneGenerator = MinionUtils.isStoneGenerator(location)
 
                                 if (isStoneGenerator) {
+                                    val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                    Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                    if(blockEvent.isCancelled) return@fastFor
+
                                     Scheduler.get().run {
                                         val block = location.block
                                         val drops = block.getDrops(minion.getTool())
@@ -176,6 +198,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 val possible = gen?.isBlockPossibleToMine(location) ?: false
 
                                 if (possible) {
+                                    val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                    Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                    if(blockEvent.isCancelled) return;
+
                                     gen?.scheduleGeneratorRegeneration()
                                     return@fastFor
                                 }
@@ -185,6 +212,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                             if (isStoneGenerator) {
                                 val block = location.block
+                                val blockEvent = MinionMineBlockEvent(minion, block)
+                                Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                if(blockEvent.isCancelled) return;
+
                                 val drops = block.getDrops(minion.getTool())
                                 xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                                 drops.forEach {
@@ -207,6 +239,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             val possible = gen?.isBlockPossibleToMine(location) ?: false
 
                             if (possible) {
+                                val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                if(blockEvent.isCancelled) return;
+
                                 gen?.scheduleGeneratorRegeneration()
                                 return@fastFor
                             }
@@ -216,6 +253,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (isStoneGenerator) {
                             val block = location.block
+                            val blockEvent = MinionMineBlockEvent(minion, block)
+                            Bukkit.getPluginManager().callEvent(blockEvent)
+
+                            if(blockEvent.isCancelled) return;
+
                             val drops = block.getDrops(minion.getTool())
                             xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach { item ->
@@ -238,6 +280,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             val possible = gen?.isBlockPossibleToMine(location) ?: false
 
                             if (possible) {
+                                val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                if(blockEvent.isCancelled) return;
+
                                 gen?.scheduleGeneratorRegeneration()
                                 return@fastFor
                             }
@@ -246,6 +293,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         if (AxMinionsPlugin.integrations.itemsAdderIntegration) {
                             val block = CustomBlock.byAlreadyPlaced(location.block)
                             if (block !== null) {
+                                val blockEvent = MinionMineBlockEvent(minion, location.block)
+                                Bukkit.getPluginManager().callEvent(blockEvent)
+
+                                if(blockEvent.isCancelled) return;
+
                                 val drops = block.getLoot(minion.getTool(), false)
                                 drops.forEach {
                                     amount += it.amount
@@ -260,6 +312,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (isStoneGenerator) {
                             val block = location.block
+                            val blockEvent = MinionMineBlockEvent(minion, block)
+                            Bukkit.getPluginManager().callEvent(blockEvent)
+
+                            if(blockEvent.isCancelled) return;
+
                             val drops = block.getDrops(minion.getTool())
                             xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach {
