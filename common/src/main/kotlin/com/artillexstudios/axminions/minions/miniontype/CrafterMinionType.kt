@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.ShapelessRecipe
 
-class CrafterMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.getResource("minions/crafter.yml")!!) {
+class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getResource("minions/crafter.yml")!!) {
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
