@@ -5,7 +5,6 @@ import com.bgsoftware.superiorskyblock.api.events.IslandDisbandEvent
 import org.bukkit.World.Environment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.World
 
 class SuperiorSkyBlock2Listener : Listener {
 

@@ -36,6 +36,7 @@ import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
 import com.artillexstudios.axapi.libs.libby.BukkitLibraryManager
 import com.artillexstudios.axapi.libs.libby.Library
+import com.artillexstudios.axminions.minions.miniontype.CrafterMinionType
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
@@ -83,6 +84,7 @@ class AxMinionsPlugin : AxPlugin() {
 
         MinionTypes.also {
             it.register(CollectorMinionType())
+            it.register(CrafterMinionType())
             it.register(FarmerMinionType())
             it.register(MinerMinionType())
             it.register(LumberMinionType())

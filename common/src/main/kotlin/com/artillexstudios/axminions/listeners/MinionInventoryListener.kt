@@ -49,8 +49,15 @@ class MinionInventoryListener : Listener {
         coolDown.add(player, 250)
 
         val allowedTools = arrayListOf<Material>()
-        minion.getType().getConfig().getStringList("tool.material").fastFor {
-            allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+        run breaking@{
+            minion.getType().getConfig().getStringList("tool.material").fastFor {
+                if (it.equals("*")) {
+                    allowedTools.addAll(Material.entries)
+                    return@breaking
+                }
+
+                allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
+            }
         }
 
         if (event.clickedInventory == player.inventory && event.currentItem != null) {
@@ -147,7 +154,12 @@ class MinionInventoryListener : Listener {
                 }
 
                 if (Config.UPGRADE_SOUND().isNotBlank()) {
-                    player.playSound(player, Sound.valueOf(Config.UPGRADE_SOUND().uppercase(Locale.ENGLISH)), 1.0f, 1.0f)
+                    player.playSound(
+                        player,
+                        Sound.valueOf(Config.UPGRADE_SOUND().uppercase(Locale.ENGLISH)),
+                        1.0f,
+                        1.0f
+                    )
                 }
 
                 minion.setLevel(minion.getLevel() + 1)
