@@ -6,9 +6,10 @@ entity:
 tool:
   material:
     - "*"
+
 item:
   type: "player_head"
-  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UzZDM2MzVjZTQxMWFiZjFlNGYzNzNkMTYxZDA3YjhjNDdlMzU5YjZjNTZmNzRiNDEzY2I0OTRhYzc0NmUyZCJ9fX0="
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmNkYzBmZWI3MDAxZTJjMTBmZDUwNjZlNTAxYjg3ZTNkNjQ3OTMwOTJiODVhNTBjODU2ZDk2MmY4YmU5MmM3OCJ9fX0="
   name: "<#FFEE00>Crafter <white>Minion"
   lore:
     - ""
@@ -16,7 +17,7 @@ item:
     - ""
     - "<#FFEE00>Statistics"
     - " <#FFEE00>❙ <white>Level: <#FFEEAA><level>"
-    - " <#FFEE00>❙ <white>Collected items: <#FFEEAA><actions>"
+    - " <#FFEE00>❙ <white>Crafted items: <#FFEEAA><actions>"
     - ""
     - "<#FFEE00><b>(!)</b> Place the minion and give it an item to craft!"
 
@@ -32,7 +33,7 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - " <gray>- <white>Crafted items: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
@@ -49,20 +50,21 @@ upgrades:
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UzZDM2MzVjZTQxMWFiZjFlNGYzNzNkMTYxZDA3YjhjNDdlMzU5YjZjNTZmNzRiNDEzY2I0OTRhYzc0NmUyZCJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmNkYzBmZWI3MDAxZTJjMTBmZDUwNjZlNTAxYjg3ZTNkNjQ3OTMwOTJiODVhNTBjODU2ZDk2MmY4YmU5MmM3OCJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "255, 230, 0"
+        color: "125, 75, 30"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "255, 230, 0"
+        color: "125, 75, 30"
         glow: false
       boots:
         type: "leather_boots"
-        color: "255, 230, 0"
+        color: "125, 75, 30"
         glow: false
   2:
+    speed: 150
     requirements:
       money: 1000
       actions: 100
@@ -72,6 +74,7 @@ upgrades:
       money: 3000
       actions: 300
   4:
+    speed: 130
     requirements:
       money: 10000
       actions: 1000
@@ -81,6 +84,7 @@ upgrades:
       money: 20000
       actions: 3000
   6:
+    speed: 110
     requirements:
       money: 50000
       actions: 6000
@@ -90,6 +94,7 @@ upgrades:
       money: 150000
       actions: 10000
   8:
+    speed: 95
     requirements:
       money: 500000
       actions: 17500
@@ -106,13 +111,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "100, 70, 30"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "100, 70, 30"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "100, 70, 30"
         glow: true

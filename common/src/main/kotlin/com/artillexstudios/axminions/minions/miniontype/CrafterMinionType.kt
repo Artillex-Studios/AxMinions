@@ -60,7 +60,9 @@ class CrafterMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.getRe
         val shapeless = arrayListOf<ShapelessRecipe>()
 
         for (recipe in recipes) {
+            println("RECIPE!")
             if (recipe is ShapedRecipe) {
+                println("SHAPED!")
                 shaped.add(recipe)
             } else if (recipe is ShapelessRecipe) {
                 shapeless.add(recipe)

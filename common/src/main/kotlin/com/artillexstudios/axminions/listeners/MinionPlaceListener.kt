@@ -13,7 +13,6 @@ import com.artillexstudios.axminions.minions.Minion
 import com.artillexstudios.axminions.minions.Minions
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -28,7 +27,7 @@ class MinionPlaceListener : Listener {
     fun onPlayerInteractEvent(event: PlayerInteractEvent) {
         if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
         if (event.clickedBlock == null) return
-        val item = event.player.inventory.itemInMainHand ?: return
+        val item = event.player.inventory.getItem(event.hand ?: return) ?: return
         var meta = item.itemMeta ?: return
 
         val type = meta.persistentDataContainer.get(Keys.MINION_TYPE, PersistentDataType.STRING) ?: return

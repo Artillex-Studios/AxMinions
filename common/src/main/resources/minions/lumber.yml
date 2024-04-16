@@ -14,7 +14,7 @@ tool:
 
 item:
   type: "player_head"
-  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNjMGE5MTk5MGU3NmM2ZDY1ODA1MGI3YWM3ZTQ4MmJjNTgyYjI0NTg5YmI3ZjE0NmJkMWMwM2I5Yzg0Y2RkOSJ9fX0="
   name: "<#00AAFF>Lumberjack <white>Minion"
   lore:
     - ""
@@ -56,18 +56,18 @@ upgrades:
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNjMGE5MTk5MGU3NmM2ZDY1ODA1MGI3YWM3ZTQ4MmJjNTgyYjI0NTg5YmI3ZjE0NmJkMWMwM2I5Yzg0Y2RkOSJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "0, 150, 255"
+        color: "0, 200, 255"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "0, 150, 255"
+        color: "0, 200, 255"
         glow: false
       boots:
         type: "leather_boots"
-        color: "0, 150, 255"
+        color: "0, 200, 255"
         glow: false
   2:
     range: 4
@@ -126,13 +126,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "0, 150, 200"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "0, 150, 200"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "0, 150, 200"
         glow: true

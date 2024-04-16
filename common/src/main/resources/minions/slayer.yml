@@ -42,7 +42,7 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Killed mobs: <#33FF33><required_actions>"
+      - " <gray>- <white>Mobs killed: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
@@ -50,22 +50,9 @@ gui:
     name: "<#FF3333><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Killed mobs: <#FF3333><actions>"
+      - " <gray>- <white>Mobs killed: <#FF3333><actions>"
       - " <gray>- <white>Stored exp: <#CC00FF><storage>"
       - ""
-  autosmelt:
-    enabled: true
-    slot: 9
-    material: "lava_bucket"
-    name: "<gold>Autosmelt"
-    lore:
-      - ""
-      - "<gray> Click to purchase! "
-      - ""
-      - "<white>Price: <green>$1,000"
-    requirements:
-      money: 1000
-      actions: 100
 
 upgrades:
   1:
@@ -75,18 +62,18 @@ upgrades:
     items:
       helmet:
         type: "player_head"
-        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI 6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
+        texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "0, 150, 255"
+        color: "255, 0, 0"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "0, 150, 255"
+        color: "255, 0, 0"
         glow: false
       boots:
         type: "leather_boots"
-        color: "0, 150, 255"
+        color: "255, 0, 0"
         glow: false
   2:
     range: 4
@@ -145,13 +132,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "200, 0, 0"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "200, 0, 0"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "200, 0, 0"
         glow: true

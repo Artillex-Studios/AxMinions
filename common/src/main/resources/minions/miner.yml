@@ -31,7 +31,7 @@ item:
     - ""
     - "<#00AAFF>Statistics"
     - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#00AAFF>❙ <white>Broken blocks: <#FFEEAA><actions>"
+    - " <#00AAFF>❙ <white>Blocks broken: <#FFEEAA><actions>"
     - ""
     - "<#00AAFF><b>(!)</b> Place the minion and give it a pickaxe!"
 
@@ -47,7 +47,7 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Collected items: <#33FF33><required_actions>"
+      - " <gray>- <white>Blocks broken: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
@@ -55,7 +55,7 @@ gui:
     name: "<#00AAFF><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Broken blocks: <#00AAFF><actions>"
+      - " <gray>- <white>Blocks broken: <#00AAFF><actions>"
       - ""
 
 upgrades:
@@ -68,15 +68,15 @@ upgrades:
         texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "0, 150, 255"
+        color: "200, 200, 200"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "0, 150, 255"
+        color: "200, 200, 200"
         glow: false
       boots:
         type: "leather_boots"
-        color: "0, 150, 255"
+        color: "200, 200, 200"
         glow: false
   2:
     range: 3
@@ -135,13 +135,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "150, 150, 150"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "150, 150, 150"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "150, 150, 150"
         glow: true

@@ -22,7 +22,7 @@ item:
     - ""
     - "<#33FF33>Statistics"
     - " <#33FF33>❙ <white>Level: <#AAFFAA><level>"
-    - " <#33FF33>❙ <white>Harvested crops: <#AAFFAA><actions>"
+    - " <#33FF33>❙ <white>Crops harvested: <#AAFFAA><actions>"
     - ""
     - "<#33FF33><b>(!)</b> Place the minion and give it a hoe!"
 
@@ -59,15 +59,15 @@ upgrades:
         texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDAxZTAzNWEzZDhkNjEyNjA3MmJjYmU1MmE5NzkxM2FjZTkzNTUyYTk5OTk1YjVkNDA3MGQ2NzgzYTMxZTkwOSJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "50, 255, 50"
+        color: "0, 255, 0"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "50, 255, 50"
+        color: "0, 255, 0"
         glow: false
       boots:
         type: "leather_boots"
-        color: "50, 255, 50"
+        color: "0, 255, 0"
         glow: false
   2:
     range: 2.5
@@ -126,13 +126,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "50, 225, 50"
+        color: "0, 200, 0"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "50, 225, 50"
+        color: "0, 200, 0"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "50, 225, 50"
+        color: "0, 200, 0"
         glow: true

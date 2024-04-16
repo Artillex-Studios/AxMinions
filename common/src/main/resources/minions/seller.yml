@@ -20,7 +20,7 @@ item:
     - ""
     - "<#CC00FF>Statistics"
     - " <#CC00FF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#CC00FF>❙ <white>Sold items: <#FFEEAA><actions>"
+    - " <#CC00FF>❙ <white>Items sold: <#FFEEAA><actions>"
     - ""
     - "<#CC00FF><b>(!)</b> Place the minion and give it a bow!"
 
@@ -36,7 +36,7 @@ gui:
       - ""
       - "<#00CCFF>Requirements:"
       - " <gray>- <white>Money: <#33FF33><price>$"
-      - " <gray>- <white>Sold items: <#33FF33><required_actions>"
+      - " <gray>- <white>Items sold: <#33FF33><required_actions>"
       - ""
       - "<#00CCFF><b>(!)</b> Click here to upgrade your minion!"
   statistics:
@@ -44,7 +44,7 @@ gui:
     name: "<#CC00FF><b>Statistics"
     lore:
       - ""
-      - " <gray>- <white>Collected items: <#CC00FF><actions>"
+      - " <gray>- <white>Items sold: <#CC00FF><actions>"
       - " <gray>- <white>Stored coins: <#CC00FF><storage>"
       - ""
       - "<#CC00FF><b>(!)</b> Click here to collect the stored coins!"
@@ -64,11 +64,11 @@ upgrades:
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "255, 230, 0"
+        color: "200, 0, 255"
         glow: false
       boots:
         type: "leather_boots"
-        color: "255, 230, 0"
+        color: "200, 0, 255"
         glow: false
   2:
     multiplier: 1.05
@@ -136,13 +136,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "150, 0, 200"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "150, 0, 200"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "150, 0, 200"
         glow: true

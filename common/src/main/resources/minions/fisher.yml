@@ -54,15 +54,15 @@ upgrades:
         texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWMxNWU1ZmI1NmZhMTZiMDc0N2IxYmNiMDUzMzVmNTVkMWZhMzE1NjFjMDgyYjVlMzY0M2RiNTU2NTQxMDg1MiJ9fX0="
       chestplate:
         type: "leather_chestplate"
-        color: "0, 150, 255"
+        color: "0, 255, 255"
         glow: false
       leggings:
         type: "leather_leggings"
-        color: "0, 150, 255"
+        color: "0, 255, 255"
         glow: false
       boots:
         type: "leather_boots"
-        color: "0, 150, 255"
+        color: "0, 255, 255"
         glow: false
   2:
     range: 4
@@ -121,13 +121,13 @@ upgrades:
     items:
       chestplate:
         type: LEATHER_CHESTPLATE
-        color: "255, 200, 0"
+        color: "0, 200, 200"
         glow: true
       leggings:
         type: LEATHER_LEGGINGS
-        color: "255, 200, 0"
+        color: "0, 200, 200"
         glow: true
       boots:
         type: LEATHER_BOOTS
-        color: "255, 200, 0"
+        color: "0, 200, 200"
         glow: true
