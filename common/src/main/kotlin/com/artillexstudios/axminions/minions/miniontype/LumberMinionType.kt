@@ -62,7 +62,7 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
                 val down = it.getRelative(BlockFace.DOWN).type
                 loot.addAll(it.getDrops(minion.getTool()))
 
-                if (down == Material.DIRT || down == Material.GRASS_BLOCK || down == Material.COARSE_DIRT || down == Material.ROOTED_DIRT || down == Material.DIRT_PATH) {
+                if (down == Material.DIRT || down == Material.GRASS_BLOCK || down == Material.COARSE_DIRT || down == Material.ROOTED_DIRT || down == Material.DIRT_PATH || down == Material.MUD || down == Material.MUDDY_MANGROVE_ROOTS) {
                     it.type = getSaplingType(it.type)
                 } else {
                     it.type = Material.AIR
@@ -96,6 +96,14 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
 
             Material.SPRUCE_LOG -> {
                 Material.SPRUCE_SAPLING
+            }
+
+            Material.MANGROVE_LOG -> {
+                Material.MANGROVE_PROPAGULE
+            }
+
+            Material.CHERRY_LOG -> {
+                Material.CHERRY_SAPLING
             }
 
             else -> Material.OAK_SAPLING

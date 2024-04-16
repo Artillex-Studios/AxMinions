@@ -55,14 +55,11 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
         val tool = minion.getTool()
 
         val recipes = Bukkit.getRecipesFor(tool ?: return)
-
         val shaped = arrayListOf<ShapedRecipe>()
         val shapeless = arrayListOf<ShapelessRecipe>()
 
         for (recipe in recipes) {
-            println("RECIPE!")
             if (recipe is ShapedRecipe) {
-                println("SHAPED!")
                 shaped.add(recipe)
             } else if (recipe is ShapelessRecipe) {
                 shapeless.add(recipe)
@@ -159,13 +156,14 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun canCraftShaped(recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>): Boolean {
         val clone = contents.clone() as HashMap<ItemStack, Int>
         for (recipeChoice in recipe.choiceMap.values) {
+            if (recipeChoice == null) continue
             var hasEnough = false
 
             val iterator = clone.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                if (next.key.isSimilar(recipeChoice.itemStack) && next.value >= recipeChoice.itemStack.amount) {
+                if (recipeChoice.test(next.key)) {
                     hasEnough = true
                     val amount = next.value - recipeChoice.itemStack.amount
                     if (amount == 0) {
@@ -187,6 +185,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
 
     private fun doCraftShapeless(inventory: Inventory, recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceList) {
+            if (recipeChoice == null) continue
             val item = recipeChoice.itemStack.clone()
 
             inventory.removeItem(item)
@@ -195,7 +194,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                if (item.isSimilar(next.key)) {
+                if (recipeChoice.test(next.key)) {
                     val amount = next.value - item.amount
                     if (amount == 0) {
                         iterator.remove()
@@ -224,22 +223,31 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
 
     private fun doCraftShaped(inventory: Inventory, recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceMap.values) {
+            if (recipeChoice == null) continue
             val item = recipeChoice.itemStack.clone()
 
-            inventory.removeItem(item)
+            for (content in inventory.contents) {
+                if (content == null || content.type.isAir) continue
+                if (recipeChoice.test(content)) {
+                    val clone = content.clone()
+                    clone.amount = item.amount
 
-            val iterator = contents.entries.iterator()
-            while (iterator.hasNext()) {
-                val next = iterator.next()
+                    inventory.removeItem(clone)
 
-                if (item.isSimilar(next.key)) {
-                    val amount = next.value - item.amount
-                    if (amount == 0) {
-                        iterator.remove()
-                    } else {
-                        next.setValue(amount)
+                    val iterator = contents.entries.iterator()
+                    while (iterator.hasNext()) {
+                        val next = iterator.next()
+
+                        if (next.key.isSimilar(clone)) {
+                            val amount = next.value - item.amount
+                            if (amount == 0) {
+                                iterator.remove()
+                            } else {
+                                next.setValue(amount)
+                            }
+                            break
+                        }
                     }
-                    break
                 }
             }
         }
