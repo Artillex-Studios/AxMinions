@@ -107,6 +107,10 @@ allprojects {
         maven {
             url = uri("https://repo.glaremasters.me/repository/towny")
         }
+
+        maven {
+            url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        }
     }
 
     dependencies {
@@ -136,6 +140,7 @@ allprojects {
         implementation("org.bstats:bstats-bukkit:3.0.2")
         compileOnly 'org.black_ixx:playerpoints:3.2.6'
         compileOnly 'com.github.Maxlego08:zShop-API:3.0.5'
+        compileOnly 'me.clip:placeholderapi:2.11.5'
     }
 
     compileKotlin {

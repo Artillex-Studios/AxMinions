@@ -13,6 +13,7 @@ import com.artillexstudios.axminions.api.integrations.types.ProtectionIntegratio
 import com.artillexstudios.axminions.api.integrations.types.StackerIntegration
 import com.artillexstudios.axminions.integrations.economy.PlayerPointsIntegration
 import com.artillexstudios.axminions.integrations.economy.VaultIntegration
+import com.artillexstudios.axminions.integrations.placeholder.PlaceholderAPIIntegration
 import com.artillexstudios.axminions.integrations.prices.CMIIntegration
 import com.artillexstudios.axminions.integrations.prices.EconomyShopGUIIntegration
 import com.artillexstudios.axminions.integrations.prices.EssentialsIntegration
@@ -192,6 +193,10 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
             register(TownyIntegration())
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            PlaceholderAPIIntegration().register()
         }
     }
 
