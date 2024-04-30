@@ -58,11 +58,6 @@ class MinionPlaceListener : Listener {
 
         if (meta.persistentDataContainer.has(Keys.PLACED, PersistentDataType.BYTE)) return
 
-        val prePlaceEvent = MinionPrePlaceEvent(event.player)
-        Bukkit.getPluginManager().callEvent(prePlaceEvent)
-
-        if(prePlaceEvent.isCancelled) return
-
         meta.persistentDataContainer.set(Keys.PLACED, PersistentDataType.BYTE, 0)
         item.itemMeta = meta
 
@@ -71,10 +66,15 @@ class MinionPlaceListener : Listener {
         val maxMinions = AxMinionsAPI.INSTANCE.getMinionLimit(event.player)
 
         val chunk = location.chunk
+
+        val prePlaceEvent = MinionPrePlaceEvent(event.player, event.clickedBlock!!.location)
+        Bukkit.getPluginManager().callEvent(prePlaceEvent)
+        if(prePlaceEvent.isCancelled) return
+
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
 
-            if (placed >= maxMinions && !event.player.hasPermission("axminions.limit.*")) {
+            if (placed >= maxMinions && !prePlaceEvent.getShouldOverridePlayerLimit() && !event.player.hasPermission("axminions.limit.*")) {
                 event.player.sendMessage(
                     StringUtils.formatToString(
                         Messages.PREFIX() + Messages.PLACE_LIMIT_REACHED(),

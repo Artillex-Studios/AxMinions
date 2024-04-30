@@ -4,9 +4,13 @@ import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.events.MinionChestLinkEvent
+import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
+import org.bukkit.Bukkit
 import java.util.WeakHashMap
 import org.bukkit.Material
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -24,6 +28,16 @@ class LinkingListener : Listener {
         if (event.player !in linking) return
         if (event.clickedBlock!!.type !in CONTAINERS) return
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
+
+        val linkEvent = MinionChestLinkEvent(
+            linking.getValue(event.player),
+            event.player,
+            event.clickedBlock!!
+        )
+        Bukkit.getPluginManager().callEvent(linkEvent)
+        if (linkEvent.isCancelled) {
+            return
+        }
 
         val minion = linking.remove(event.player) ?: return
         event.isCancelled = true
