@@ -30,21 +30,23 @@ class LinkingListener : Listener {
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
 
         val minion = linking.remove(event.player) ?: return
-        event.isCancelled = true
-        if (minion.getLocation()
-                .distanceSquared(event.clickedBlock!!.location) > Config.MAX_LINKING_DISTANCE() * Config.MAX_LINKING_DISTANCE()
-        ) {
-            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_FAIL()))
-            return
-        }
 
         val linkEvent = MinionChestLinkEvent(
-            linking.getValue(event.player),
+            minion,
             event.player,
             event.clickedBlock!!
         )
         Bukkit.getPluginManager().callEvent(linkEvent)
         if (linkEvent.isCancelled) {
+            event.player.sendMessage(StringUtils.formatToString(linkEvent.getFailMessage() ?: (Messages.PREFIX() + Messages.LINK_FAIL())))
+            return
+        }
+
+        event.isCancelled = true
+        if (minion.getLocation()
+                .distanceSquared(event.clickedBlock!!.location) > Config.MAX_LINKING_DISTANCE() * Config.MAX_LINKING_DISTANCE()
+        ) {
+            event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_FAIL()))
             return
         }
 

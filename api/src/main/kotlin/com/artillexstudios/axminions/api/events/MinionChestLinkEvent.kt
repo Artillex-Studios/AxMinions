@@ -15,7 +15,7 @@ class MinionChestLinkEvent(minion: Minion, private val player: Player, private v
     }
 
     private var isCancelled = false
-
+    private var failMessage: String? = null
 
     override fun getHandlers(): HandlerList {
         return handlerList
@@ -23,6 +23,14 @@ class MinionChestLinkEvent(minion: Minion, private val player: Player, private v
 
     fun getLinker(): Player {
         return player
+    }
+
+    fun getFailMessage(): String? {
+        return failMessage
+    }
+
+    fun setFailMessage(message: String) {
+        failMessage = message
     }
 
     fun getBlock(): Block {
