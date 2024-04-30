@@ -20,6 +20,8 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.event.block.BlockPlaceEvent
+import com.artillexstudios.axminions.api.events.MinionPrePlaceEvent
+import org.bukkit.Bukkit
 
 class MinionPlaceListener : Listener {
 
@@ -55,6 +57,12 @@ class MinionPlaceListener : Listener {
         }
 
         if (meta.persistentDataContainer.has(Keys.PLACED, PersistentDataType.BYTE)) return
+
+        val prePlaceEvent = MinionPrePlaceEvent(event.player)
+        Bukkit.getPluginManager().callEvent(prePlaceEvent)
+
+        if(prePlaceEvent.isCancelled) return
+
         meta.persistentDataContainer.set(Keys.PLACED, PersistentDataType.BYTE, 0)
         item.itemMeta = meta
 
