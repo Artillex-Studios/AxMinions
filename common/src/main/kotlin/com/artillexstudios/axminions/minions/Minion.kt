@@ -16,6 +16,8 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.events.MinionPreBreakEvent
+import com.artillexstudios.axminions.api.events.MinionPrePlaceEvent
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
@@ -164,6 +166,10 @@ class Minion(
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
+        val preBreakEvent = MinionPreBreakEvent(event.player, this)
+        Bukkit.getPluginManager().callEvent(preBreakEvent)
+        if(preBreakEvent.isCancelled) return
+
         LinkingListener.linking.remove(event.player)
         remove()
         setTicking(false)
