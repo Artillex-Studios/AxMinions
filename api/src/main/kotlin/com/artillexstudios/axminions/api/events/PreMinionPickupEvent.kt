@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 
-class MinionPreBreakEvent(private val player: Player, minion: Minion) : MinionEvent(minion), Cancellable {
+class PreMinionPickupEvent(private val player: Player, minion: Minion) : MinionEvent(minion), Cancellable {
     companion object {
         private val handlerList = HandlerList()
 
@@ -16,7 +16,7 @@ class MinionPreBreakEvent(private val player: Player, minion: Minion) : MinionEv
     private var isCancelled = false
 
     override fun getHandlers(): HandlerList {
-        return MinionPreBreakEvent.handlerList
+        return PreMinionPickupEvent.handlerList
     }
 
     fun getPlayer(): Player {

@@ -6,7 +6,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class MinionPrePlaceEvent(private val player: Player, private val location: Location) : Cancellable, Event() {
+class PreMinionPlaceEvent(private val player: Player, private val location: Location) : Cancellable, Event() {
     companion object {
         private val handlerList = HandlerList()
 
@@ -18,7 +18,7 @@ class MinionPrePlaceEvent(private val player: Player, private val location: Loca
     private var shouldOverridePlayerLimit = false
 
     override fun getHandlers(): HandlerList {
-        return MinionPrePlaceEvent.handlerList
+        return PreMinionPlaceEvent.handlerList
     }
 
     override fun isCancelled(): Boolean {

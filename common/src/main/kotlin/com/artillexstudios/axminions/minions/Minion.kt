@@ -16,8 +16,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
-import com.artillexstudios.axminions.api.events.MinionPreBreakEvent
-import com.artillexstudios.axminions.api.events.MinionPrePlaceEvent
+import com.artillexstudios.axminions.api.events.PreMinionPickupEvent
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
@@ -41,7 +40,6 @@ import org.bukkit.block.Container
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
-import org.bukkit.inventory.CreativeCategory
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
@@ -166,9 +164,9 @@ class Minion(
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
-        val preBreakEvent = MinionPreBreakEvent(event.player, this)
+        val preBreakEvent = PreMinionPickupEvent(event.player, this)
         Bukkit.getPluginManager().callEvent(preBreakEvent)
-        if(preBreakEvent.isCancelled) return
+        if (preBreakEvent.isCancelled) return
 
         LinkingListener.linking.remove(event.player)
         remove()
