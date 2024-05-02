@@ -28,10 +28,6 @@ class PreFarmerMinionHarvestEvent(minion: Minion, val block: Block) : MinionEven
         return block
     }
 
-    fun setType(): Block {
-        return block
-    }
-
     override fun setCancelled(cancelled: Boolean) {
         isCancelled = cancelled
     }
