@@ -48,7 +48,7 @@ class AxMinionsCommand {
         receiver: Player
     ) {
         AxMinionsAPI.INSTANCE.getMinions().fastFor {
-            if(it.getOwnerUUID() == receiver.uniqueId) {
+            if (it.getOwnerUUID() == receiver.uniqueId) {
                 it.remove()
             }
         }

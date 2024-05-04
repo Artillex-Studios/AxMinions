@@ -4,9 +4,13 @@ import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.events.MinionChestLinkEvent
+import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
+import org.bukkit.Bukkit
 import java.util.WeakHashMap
 import org.bukkit.Material
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -26,6 +30,18 @@ class LinkingListener : Listener {
         if (!AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(event.player, event.clickedBlock!!.location)) return
 
         val minion = linking.remove(event.player) ?: return
+
+        val linkEvent = MinionChestLinkEvent(
+            minion,
+            event.player,
+            event.clickedBlock!!
+        )
+        Bukkit.getPluginManager().callEvent(linkEvent)
+        if (linkEvent.isCancelled) {
+            event.player.sendMessage(StringUtils.formatToString(linkEvent.getFailMessage() ?: (Messages.PREFIX() + Messages.LINK_FAIL())))
+            return
+        }
+
         event.isCancelled = true
         if (minion.getLocation()
                 .distanceSquared(event.clickedBlock!!.location) > Config.MAX_LINKING_DISTANCE() * Config.MAX_LINKING_DISTANCE()
