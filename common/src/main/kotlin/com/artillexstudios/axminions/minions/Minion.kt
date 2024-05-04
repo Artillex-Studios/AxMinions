@@ -5,7 +5,7 @@ import com.artillexstudios.axapi.entity.impl.PacketArmorStand
 import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
-import com.artillexstudios.axapi.hologram.HologramFactory
+import com.artillexstudios.axapi.hologram.HologramLine
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axapi.utils.EquipmentSlot
@@ -155,8 +155,8 @@ class Minion(
         )
 
         if (Config.DEBUG()) {
-            debugHologram = HologramFactory.get().spawnHologram(location.clone().add(0.0, 2.0, 0.0), "$locationID")
-            debugHologram?.addLine(StringUtils.format("ticking: $ticking"))
+            debugHologram = Hologram(location.clone().add(0.0, 2.0, 0.0), "$locationID")
+            debugHologram?.addLine("ticking: $ticking", HologramLine.Type.TEXT)
         }
 
         setDirection(direction, false)
@@ -198,7 +198,7 @@ class Minion(
         }
 
         if (Config.DEBUG() && debugHologram != null) {
-            debugHologram?.setLine(0, StringUtils.format("Ticking: $ticking"))
+            debugHologram?.setLine(0, "Ticking: $ticking")
         }
 
         if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {
@@ -302,17 +302,21 @@ class Minion(
                     actions,
                     multiplier,
                     nextMultiplier
-                ).storePersistentData(
-                    Keys.GUI, PersistentDataType.STRING, it
                 ).get()
+
+                val meta = item.itemMeta!!
+                meta.persistentDataContainer.set(Keys.GUI, PersistentDataType.STRING, it)
+                item.itemMeta = meta
             } else if (it.equals("item")) {
                 item = tool?.clone() ?: ItemStack(Material.AIR)
             } else if (it.equals("charge")) {
                 if (Config.CHARGE_ENABLED()) {
                     val charge = Placeholder.parsed("charge", TimeUtils.format(charge - System.currentTimeMillis()))
-                    item = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"), charge).storePersistentData(
-                        Keys.GUI, PersistentDataType.STRING, it
-                    ).get()
+                    item = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"), charge).get()
+
+                    val meta = item.itemMeta!!
+                    meta.persistentDataContainer.set(Keys.GUI, PersistentDataType.STRING, it)
+                    item.itemMeta = meta
                 } else {
                     item = null
                 }
@@ -328,9 +332,11 @@ class Minion(
                     AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"),
                     rotation,
                     linked
-                ).storePersistentData(
-                    Keys.GUI, PersistentDataType.STRING, it
                 ).get()
+
+                val meta = item.itemMeta!!
+                meta.persistentDataContainer.set(Keys.GUI, PersistentDataType.STRING, it)
+                item.itemMeta = meta
             }
 
             if (item != null) {

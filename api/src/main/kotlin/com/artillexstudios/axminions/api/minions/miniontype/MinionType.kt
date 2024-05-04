@@ -57,12 +57,14 @@ abstract class MinionType(private val name: String, private val defaults: InputS
             Placeholder.unparsed("level", level.toString()),
             Placeholder.unparsed("actions", actions.toString())
         )
-        builder.storePersistentData(Keys.MINION_TYPE, PersistentDataType.STRING, name)
-        builder.storePersistentData(Keys.LEVEL, PersistentDataType.INTEGER, level)
-        builder.storePersistentData(Keys.STATISTICS, PersistentDataType.LONG, actions)
-        builder.storePersistentData(Keys.CHARGE, PersistentDataType.LONG, charge)
-
-        return builder.clonedGet()
+        val item = builder.clonedGet()
+        val meta = item.itemMeta!!
+        meta.persistentDataContainer.set(Keys.MINION_TYPE, PersistentDataType.STRING, name)
+        meta.persistentDataContainer.set(Keys.LEVEL, PersistentDataType.INTEGER, level)
+        meta.persistentDataContainer.set(Keys.STATISTICS, PersistentDataType.LONG, actions)
+        meta.persistentDataContainer.set(Keys.CHARGE, PersistentDataType.LONG, charge)
+        item.itemMeta = meta
+        return item
     }
 
     fun getConfig(): Config {
