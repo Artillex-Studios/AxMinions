@@ -30,6 +30,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun CAN_BREAK_TOOLS() = AxMinionsAPI.INSTANCE.getConfig().get("can-break-tools", true)
         @JvmStatic
+        fun ISLAND_LIMIT() = AxMinionsAPI.INSTANCE.getConfig().get("island-limit", 0)
+        @JvmStatic
         fun USE_DURABILITY() = AxMinionsAPI.INSTANCE.getConfig().get("use-durability", true)
         @JvmStatic
         fun DATABASE_TYPE() = AxMinionsAPI.INSTANCE.getConfig().get("database.type", "H2")

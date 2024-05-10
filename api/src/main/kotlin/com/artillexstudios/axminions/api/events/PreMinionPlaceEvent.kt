@@ -18,7 +18,7 @@ class PreMinionPlaceEvent(private val player: Player, private val location: Loca
     private var shouldOverridePlayerLimit = false
 
     override fun getHandlers(): HandlerList {
-        return PreMinionPlaceEvent.handlerList
+        return handlerList
     }
 
     override fun isCancelled(): Boolean {

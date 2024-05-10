@@ -47,6 +47,8 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun PLACE_MISSING_PERMISSION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.missing-permission")
         @JvmStatic
+        fun ISLAND_LIMIT_REACHED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("place.island-limit-reached")
+        @JvmStatic
         fun STATISTICS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("statistics")
         @JvmStatic
         fun LEVEL_COLOR(level: Int = 1) = AxMinionsAPI.INSTANCE.getMessages().get("levels.$level", "<#33FF33>")

@@ -33,6 +33,9 @@ display-warnings: true
 # If set to false, the minion can break the tool
 can-break-tools: true
 
+# The limit to use for islands
+island-limit: 10
+
 # If the minion should be able to take durability from it's held item
 use-durability: true
 
@@ -126,4 +129,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 8
+config-version: 9

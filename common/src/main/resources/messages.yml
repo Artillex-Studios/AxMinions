@@ -3,10 +3,11 @@ prefix: "<gradient:#00aaff:#00ccff>AxMinions</gradient> <gray>»</gray> "
 reload: "<green>Plugin successfully reloaded in <white><time></white>ms!"
 
 place:
-  success: "<green>Successfully placed a new <type> minion! <gray>(<placed>/<max>)"
+  success: "<green>Successfully placed a new <type> minion! <gray>(<placed>/<max>)" # There also is island-placed and island-max for island limits
   limit-reached: "<red>Could not place minion! You have reached the limit! <gray>(<placed>/<max>)"
   minion-at-location: "<red>Could not place minion! There already is a minion at that location!"
   missing-permission: "<red>You do not have the required permissions to place this minion!"
+  island-limit-reached: "<red>You have reached the island limit for minions! <gray>(<placed>/<max>)"
 
 pickup:
   success: "<green>Successfully picked up a minion! <gray>(<placed>/<max>)"
@@ -74,4 +75,4 @@ tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 # Do not change!
-config-version: 4
+config-version: 6

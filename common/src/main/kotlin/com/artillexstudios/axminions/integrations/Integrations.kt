@@ -6,11 +6,7 @@ import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.exception.InvalidIntegrationException
 import com.artillexstudios.axminions.api.integrations.Integration
 import com.artillexstudios.axminions.api.integrations.Integrations
-import com.artillexstudios.axminions.api.integrations.types.EconomyIntegration
-import com.artillexstudios.axminions.api.integrations.types.PricesIntegration
-import com.artillexstudios.axminions.api.integrations.types.ProtectionIntegration
-import com.artillexstudios.axminions.api.integrations.types.ProtectionIntegrations
-import com.artillexstudios.axminions.api.integrations.types.StackerIntegration
+import com.artillexstudios.axminions.api.integrations.types.*
 import com.artillexstudios.axminions.integrations.economy.PlayerPointsIntegration
 import com.artillexstudios.axminions.integrations.economy.VaultIntegration
 import com.artillexstudios.axminions.integrations.placeholder.PlaceholderAPIIntegration
@@ -38,6 +34,7 @@ class Integrations : Integrations {
     private lateinit var stackerIntegration: StackerIntegration
     private var pricesIntegration: PricesIntegration? = null
     private var economyIntegration: EconomyIntegration? = null
+    private var islandIntegration: IslandIntegration? = null
     private val protectionIntegrations = com.artillexstudios.axminions.integrations.protection.ProtectionIntegrations()
     internal var kGeneratorsIntegration = false
     internal var itemsAdderIntegration = false
@@ -52,6 +49,10 @@ class Integrations : Integrations {
 
     override fun getEconomyIntegration(): EconomyIntegration? {
         return economyIntegration
+    }
+
+    override fun getIslandIntegration(): IslandIntegration? {
+        return islandIntegration
     }
 
     override fun getProtectionIntegration(): ProtectionIntegrations {
@@ -198,6 +199,12 @@ class Integrations : Integrations {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             PlaceholderAPIIntegration().register()
         }
+
+        if (Config.ISLAND_LIMIT() > 0) {
+            if (Bukkit.getPluginManager().getPlugin("SuperiorSkyBlock2") != null) {
+                register(com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration())
+            }
+        }
     }
 
     override fun register(integration: Integration) {
@@ -216,6 +223,10 @@ class Integrations : Integrations {
 
             is PricesIntegration -> {
                 pricesIntegration = integration
+            }
+
+            is IslandIntegration -> {
+                islandIntegration = integration
             }
 
             else -> {

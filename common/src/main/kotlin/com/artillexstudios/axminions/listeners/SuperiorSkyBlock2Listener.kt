@@ -13,12 +13,16 @@ class SuperiorSkyBlock2Listener : Listener {
         val minions = Minions.getMinions()
 
         Environment.entries.forEach { entry ->
-            event.island.getAllChunksAsync(entry, true) {}.forEach { chunk ->
-                minions.forEach { minion ->
-                    if (minion.getLocation().chunk == chunk) {
-                        minion.remove()
+            try {
+                event.island.getAllChunksAsync(entry, true) { }.forEach { chunk ->
+                    minions.forEach { minion ->
+                        if (minion.getLocation().chunk == chunk) {
+                            minion.remove()
+                        }
                     }
                 }
+            } catch (_: NullPointerException) {
+                // SuperiorSkyBlock api does it this way aswell
             }
         }
     }

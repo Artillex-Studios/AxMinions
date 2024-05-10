@@ -75,6 +75,29 @@ class MinionPlaceListener : Listener {
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
 
+            val islandLimit = Config.ISLAND_LIMIT()
+            var islandPlaced = 0
+            if (islandLimit > 0 && AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration() != null) {
+                islandPlaced = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandPlaced(event.player)
+
+                if (islandPlaced >= islandLimit && !event.player.hasPermission("axminions.limit.*")) {
+                    event.player.sendMessage(
+                        StringUtils.formatToString(
+                            Messages.PREFIX() + Messages.ISLAND_LIMIT_REACHED(),
+                            Placeholder.unparsed("placed", islandPlaced.toString()),
+                            Placeholder.unparsed("max", islandLimit.toString())
+                        )
+                    )
+
+                    Scheduler.get().run { _ ->
+                        meta = item.itemMeta!!
+                        meta.persistentDataContainer.remove(Keys.PLACED)
+                        item.itemMeta = meta
+                    }
+                    return@submit
+                }
+            }
+
             if (placed >= maxMinions && !prePlaceEvent.getShouldOverridePlayerLimit() && !event.player.hasPermission("axminions.limit.*")) {
                 event.player.sendMessage(
                     StringUtils.formatToString(
@@ -146,7 +169,9 @@ class MinionPlaceListener : Listener {
                     Messages.PREFIX() + Messages.PLACE_SUCCESS(),
                     Placeholder.unparsed("type", minionType.getName()),
                     Placeholder.unparsed("placed", (placed + 1).toString()),
-                    Placeholder.unparsed("max", (maxMinions).toString())
+                    Placeholder.unparsed("max", maxMinions.toString()),
+                    Placeholder.unparsed("island-placed", islandPlaced.toString()),
+                    Placeholder.unparsed("island-max", islandLimit.toString()),
                 )
             )
         }

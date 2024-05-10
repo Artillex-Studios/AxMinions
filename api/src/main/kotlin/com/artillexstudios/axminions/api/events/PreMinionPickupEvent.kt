@@ -16,7 +16,7 @@ class PreMinionPickupEvent(private val player: Player, minion: Minion) : MinionE
     private var isCancelled = false
 
     override fun getHandlers(): HandlerList {
-        return PreMinionPickupEvent.handlerList
+        return handlerList
     }
 
     fun getPlayer(): Player {
