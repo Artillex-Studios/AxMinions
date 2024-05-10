@@ -1,9 +1,9 @@
 plugins {
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version "8.1.1"
+    id 'io.github.goooler.shadow' version "8.1.7"
     id 'maven-publish'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.23'
 }
 
 group = 'com.artillexstudios.axminions'
@@ -26,13 +26,14 @@ dependencies {
     implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R2", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R3", configuration: "reobf")
+    implementation project(path: ":nms:v1_20_R4", configuration: "reobf")
 }
 
 allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
     apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'io.github.goooler.shadow'
 
     kotlin {
         jvmToolchain(17)
@@ -141,12 +142,6 @@ allprojects {
         compileOnly 'org.black_ixx:playerpoints:3.2.6'
         compileOnly 'com.github.Maxlego08:zShop-API:3.0.5'
         compileOnly 'me.clip:placeholderapi:2.11.5'
-    }
-
-    compileKotlin {
-        kotlinOptions {
-            javaParameters = true
-        }
     }
 }
 
