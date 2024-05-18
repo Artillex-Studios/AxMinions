@@ -1,13 +1,17 @@
 package com.artillexstudios.axminions.commands
 
+import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.converter.LitMinionsConverter
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -38,6 +42,28 @@ class AxMinionsCommand {
 
         receiver.inventory.addItem(item)
     }
+
+    @Subcommand("fuel")
+    @CommandPermission("axminions.command.fuel")
+    class Fuel {
+
+        @Subcommand("give")
+        @CommandPermission("axminions.command.fuel.give")
+        fun give(sender: CommandSender, id: String, receiver: Player, @Default("1") amount: Int) {
+            val item = ItemBuilder(Config.CHARGE_ITEMS().getSection(id)).get()
+            item.amount = amount
+            receiver.inventory.addItem(item)
+        }
+
+        @Subcommand("add")
+        @CommandPermission("axminions.command.fuel.add")
+        fun add(player: Player, id: String, charge: Int) {
+            val item = ItemBuilder(player.inventory.itemInMainHand).serialize(true)
+            item["charge"] = charge
+            AxMinionsPlugin.config.getConfig().set("charge.items.$id", item)
+        }
+    }
+
 
     @Subcommand("reset")
     @CommandPermission("axminions.command.reset")

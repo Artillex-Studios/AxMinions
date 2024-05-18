@@ -74,5 +74,7 @@ charge:
 tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
+location-format: "<world>;<x>;<y>;<z>"
+
 # Do not change!
-config-version: 6
+config-version: 7

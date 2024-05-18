@@ -240,6 +240,13 @@ class Minion(
                         else -> (this.level + 1).toString()
                     }
                 )
+                val nextStorage = Placeholder.parsed(
+                    "next_storage",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "storage",
+                        this.level + 1
+                    ).toString()
+                )
                 val range = Placeholder.parsed("range", type.getDouble("range", this.level).toString())
                 val nextRange = Placeholder.parsed(
                     "next_range",
@@ -305,7 +312,8 @@ class Minion(
                     stored,
                     actions,
                     multiplier,
-                    nextMultiplier
+                    nextMultiplier,
+                    nextStorage
                 ).get()
 
                 val meta = item.itemMeta!!
@@ -329,7 +337,7 @@ class Minion(
                 val linked = Placeholder.unparsed(
                     "linked", when (linkedChest) {
                         null -> "---"
-                        else -> Serializers.LOCATION.serialize(linkedChest)
+                        else -> Messages.LOCATION_FORMAT().replace("<world>", location.world!!.name).replace("<x>", location.blockX.toString()).replace("<y>", location.blockY.toString()).replace("<z>", location.blockZ.toString())
                     }
                 )
                 item = ItemBuilder(

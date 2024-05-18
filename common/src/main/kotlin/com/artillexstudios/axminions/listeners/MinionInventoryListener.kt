@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.listeners
 
+import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -11,6 +12,7 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.CoolDown
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.Locale
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
@@ -200,21 +202,36 @@ class MinionInventoryListener : Listener {
                     return
                 }
 
-                AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
-                    minion.getOwner()?.let { player ->
-                        it.takeBalance(player, Config.CHARGE_PRICE())
+                var chargeAmount = Config.CHARGE_AMOUNT()
+                var itemCharge = false
+                val section = Config.CHARGE_ITEMS()
+
+                for (key in section.keys) {
+                    val item = ItemBuilder(section.getSection(key.toString())).get()
+                    if (player.inventory.containsAtLeast(item, 1)) {
+                        itemCharge = true
+                        chargeAmount = section.getSection(key.toString()).getInt("charge")
+                        player.inventory.removeItem(item)
                     }
                 }
 
-                if (chargeSeconds + Config.CHARGE_AMOUNT() > Config.MAX_CHARGE() * 60L) {
+                if (!itemCharge) {
+                    AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
+                        minion.getOwner()?.let { player ->
+                            it.takeBalance(player, Config.CHARGE_PRICE())
+                        }
+                    }
+                }
+
+                if (chargeSeconds + chargeAmount > Config.MAX_CHARGE() * 60L) {
                     minion.setCharge(System.currentTimeMillis() + Config.MAX_CHARGE() * 60L * 1000L)
                     return
                 }
 
                 if (minion.getCharge() < System.currentTimeMillis()) {
-                    minion.setCharge(System.currentTimeMillis() + Config.CHARGE_AMOUNT() * 1000)
+                    minion.setCharge(System.currentTimeMillis() + chargeAmount * 1000)
                 } else {
-                    minion.setCharge(minion.getCharge() + Config.CHARGE_AMOUNT() * 1000)
+                    minion.setCharge(minion.getCharge() + chargeAmount * 1000)
                 }
 
                 if (Messages.CHARGE().isNotBlank()) {

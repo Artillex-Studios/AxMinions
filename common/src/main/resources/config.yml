@@ -76,6 +76,11 @@ charge:
   max-charge: 1440 # in minutes
   price: 10000
   minimum-charge: 30 # in seconds
+  items:
+    1:
+      type: coal
+      name: "<red>Fuel"
+      charge: 1000 # In seconds
 
 # 1 - HH:MM:SS, for example 01:25:35
 # 2 - short format, for example 20m

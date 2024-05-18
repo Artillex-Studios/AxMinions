@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.api.config
 
 import com.artillexstudios.axapi.config.Config
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.dvs.versioning.BasicVersioning
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.DumperSettings
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings
@@ -51,6 +52,8 @@ class Config(file: File, stream: InputStream) {
         fun CHARGE_PRICE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.price", 10000.0)
         @JvmStatic
         fun MINIMUM_CHARGE() = AxMinionsAPI.INSTANCE.getConfig().get("charge.minimum-charge", 30)
+        @JvmStatic
+        fun CHARGE_ITEMS() = AxMinionsAPI.INSTANCE.getConfig().get<Section>("charge.items")
         @JvmStatic
         fun TIMER_FORMAT() = AxMinionsAPI.INSTANCE.getConfig().get("timer-format", 1)
         @JvmStatic
@@ -103,6 +106,10 @@ class Config(file: File, stream: InputStream) {
                 }
             }
         }
+    }
+
+    fun save() {
+        this.config.save()
     }
 
     fun <T> get(route: String?): T {

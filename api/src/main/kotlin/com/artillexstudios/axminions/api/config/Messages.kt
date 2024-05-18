@@ -77,6 +77,8 @@ class Messages(file: File, stream: InputStream) {
         fun LINK_START() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.start")
         @JvmStatic
         fun UPGRADE_FAIL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("upgrades.fail")
+        @JvmStatic
+        fun LOCATION_FORMAT() = AxMinionsAPI.INSTANCE.getMessages().get<String>("location-format")
     }
 
     private val config = Config(
