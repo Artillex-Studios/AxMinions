@@ -220,6 +220,7 @@ class MinionInventoryListener : Listener {
                         itemCharge = true
                         chargeAmount = section.getSection(key.toString()).getInt("charge")
                         player.inventory.removeItem(item)
+                        break
                     }
                 }
 
