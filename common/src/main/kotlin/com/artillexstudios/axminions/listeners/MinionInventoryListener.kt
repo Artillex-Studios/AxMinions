@@ -6,6 +6,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.events.MinionToolEvent
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
@@ -16,6 +17,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.Locale
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -67,6 +69,9 @@ class MinionInventoryListener : Listener {
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.WRONG_TOOL()))
                 return
             }
+            val minionToolEvent = MinionToolEvent(minion, player, event.currentItem!!)
+            Bukkit.getPluginManager().callEvent(minionToolEvent)
+            if (minionToolEvent.isCancelled) return
 
             if (minion.getTool()?.type != Material.AIR) {
                 val current = event.currentItem!!.clone()
@@ -90,6 +95,9 @@ class MinionInventoryListener : Listener {
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.ERROR_INVENTORY_FULL()))
                 return
             }
+            val minionToolEvent = MinionToolEvent(minion, player, ItemStack(Material.AIR))
+            Bukkit.getPluginManager().callEvent(minionToolEvent)
+            if (minionToolEvent.isCancelled) return
 
             val tool = minion.getTool()?.clone() ?: return
             minion.setTool(ItemStack(Material.AIR))
