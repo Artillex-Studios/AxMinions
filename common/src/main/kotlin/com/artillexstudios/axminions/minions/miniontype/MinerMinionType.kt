@@ -55,7 +55,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         generatorMode = getConfig().getString("break") == "generator"
         whitelist.clear()
         getConfig().getStringList("whitelist").fastFor {
-            whitelist.add(Material.matchMaterial(it) ?: return@fastFor)
+            whitelist.add(Material.matchMaterial(it.uppercase(Locale.ENGLISH)) ?: return@fastFor)
         }
     }
 
