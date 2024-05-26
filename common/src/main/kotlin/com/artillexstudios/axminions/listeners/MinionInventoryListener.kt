@@ -224,6 +224,10 @@ class MinionInventoryListener : Listener {
                     }
                 }
 
+                if (Config.CHARGE_PRICE() <= 0) {
+                    return
+                }
+
                 if (!itemCharge) {
                     AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                         minion.getOwner()?.let { player ->

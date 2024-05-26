@@ -34,6 +34,6 @@ class NMSHandler : NMSHandler {
 
     override fun getExp(block: Block, itemStack: ItemStack): Int {
         val craftBlock = block as CraftBlock
-        return craftBlock.nms.block.getExpDrop((block.state as CraftBlockState).handle, craftBlock.handle.minecraftWorld, CraftLocation.toBlockPosition(block.location), CraftItemStack.unwrap(itemStack), true)
+        return craftBlock.nms.block.getExpDrop((block.state as CraftBlockState).handle, craftBlock.handle.minecraftWorld, CraftLocation.toBlockPosition(block.location), CraftItemStack.asNMSCopy(itemStack), true)
     }
 }

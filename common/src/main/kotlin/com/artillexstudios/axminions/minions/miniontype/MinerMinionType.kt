@@ -38,8 +38,8 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
         }
     }
-    var generatorMode = false
-    val whitelist = arrayListOf<Material>()
+    private var generatorMode = false
+    private val whitelist = arrayListOf<Material>()
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
