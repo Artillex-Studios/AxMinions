@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.math.roundToInt
 import me.kryniowesegryderiusz.kgenerators.Main
+import me.kryniowesegryderiusz.kgenerators.generators.locations.handlers.enums.InteractionType
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
@@ -98,11 +99,15 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             .isChunkFullyLoaded(location)
                     ) {
                         val gen = Main.getPlacedGenerators().getLoaded(location)
-                        val possible = gen?.isBlockPossibleToMine(location) ?: false
+                        if (gen != null) {
+                            val possible = gen.isBlockPossibleToMine(location)
 
-                        if (possible) {
-                            gen?.scheduleGeneratorRegeneration()
-                            return@fastFor
+                            if (possible) {
+                                gen.scheduleGeneratorRegeneration()
+                                return@fastFor
+                            } else {
+                                return@fastFor
+                            }
                         }
                     }
 
@@ -142,11 +147,15 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                         .isChunkFullyLoaded(location)
                                 ) {
                                     val gen = Main.getPlacedGenerators().getLoaded(location)
-                                    val possible = gen?.isBlockPossibleToMine(location) ?: false
+                                    if (gen != null) {
+                                        val possible = gen.isBlockPossibleToMine(location)
 
-                                    if (possible) {
-                                        gen?.scheduleGeneratorRegeneration()
-                                        return@fastFor
+                                        if (possible) {
+                                            gen.scheduleGeneratorRegeneration()
+                                            return@fastFor
+                                        } else {
+                                            return@fastFor
+                                        }
                                     }
                                 }
 
@@ -181,11 +190,15 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                     .isChunkFullyLoaded(location)
                             ) {
                                 val gen = Main.getPlacedGenerators().getLoaded(location)
-                                val possible = gen?.isBlockPossibleToMine(location) ?: false
+                                if (gen != null) {
+                                    val possible = gen.isBlockPossibleToMine(location)
 
-                                if (possible) {
-                                    gen?.scheduleGeneratorRegeneration()
-                                    return@fastFor
+                                    if (possible) {
+                                        gen.scheduleGeneratorRegeneration()
+                                        return@fastFor
+                                    } else {
+                                        return@fastFor
+                                    }
                                 }
                             }
 
@@ -220,11 +233,15 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 .isChunkFullyLoaded(location)
                         ) {
                             val gen = Main.getPlacedGenerators().getLoaded(location)
-                            val possible = gen?.isBlockPossibleToMine(location) ?: false
+                            if (gen != null) {
+                                val possible = gen.isBlockPossibleToMine(location)
 
-                            if (possible) {
-                                gen?.scheduleGeneratorRegeneration()
-                                return@fastFor
+                                if (possible) {
+                                    gen.scheduleGeneratorRegeneration()
+                                    return@fastFor
+                                } else {
+                                    return@fastFor
+                                }
                             }
                         }
 
@@ -259,11 +276,15 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 .isChunkFullyLoaded(location)
                         ) {
                             val gen = Main.getPlacedGenerators().getLoaded(location)
-                            val possible = gen?.isBlockPossibleToMine(location) ?: false
+                            if (gen != null) {
+                                val possible = gen.isBlockPossibleToMine(location)
 
-                            if (possible) {
-                                gen?.scheduleGeneratorRegeneration()
-                                return@fastFor
+                                if (possible) {
+                                    gen.scheduleGeneratorRegeneration()
+                                    return@fastFor
+                                } else {
+                                    return@fastFor
+                                }
                             }
                         }
 

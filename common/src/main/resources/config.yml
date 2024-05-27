@@ -134,4 +134,4 @@ gui:
 debug: false
 
 # Do not change!
-config-version: 9
+config-version: 10

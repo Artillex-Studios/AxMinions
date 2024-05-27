@@ -196,13 +196,6 @@ class MinionInventoryListener : Listener {
             }
 
             "charge" -> {
-                if ((AxMinionsPlugin.integrations.getEconomyIntegration()?.getBalance(player)
-                        ?: return) < Config.CHARGE_PRICE()
-                ) {
-                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE_FAIL()))
-                    return
-                }
-
                 val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
 
                 if ((Config.MAX_CHARGE() * 60) - chargeSeconds < Config.MINIMUM_CHARGE()) {
@@ -224,11 +217,19 @@ class MinionInventoryListener : Listener {
                     }
                 }
 
-                if (Config.CHARGE_PRICE() <= 0) {
+                if (Config.CHARGE_PRICE() <= 0 && !itemCharge) {
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE_FAIL()))
                     return
                 }
 
                 if (!itemCharge) {
+                    if ((AxMinionsPlugin.integrations.getEconomyIntegration()?.getBalance(player)
+                            ?: return) < Config.CHARGE_PRICE()
+                    ) {
+                        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.CHARGE_FAIL()))
+                        return
+                    }
+
                     AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
                         minion.getOwner()?.let { player ->
                             it.takeBalance(player, Config.CHARGE_PRICE())
