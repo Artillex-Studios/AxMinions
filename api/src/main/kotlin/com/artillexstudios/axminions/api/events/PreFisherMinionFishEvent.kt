@@ -1,7 +1,6 @@
 package com.artillexstudios.axminions.api.events
 
 import com.artillexstudios.axminions.api.minions.Minion
-import org.bukkit.block.Block
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
