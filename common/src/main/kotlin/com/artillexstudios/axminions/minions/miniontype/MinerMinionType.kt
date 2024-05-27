@@ -3,12 +3,14 @@ package com.artillexstudios.axminions.minions.miniontype
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.scheduler.impl.FoliaScheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.utils.LocationUtils
 import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration
 import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.nms.NMSHandler
 import dev.lone.itemsadder.api.CustomBlock
@@ -118,7 +120,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             amount += it.amount
                         }
                         minion.addToContainerOrDrop(drops)
-                        location.block.type = Material.AIR
+                        block.type = Material.AIR
+                        val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+                        if (integration is SuperiorSkyBlock2Integration) {
+                            integration.handleBlockBreak(block)
+                        }
                     }
                 }
             }
@@ -159,7 +165,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                             amount += it.amount
                                         }
                                         minion.addToContainerOrDrop(drops)
-                                        location.block.type = Material.AIR
+                                        block.type = Material.AIR
+                                        val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+                                        if (integration is SuperiorSkyBlock2Integration) {
+                                            integration.handleBlockBreak(block)
+                                        }
                                     }
                                 }
                             }
@@ -193,7 +203,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                     amount += it.amount
                                 }
                                 minion.addToContainerOrDrop(drops)
-                                location.block.type = Material.AIR
+                                block.type = Material.AIR
+                                val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+                                if (integration is SuperiorSkyBlock2Integration) {
+                                    integration.handleBlockBreak(block)
+                                }
                             }
                         }
                 }
@@ -228,7 +242,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 amount += item.amount
                             }
                             minion.addToContainerOrDrop(drops)
-                            location.block.type = Material.AIR
+                            block.type = Material.AIR
+                            val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+                            if (integration is SuperiorSkyBlock2Integration) {
+                                integration.handleBlockBreak(block)
+                            }
                         }
                     }
                 }
@@ -277,7 +295,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             }
 
                             minion.addToContainerOrDrop(drops)
-                            location.block.type = Material.AIR
+                            block.type = Material.AIR
+                            val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+                            if (integration is SuperiorSkyBlock2Integration) {
+                                integration.handleBlockBreak(block)
+                            }
                         }
                     }
             }

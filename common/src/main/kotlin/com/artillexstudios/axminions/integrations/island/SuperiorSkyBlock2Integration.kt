@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.integrations.island
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.integrations.types.IslandIntegration
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
 class SuperiorSkyBlock2Integration : IslandIntegration {
@@ -14,6 +15,10 @@ class SuperiorSkyBlock2Integration : IslandIntegration {
         }
 
         return placed
+    }
+
+    fun handleBlockBreak(block: Block) {
+        SuperiorSkyblockAPI.getIslandAt(block.location)?.handleBlockBreak(block)
     }
 
     override fun register() {
