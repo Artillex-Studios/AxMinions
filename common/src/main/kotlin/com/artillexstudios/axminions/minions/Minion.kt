@@ -679,6 +679,7 @@ class Minion(
             if (Config.CAN_BREAK_TOOLS()) {
                 if (Config.PULL_FROM_CHEST()) {
                     val item = pullFromChest()
+                    linkedInventory?.addItem(tool)
                     setTool(item)
 
                     if (!tool.type.isAir && notDurable.contains(tool.type)) {
@@ -695,6 +696,7 @@ class Minion(
             } else {
                 if (Config.PULL_FROM_CHEST()) {
                     val item = pullFromChest()
+                    linkedInventory?.addItem(tool)
                     setTool(item)
 
                     if (!tool.type.isAir && notDurable.contains(tool.type)) {
@@ -735,6 +737,7 @@ class Minion(
             if (Config.CAN_BREAK_TOOLS()) {
                 if (Config.PULL_FROM_CHEST()) {
                     val item = pullFromChest()
+                    linkedInventory?.addItem(tool)
                     setTool(item)
 
                     if (!tool.type.isAir && notDurable.contains(tool.type)) {
@@ -751,6 +754,7 @@ class Minion(
             } else {
                 if (Config.PULL_FROM_CHEST()) {
                     val item = pullFromChest()
+                    linkedInventory?.addItem(tool)
                     setTool(item)
 
                     if (!tool.type.isAir && notDurable.contains(tool.type)) {
