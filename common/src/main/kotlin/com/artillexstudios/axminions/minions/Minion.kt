@@ -668,13 +668,13 @@ class Minion(
 
         if (Math.random() > 1f / (toolMeta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
 
-        if (remaining > 1) {
+        if (remaining > amount) {
             // We can damage the tool
             toolMeta.damage += amount
             tool.itemMeta = toolMeta
             updateInventories()
             return
-        } else if (remaining == 1) {
+        } else if (remaining <= 1) {
             // Tool is breaking
             if (Config.CAN_BREAK_TOOLS()) {
                 if (Config.PULL_FROM_CHEST()) {
@@ -731,7 +731,7 @@ class Minion(
         if (remaining > 1) {
             // We can damage the tool
             return true
-        } else if (remaining == 1) {
+        } else {
             // Tool is breaking
             if (Config.CAN_BREAK_TOOLS()) {
                 if (Config.PULL_FROM_CHEST()) {
