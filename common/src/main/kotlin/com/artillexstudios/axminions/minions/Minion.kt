@@ -674,7 +674,7 @@ class Minion(
             tool.itemMeta = toolMeta
             updateInventories()
             return
-        } else if (remaining <= 1) {
+        } else {
             // Tool is breaking
             if (Config.CAN_BREAK_TOOLS()) {
                 if (Config.PULL_FROM_CHEST()) {
@@ -710,7 +710,6 @@ class Minion(
             }
         }
     }
-
 
     override fun canUseTool(): Boolean {
         val tool = tool ?: return false
