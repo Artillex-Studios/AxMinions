@@ -55,7 +55,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         val efficiency = 1.0 - if (tool > 0.9) 0.9 else tool
         minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
 
-        generatorMode = getConfig().getString("break") == "generator"
+        generatorMode = getConfig().getString("break", "generator").equals("generator", true)
         whitelist.clear()
         getConfig().getStringList("whitelist").fastFor {
             whitelist.add(Material.matchMaterial(it.uppercase(Locale.ENGLISH)) ?: return@fastFor)
