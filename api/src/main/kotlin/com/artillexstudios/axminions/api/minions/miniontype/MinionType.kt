@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.api.minions.miniontype
 
 import com.artillexstudios.axapi.config.Config
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.dvs.versioning.BasicVersioning
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.DumperSettings
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings
@@ -16,18 +17,31 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-abstract class MinionType(private val name: String, private val defaults: InputStream) {
+abstract class MinionType(private val name: String, private val defaults: InputStream, private val autoUpdateConfig: Boolean) {
     private lateinit var config: Config
 
+    constructor(name: String, defaults: InputStream) : this(name, defaults, false)
+
     fun load() {
-        config = Config(
-            File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"),
-            defaults,
-            GeneralSettings.builder().setUseDefaults(false).build(),
-            LoaderSettings.DEFAULT,
-            DumperSettings.DEFAULT,
-            UpdaterSettings.DEFAULT
-        )
+        if (!autoUpdateConfig) {
+            config = Config(
+                File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"),
+                defaults,
+                GeneralSettings.builder().setUseDefaults(false).build(),
+                LoaderSettings.DEFAULT,
+                DumperSettings.DEFAULT,
+                UpdaterSettings.DEFAULT
+            )
+        } else {
+            config = Config(
+                File(AxMinionsAPI.INSTANCE.getAxMinionsDataFolder(), "/minions/$name.yml"),
+                defaults,
+                GeneralSettings.builder().setUseDefaults(false).build(),
+                LoaderSettings.builder().setAutoUpdate(true).build(),
+                DumperSettings.DEFAULT,
+                UpdaterSettings.builder().setVersioning(BasicVersioning("config-version")).build()
+            )
+        }
         AxMinionsAPI.INSTANCE.getDataHandler().insertType(this)
     }
 

@@ -27,7 +27,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.FurnaceRecipe
 import org.bukkit.inventory.ItemStack
 
-class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource("minions/miner.yml")!!) {
+class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource("minions/miner.yml")!!, true) {
     companion object {
         private var asyncExecutor: ExecutorService? = null
         private val smeltingRecipes = ArrayList<FurnaceRecipe>()

@@ -157,3 +157,5 @@ upgrades:
         type: LEATHER_BOOTS
         color: "150, 150, 150"
         glow: true
+
+config-version: 1
