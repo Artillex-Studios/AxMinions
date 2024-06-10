@@ -133,6 +133,7 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("SuperiorSkyblock2") != null) {
             register(SuperiorSkyBlock2Integration())
+            register(com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration())
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into SuperiorSkyblock2!"))
             Bukkit.getPluginManager().registerEvents(SuperiorSkyBlock2Listener(), AxMinionsPlugin.INSTANCE)
@@ -164,6 +165,7 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("IridiumSkyBlock") != null) {
             register(IridiumSkyBlockIntegration())
+            register(com.artillexstudios.axminions.integrations.island.IridiumSkyBlockIntegration())
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into IridiumSkyBlock!"))
         }
@@ -198,12 +200,6 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             PlaceholderAPIIntegration().register()
-        }
-
-        if (Config.ISLAND_LIMIT() > 0) {
-            if (Bukkit.getPluginManager().getPlugin("SuperiorSkyBlock2") != null) {
-                register(com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration())
-            }
         }
     }
 

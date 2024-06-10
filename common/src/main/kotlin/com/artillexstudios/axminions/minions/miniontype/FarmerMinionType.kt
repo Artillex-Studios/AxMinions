@@ -11,13 +11,16 @@ import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
 import dev.lone.itemsadder.api.CustomBlock
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import kotlin.math.roundToInt
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.block.data.Ageable
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 
-class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResource("minions/farmer.yml")!!) {
+class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResource("minions/farmer.yml")!!, true) {
+    private val faces = arrayOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
@@ -61,7 +64,21 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
         var size = 0
         val drops = arrayListOf<ItemStack>()
-        LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
+        val blocks = when (getConfig().getString("mode")) {
+            "face" -> {
+                LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing)
+            }
+            "line" -> {
+                val list = arrayListOf<Location>()
+                faces.fastFor {
+                    list.addAll(LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing))
+                }
+                list
+            }
+            else -> LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
+        }
+
+        blocks.fastFor { location ->
             val block = location.block
 
             if (AxMinionsPlugin.integrations.itemsAdderIntegration) {
