@@ -80,10 +80,21 @@ class MinionPlaceListener : Listener {
             var islandId = ""
             if (islandLimit > 0 && AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration() != null) {
                 islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(location)
+                if (Config.DEBUG()) {
+                    event.player.sendMessage("Island ID: $islandId, limit: $islandLimit")
+                }
+
                 if (islandId.isNotBlank()) {
                     islandPlaced = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
+                    if (Config.DEBUG()) {
+                        event.player.sendMessage("Placed: $islandPlaced")
+                    }
 
                     if (islandPlaced >= islandLimit && !event.player.hasPermission("axminions.limit.*")) {
+                        if (Config.DEBUG()) {
+                            event.player.sendMessage("Return")
+                        }
+
                         event.player.sendMessage(
                             StringUtils.formatToString(
                                 Messages.PREFIX() + Messages.ISLAND_LIMIT_REACHED(),
@@ -98,6 +109,10 @@ class MinionPlaceListener : Listener {
                             item.itemMeta = meta
                         }
                         return@submit
+                    } else {
+                        if (Config.DEBUG()) {
+                            event.player.sendMessage("Not return ${islandPlaced >= islandLimit} ${!event.player.hasPermission("axminions.limit.*")}")
+                        }
                     }
                 }
             }
