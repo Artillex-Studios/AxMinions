@@ -376,8 +376,10 @@ class H2DataHandler : DataHandler {
 
     override fun islandPlace(island: String) {
         dataSource.connection.use { connection ->
-            connection.prepareStatement("UPDATE `axminions_island_counter` SET `placed` = `placed` + 1 WHERE `island` = ?;").use { statement ->
-                statement.setString(1, island)
+            val placed = getIsland(island) + 1
+            connection.prepareStatement("MERGE INTO `axminions_island_counter`(`placed`, `island`) KEY(`island`) VALUES(?,?);").use { statement ->
+                statement.setInt(1, placed)
+                statement.setString(2, island)
                 statement.executeUpdate()
             }
         }
