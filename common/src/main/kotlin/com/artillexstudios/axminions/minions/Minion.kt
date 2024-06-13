@@ -550,6 +550,13 @@ class Minion(
 
         AxMinionsPlugin.dataQueue.submit {
             AxMinionsPlugin.dataHandler.deleteMinion(this)
+
+            if (AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration() != null) {
+                val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(location)
+                if (islandId.isNotBlank()) {
+                    AxMinionsPlugin.dataHandler.islandBreak(islandId)
+                }
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.data
 
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axminions.AxMinionsPlugin
+import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
@@ -71,6 +72,15 @@ class H2DataHandler : DataHandler {
         dataSource.connection.use { connection ->
             connection.prepareStatement("ALTER TABLE `axminions_minions` ADD COLUMN IF NOT EXISTS `charge` BIGINT DEFAULT(0);").use {
                 it.executeUpdate()
+            }
+        }
+
+        if (Config.ISLAND_LIMIT() > 0) {
+            dataSource.connection.use { connection ->
+                connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_island_counter`(`island` VARCHAR(256) PRIMARY KEY, `placed` INT);")
+                    .use {
+                        it.executeUpdate()
+                    }
             }
         }
     }
@@ -362,6 +372,38 @@ class H2DataHandler : DataHandler {
         }
 
         return false
+    }
+
+    override fun islandPlace(island: String) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("UPDATE `axminions_island_counter` SET `placed` = `placed` + 1 WHERE `island` = ?;").use { statement ->
+                statement.setString(1, island)
+                statement.executeUpdate()
+            }
+        }
+    }
+
+    override fun islandBreak(island: String) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("UPDATE `axminions_island_counter` SET `placed` = `placed` - 1 WHERE `island` = ?;").use { statement ->
+                statement.setString(1, island)
+                statement.executeUpdate()
+            }
+        }
+    }
+
+    override fun getIsland(island: String): Int {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("SELECT `placed` FROM `axminions_island_counter` WHERE `island` = ?").use { statement ->
+                statement.executeQuery().use { resultSet ->
+                    if (resultSet.next()) {
+                        return resultSet.getInt("placed")
+                    }
+                }
+            }
+        }
+
+        return 0
     }
 
     override fun disable() {

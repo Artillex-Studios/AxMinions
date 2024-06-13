@@ -6,22 +6,22 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.events.PreMinionPlaceEvent
 import com.artillexstudios.axminions.api.minions.Direction
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.minions.Minion
 import com.artillexstudios.axminions.minions.Minions
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
-import org.bukkit.event.block.BlockPlaceEvent
-import com.artillexstudios.axminions.api.events.PreMinionPlaceEvent
-import org.bukkit.Bukkit
 
 class MinionPlaceListener : Listener {
 
@@ -77,24 +77,28 @@ class MinionPlaceListener : Listener {
 
             val islandLimit = Config.ISLAND_LIMIT()
             var islandPlaced = 0
+            var islandId = ""
             if (islandLimit > 0 && AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration() != null) {
-                islandPlaced = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandPlaced(event.player)
+                islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(location)
+                if (islandId.isNotBlank()) {
+                    islandPlaced = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
 
-                if (islandPlaced >= islandLimit && !event.player.hasPermission("axminions.limit.*")) {
-                    event.player.sendMessage(
-                        StringUtils.formatToString(
-                            Messages.PREFIX() + Messages.ISLAND_LIMIT_REACHED(),
-                            Placeholder.unparsed("placed", islandPlaced.toString()),
-                            Placeholder.unparsed("max", islandLimit.toString())
+                    if (islandPlaced >= islandLimit && !event.player.hasPermission("axminions.limit.*")) {
+                        event.player.sendMessage(
+                            StringUtils.formatToString(
+                                Messages.PREFIX() + Messages.ISLAND_LIMIT_REACHED(),
+                                Placeholder.unparsed("placed", islandPlaced.toString()),
+                                Placeholder.unparsed("max", islandLimit.toString())
+                            )
                         )
-                    )
 
-                    Scheduler.get().run { _ ->
-                        meta = item.itemMeta!!
-                        meta.persistentDataContainer.remove(Keys.PLACED)
-                        item.itemMeta = meta
+                        Scheduler.get().run { _ ->
+                            meta = item.itemMeta!!
+                            meta.persistentDataContainer.remove(Keys.PLACED)
+                            item.itemMeta = meta
+                        }
+                        return@submit
                     }
-                    return@submit
                 }
             }
 
@@ -125,7 +129,7 @@ class MinionPlaceListener : Listener {
                 }
                 return@submit
             }
-            
+
             val locationId = AxMinionsPlugin.dataHandler.getLocationID(location)
             val minion = Minion(
                 location,
@@ -143,6 +147,7 @@ class MinionPlaceListener : Listener {
                 charge
             )
             Minions.startTicking(chunk)
+
 
             Scheduler.get().run { _ ->
                 meta = item.itemMeta!!
@@ -163,6 +168,10 @@ class MinionPlaceListener : Listener {
 
             minion.setOwnerOnline(true)
             AxMinionsPlugin.dataHandler.saveMinion(minion)
+
+            if (islandId.isNotBlank()) {
+                AxMinionsPlugin.dataHandler.islandPlace(islandId)
+            }
 
             event.player.sendMessage(
                 StringUtils.formatToString(

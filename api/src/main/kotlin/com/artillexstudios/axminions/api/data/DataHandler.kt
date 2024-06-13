@@ -30,5 +30,11 @@ interface DataHandler {
 
     fun isMinion(location: Location): Boolean
 
+    fun islandPlace(island: String)
+
+    fun islandBreak(island: String)
+
+    fun getIsland(island: String): Int
+
     fun disable()
 }
