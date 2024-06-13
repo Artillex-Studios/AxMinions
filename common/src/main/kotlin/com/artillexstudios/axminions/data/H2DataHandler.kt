@@ -395,6 +395,7 @@ class H2DataHandler : DataHandler {
     override fun getIsland(island: String): Int {
         dataSource.connection.use { connection ->
             connection.prepareStatement("SELECT `placed` FROM `axminions_island_counter` WHERE `island` = ?;").use { statement ->
+                statement.setString(1, island)
                 statement.executeQuery().use { resultSet ->
                     if (resultSet.next()) {
                         return resultSet.getInt("placed")
