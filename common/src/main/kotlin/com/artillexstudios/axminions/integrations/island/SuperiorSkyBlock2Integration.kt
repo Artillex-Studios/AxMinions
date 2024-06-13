@@ -12,12 +12,16 @@ class SuperiorSkyBlock2Integration : IslandIntegration {
     override fun getIslandPlaced(player: Player): Int {
         var placed = 0
         SuperiorSkyblockAPI.getPlayer(player.uniqueId).island?.getIslandMembers(true)?.forEach {
+            val a = AxMinionsAPI.INSTANCE.getDataHandler().getMinionAmount(it.uniqueId)
+            placed += a
             if (Config.DEBUG()) {
-                println("Member: ${it.name}")
+                println("Member: ${it.name} - $a")
             }
-            placed += AxMinionsAPI.INSTANCE.getDataHandler().getMinionAmount(it.uniqueId)
         }
 
+        if (Config.DEBUG()) {
+            println("Placed total: $placed")
+        }
         return placed
     }
 

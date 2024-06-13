@@ -121,10 +121,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                         drops.forEach {
                             amount += it.amount
                         }
-                        minion.addToContainerOrDrop(drops)
-                        block.type = Material.AIR
                         val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
                         integration?.handleBlockBreak(block)
+
+                        minion.addToContainerOrDrop(drops)
+                        block.type = Material.AIR
                     }
                 }
             }
@@ -167,10 +168,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                         drops.forEach {
                                             amount += it.amount
                                         }
-                                        minion.addToContainerOrDrop(drops)
-                                        block.type = Material.AIR
                                         val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
                                         integration?.handleBlockBreak(block)
+
+                                        minion.addToContainerOrDrop(drops)
+                                        block.type = Material.AIR
                                     }
                                 }
                             }
@@ -206,10 +208,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 drops.forEach {
                                     amount += it.amount
                                 }
-                                minion.addToContainerOrDrop(drops)
-                                block.type = Material.AIR
                                 val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
                                 integration?.handleBlockBreak(block)
+
+                                minion.addToContainerOrDrop(drops)
+                                block.type = Material.AIR
                             }
                         }
                 }
@@ -246,10 +249,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             drops.forEach { item ->
                                 amount += item.amount
                             }
-                            minion.addToContainerOrDrop(drops)
-                            block.type = Material.AIR
                             val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
                             integration?.handleBlockBreak(block)
+
+                            minion.addToContainerOrDrop(drops)
+                            block.type = Material.AIR
                         }
                     }
                 }
@@ -299,10 +303,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 amount += it.amount
                             }
 
-                            minion.addToContainerOrDrop(drops)
-                            block.type = Material.AIR
                             val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
                             integration?.handleBlockBreak(block)
+
+                            minion.addToContainerOrDrop(drops)
+                            block.type = Material.AIR
                         }
                     }
             }
