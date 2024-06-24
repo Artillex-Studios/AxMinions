@@ -15,6 +15,7 @@ import kotlin.math.roundToInt
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.DoubleChestInventory
 
 class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResource("minions/fisher.yml")!!) {
 
@@ -37,6 +38,10 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
 
         if (minion.getLinkedChest() != null) {
             val type = minion.getLinkedChest()!!.block.type
+            if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+                minion.setLinkedChest(minion.getLinkedChest())
+            }
+
             if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
                 minion.setLinkedChest(null)
             }

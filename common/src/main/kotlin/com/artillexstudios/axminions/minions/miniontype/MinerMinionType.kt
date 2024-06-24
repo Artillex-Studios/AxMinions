@@ -19,6 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.FurnaceRecipe
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -68,6 +69,10 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
         if (minion.getLinkedChest() != null) {
             val type = minion.getLinkedChest()!!.block.type
+            if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+                minion.setLinkedChest(minion.getLinkedChest())
+            }
+
             if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
                 minion.setLinkedChest(null)
             }

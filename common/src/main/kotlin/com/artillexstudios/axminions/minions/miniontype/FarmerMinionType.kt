@@ -14,13 +14,15 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import kotlin.math.roundToInt
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
+import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Ageable
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.ItemStack
 
 class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResource("minions/farmer.yml")!!, true) {
-    private val faces = arrayOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
@@ -41,6 +43,10 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
 
         if (minion.getLinkedChest() != null) {
             val type = minion.getLinkedChest()!!.block.type
+            if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+                minion.setLinkedChest(minion.getLinkedChest())
+            }
+
             if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
                 minion.setLinkedChest(null)
             }

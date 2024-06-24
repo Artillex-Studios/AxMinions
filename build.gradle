@@ -138,7 +138,7 @@ allprojects {
         compileOnly 'com.github.LoneDev6:api-itemsadder:3.6.1'
         compileOnly 'com.palmergames.bukkit.towny:towny:0.100.1.0'
         implementation platform('com.intellectualsites.bom:bom-newest:1.35')
-        implementation("com.artillexstudios.axapi:axapi:1.4.259:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.263:all")
         implementation("com.zaxxer:HikariCP:5.1.0")
         implementation("org.bstats:bstats-bukkit:3.0.2")
         compileOnly 'org.black_ixx:playerpoints:3.2.6'

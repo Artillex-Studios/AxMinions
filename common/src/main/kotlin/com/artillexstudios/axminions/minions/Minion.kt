@@ -36,6 +36,7 @@ import org.bukkit.block.Container
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.entity.Pose
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.Damageable
@@ -156,14 +157,17 @@ class Minion(
                 Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
             )
         )
+        meta.customNameVisible(true)
 
         if (Config.DEBUG()) {
             debugHologram = Hologram(location.clone().add(0.0, 2.0, 0.0), "$locationID")
             debugHologram?.addLine("ticking: $ticking", HologramLine.Type.TEXT)
         }
 
+        meta.metadata().set(Accessors.POSE, Pose.STANDING)
         setDirection(direction, false)
         updateArmour()
+        entity.spawn()
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {

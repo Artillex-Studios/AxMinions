@@ -7,10 +7,7 @@ import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
-import org.bukkit.inventory.ShapelessRecipe
+import org.bukkit.inventory.*
 
 class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getResource("minions/crafter.yml")!!) {
 
@@ -31,6 +28,10 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
         }
 
         val type = minion.getLinkedChest()!!.block.type
+        if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+            minion.setLinkedChest(minion.getLinkedChest())
+        }
+
         if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
             Warnings.NO_CONTAINER.display(minion)
             minion.setLinkedChest(null)
@@ -129,6 +130,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun canCraftShapeless(recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>): Boolean {
         for (recipeChoice in recipe.choiceList) {
             if (recipeChoice == null) continue
+            if (recipeChoice.itemStack == null) continue
             var amount = 0
 
             val iterator = contents.entries.iterator()
@@ -151,6 +153,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun canCraftShaped(recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>): Boolean {
         for (recipeChoice in recipe.choiceMap) {
             if (recipeChoice.value == null) continue
+            if (recipeChoice.value.itemStack == null) continue
             var amount = 0
 
             val iterator = contents.entries.iterator()
@@ -173,6 +176,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun doCraftShapeless(inventory: Inventory, recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceList) {
             if (recipeChoice == null) continue
+            if (recipeChoice.itemStack == null) continue
 
             for (content in inventory.contents) {
                 if (recipeChoice.test(content)) {
@@ -215,6 +219,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun doCraftShaped(inventory: Inventory, recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceMap) {
             if (recipeChoice.value == null) continue
+            if (recipeChoice.value.itemStack == null) continue
 
             for (content in inventory.contents) {
                 if (recipeChoice.value.test(content)) {

@@ -11,13 +11,18 @@ import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.fastFor
 import java.io.File
 import java.io.InputStream
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Material
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 abstract class MinionType(private val name: String, private val defaults: InputStream, private val autoUpdateConfig: Boolean) {
+    val faces = arrayOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)
     private lateinit var config: Config
 
     constructor(name: String, defaults: InputStream) : this(name, defaults, false)
@@ -119,6 +124,16 @@ abstract class MinionType(private val name: String, private val defaults: InputS
 
     fun hasReachedMaxLevel(minion: Minion): Boolean {
         return !config.backingDocument.isSection("upgrades.${minion.getLevel() + 1}")
+    }
+
+    fun hasChestOnSide(block: Block): Boolean {
+        faces.fastFor {
+            if (block.getRelative(it).type == Material.CHEST) {
+                return true
+            }
+        }
+
+        return false
     }
 
     abstract fun run(minion: Minion)
