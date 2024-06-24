@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.api.minions
 
-import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.hologram.Hologram
+import com.artillexstudios.axapi.packetentity.PacketEntity
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.warnings.Warning
 import java.util.UUID
