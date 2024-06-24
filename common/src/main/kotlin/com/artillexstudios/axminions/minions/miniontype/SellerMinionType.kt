@@ -34,9 +34,12 @@ class SellerMinionType : MinionType("seller", AxMinionsPlugin.INSTANCE.getResour
             return
         }
 
-
         val type = minion.getLinkedChest()!!.block.type
         if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+            minion.setLinkedChest(minion.getLinkedChest())
+        }
+
+        if (type == Material.CHEST && minion.getLinkedInventory() is DoubleChestInventory && !hasChestOnSide(minion.getLinkedChest()!!.block)) {
             minion.setLinkedChest(minion.getLinkedChest())
         }
 

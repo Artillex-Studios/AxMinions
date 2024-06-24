@@ -67,9 +67,13 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             Warnings.remove(minion, Warnings.CONTAINER_FULL)
         }
 
-        if (minion.getLinkedChest() != null) {
+        if (minion.getLinkedChest() != null && minion.getLinkedInventory() != null) {
             val type = minion.getLinkedChest()!!.block.type
             if (type == Material.CHEST && minion.getLinkedInventory() !is DoubleChestInventory && hasChestOnSide(minion.getLinkedChest()!!.block)) {
+                minion.setLinkedChest(minion.getLinkedChest())
+            }
+
+            if (type == Material.CHEST && minion.getLinkedInventory() is DoubleChestInventory && !hasChestOnSide(minion.getLinkedChest()!!.block)) {
                 minion.setLinkedChest(minion.getLinkedChest())
             }
 

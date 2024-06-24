@@ -682,6 +682,10 @@ class Minion(
             return
         }
 
+        if (toolMeta.isUnbreakable) {
+            return
+        }
+
         val maxDurability = tool.type.maxDurability
         val damage = toolMeta.damage
         val remaining = maxDurability - damage
@@ -746,6 +750,10 @@ class Minion(
         }
 
         if (!Config.USE_DURABILITY()) {
+            return true
+        }
+
+        if (toolMeta.isUnbreakable) {
             return true
         }
 

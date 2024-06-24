@@ -42,6 +42,10 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
                 minion.setLinkedChest(minion.getLinkedChest())
             }
 
+            if (type == Material.CHEST && minion.getLinkedInventory() is DoubleChestInventory && !hasChestOnSide(minion.getLinkedChest()!!.block)) {
+                minion.setLinkedChest(minion.getLinkedChest())
+            }
+
             if (type != Material.CHEST && type != Material.TRAPPED_CHEST && type != Material.BARREL) {
                 minion.setLinkedChest(null)
             }
