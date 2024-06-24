@@ -26,5 +26,7 @@ interface NMSHandler {
 
     fun getAnimalUUID(): UUID
 
+    fun getMinion(): Minion?
+
     fun getExp(block: Block, itemStack: ItemStack): Int
 }

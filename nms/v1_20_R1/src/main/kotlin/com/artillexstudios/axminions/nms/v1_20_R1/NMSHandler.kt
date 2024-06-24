@@ -32,6 +32,10 @@ class NMSHandler : NMSHandler {
         return DamageHandler.getUUID()
     }
 
+    override fun getMinion(): Minion? {
+        return DamageHandler.getMinion()
+    }
+
     override fun getExp(block: Block, itemStack: ItemStack): Int {
         val craftBlock = block as CraftBlock
         return craftBlock.nms.block.getExpDrop((block.state as CraftBlockState).handle, craftBlock.handle.minecraftWorld, CraftLocation.toBlockPosition(block.location), CraftItemStack.asNMSCopy(itemStack), true)

@@ -9,6 +9,7 @@ import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.nms.NMSHandler
 import java.util.concurrent.ThreadLocalRandom
 import org.bukkit.entity.Item
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -54,6 +55,14 @@ class MinionDamageListener : Listener {
         if (event.damager.uniqueId == NMSHandler.get().getAnimalUUID() && event.entity is Player) {
             event.isCancelled = true
             event.damage = 0.0
+            return
+        }
+
+        val entity = event.entity
+        if (entity is LivingEntity) {
+            if (event.damager.uniqueId == NMSHandler.get().getAnimalUUID() && event.finalDamage > entity.health) {
+                MinionKillEntityEvent(NMSHandler.get().getMinion() ?: return, entity)
+            }
         }
     }
 }

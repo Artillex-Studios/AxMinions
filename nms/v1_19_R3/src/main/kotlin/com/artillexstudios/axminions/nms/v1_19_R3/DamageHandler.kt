@@ -1,9 +1,7 @@
 package com.artillexstudios.axminions.nms.v1_19_R3
 
-import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
-import java.util.UUID
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
@@ -29,18 +27,25 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityPotionEffectEvent
+import java.util.*
 
 object DamageHandler {
     private var DUMMY_ENTITY = Fox(EntityType.FOX, (Bukkit.getWorlds().get(0) as CraftWorld).handle)
+    private var minion: Minion? = null
 
-    fun getUUID() : UUID {
+    fun getUUID(): UUID {
         return DUMMY_ENTITY.uuid
+    }
+
+    fun getMinion(): Minion? {
+        return minion
     }
 
     fun damage(source: Minion, entity: Entity) {
         val nmsEntity = (entity as CraftEntity).handle
 
         synchronized(DUMMY_ENTITY) {
+            this.minion = source
             var f = 1
 
             val nmsItem: ItemStack
@@ -109,11 +114,6 @@ object DamageHandler {
                 val flag5 = nmsEntity.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f.toFloat())
 
                 if (flag5) {
-                    if ((nmsEntity as LivingEntity).isDeadOrDying) {
-                        val killEvent = MinionKillEntityEvent(source, entity)
-                        Bukkit.getPluginManager().callEvent(killEvent)
-                    }
-
                     if (i > 0) {
                         if (nmsEntity is LivingEntity) {
                             (nmsEntity).knockback(
@@ -159,10 +159,6 @@ object DamageHandler {
 
                                 // CraftBukkit start - Only apply knockback if the damage hits
                                 if (entityliving.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f4)) {
-                                    if (entityliving.isDeadOrDying) {
-                                        val killEvent = MinionKillEntityEvent(source, entity)
-                                        Bukkit.getPluginManager().callEvent(killEvent)
-                                    }
                                     entityliving.knockback(
                                         0.4000000059604645,
                                         Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
@@ -232,6 +228,7 @@ object DamageHandler {
                     }
                 }
             }
+            this.minion = null
         }
     }
 }

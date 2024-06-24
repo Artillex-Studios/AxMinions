@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.scheduler.impl.FoliaScheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
+import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.utils.LocationUtils
@@ -99,7 +100,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             val possible = gen.isBlockPossibleToMine(location)
 
                             if (possible) {
-                                minion.addToContainerOrDrop(gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor)
+                                minion.addToContainerOrDrop(
+                                    gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                )
                                 gen.scheduleGeneratorRegeneration()
                                 return@fastFor
                             } else {
@@ -145,7 +148,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                         val possible = gen.isBlockPossibleToMine(location)
 
                                         if (possible) {
-                                            minion.addToContainerOrDrop(gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor)
+                                            minion.addToContainerOrDrop(
+                                                gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                            )
                                             gen.scheduleGeneratorRegeneration()
                                             return@fastFor
                                         } else {
@@ -186,7 +191,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                     val possible = gen.isBlockPossibleToMine(location)
 
                                     if (possible) {
-                                        minion.addToContainerOrDrop(gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor)
+                                        minion.addToContainerOrDrop(
+                                            gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                        )
                                         gen.scheduleGeneratorRegeneration()
                                         return@fastFor
                                     } else {
@@ -222,17 +229,32 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                 faces.fastFor {
                     LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), it).fastFor { location ->
                         if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
+                            if (Config.DEBUG()) {
+                                println("KGenerators integration!")
+                            }
                             val gen = Main.getPlacedGenerators().getLoaded(location)
                             if (gen != null) {
+                                if (Config.DEBUG()) {
+                                    println("Gen not null")
+                                }
                                 val possible = gen.isBlockPossibleToMine(location)
 
                                 if (possible) {
-                                    minion.addToContainerOrDrop(gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor)
+                                    if (Config.DEBUG()) {
+                                        println("Not possible")
+                                    }
+                                    minion.addToContainerOrDrop(
+                                        gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                    )
                                     gen.scheduleGeneratorRegeneration()
                                     return@fastFor
                                 } else {
                                     return@fastFor
                                 }
+                            }
+                        } else {
+                            if (Config.DEBUG()) {
+                                println("Else")
                             }
                         }
 
@@ -268,7 +290,9 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 val possible = gen.isBlockPossibleToMine(location)
 
                                 if (possible) {
-                                    minion.addToContainerOrDrop(gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor)
+                                    minion.addToContainerOrDrop(
+                                        gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                    )
                                     gen.scheduleGeneratorRegeneration()
                                     return@fastFor
                                 } else {

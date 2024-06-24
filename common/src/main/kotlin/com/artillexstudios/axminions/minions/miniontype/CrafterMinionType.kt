@@ -103,6 +103,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
             }
 
             doCraftShapeless(inv, recipe, contents)
+            minion.setActions(minion.getActionAmount() + 1)
 
             recipeIterator = shapeless.iterator()
         }
@@ -119,33 +120,27 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
             }
 
             doCraftShaped(inv, recipe, contents)
+            minion.setActions(minion.getActionAmount() + 1)
 
             shapedIterator = shaped.iterator()
         }
     }
 
     private fun canCraftShapeless(recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>): Boolean {
-        val clone = contents.clone() as HashMap<ItemStack, Int>
         for (recipeChoice in recipe.choiceList) {
-            var hasEnough = false
+            if (recipeChoice == null) continue
+            var amount = 0
 
-            val iterator = clone.entries.iterator()
+            val iterator = contents.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                if (next.key.isSimilar(recipeChoice.itemStack) && next.value >= recipeChoice.itemStack.amount) {
-                    hasEnough = true
-                    val amount = next.value - recipeChoice.itemStack.amount
-                    if (amount == 0) {
-                        iterator.remove()
-                    } else {
-                        next.setValue(amount)
-                    }
-                    break
+                if (recipeChoice.test(next.key)) {
+                    amount += next.value
                 }
             }
 
-            if (!hasEnough) {
+            if (amount < recipeChoice.itemStack.amount) {
                 return false
             }
         }
@@ -154,28 +149,20 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     }
 
     private fun canCraftShaped(recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>): Boolean {
-        val clone = contents.clone() as HashMap<ItemStack, Int>
-        for (recipeChoice in recipe.choiceMap.values) {
-            if (recipeChoice == null) continue
-            var hasEnough = false
+        for (recipeChoice in recipe.choiceMap) {
+            if (recipeChoice.value == null) continue
+            var amount = 0
 
-            val iterator = clone.entries.iterator()
+            val iterator = contents.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                if (recipeChoice.test(next.key)) {
-                    hasEnough = true
-                    val amount = next.value - recipeChoice.itemStack.amount
-                    if (amount == 0) {
-                        iterator.remove()
-                    } else {
-                        next.setValue(amount)
-                    }
-                    break
+                if (recipeChoice.value.test(next.key)) {
+                    amount += next.value
                 }
             }
 
-            if (!hasEnough) {
+            if (amount < recipeChoice.value.itemStack.amount) {
                 return false
             }
         }
@@ -186,17 +173,21 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun doCraftShapeless(inventory: Inventory, recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceList) {
             if (recipeChoice == null) continue
-            val item = recipeChoice.itemStack.clone()
 
-            inventory.removeItem(item)
+            for (content in inventory.contents) {
+                if (recipeChoice.test(content)) {
+                    content.amount -= recipeChoice.itemStack.amount
+                    break
+                }
+            }
 
             val iterator = contents.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
                 if (recipeChoice.test(next.key)) {
-                    val amount = next.value - item.amount
-                    if (amount == 0) {
+                    val amount = next.value - recipeChoice.itemStack.amount
+                    if (amount <= 0) {
                         iterator.remove()
                     } else {
                         next.setValue(amount)
@@ -222,32 +213,28 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     }
 
     private fun doCraftShaped(inventory: Inventory, recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>) {
-        for (recipeChoice in recipe.choiceMap.values) {
-            if (recipeChoice == null) continue
-            val item = recipeChoice.itemStack.clone()
+        for (recipeChoice in recipe.choiceMap) {
+            if (recipeChoice.value == null) continue
 
             for (content in inventory.contents) {
-                if (content == null || content.type.isAir) continue
-                if (recipeChoice.test(content)) {
-                    val clone = content.clone()
-                    clone.amount = item.amount
+                if (recipeChoice.value.test(content)) {
+                    content.amount -= recipeChoice.value.itemStack.amount
+                    break
+                }
+            }
 
-                    inventory.removeItem(clone)
+            val iterator = contents.entries.iterator()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
 
-                    val iterator = contents.entries.iterator()
-                    while (iterator.hasNext()) {
-                        val next = iterator.next()
-
-                        if (next.key.isSimilar(clone)) {
-                            val amount = next.value - item.amount
-                            if (amount == 0) {
-                                iterator.remove()
-                            } else {
-                                next.setValue(amount)
-                            }
-                            break
-                        }
+                if (recipeChoice.value.test(next.key)) {
+                    val amount = next.value - recipeChoice.value.itemStack.amount
+                    if (amount <= 0) {
+                        iterator.remove()
+                    } else {
+                        next.setValue(amount)
                     }
+                    break
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.nms.v1_20_R4
+package com.artillexstudios.axminions.nms.v1_21_R1
 
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
@@ -67,7 +67,14 @@ object DamageHandler {
             if (!nmsEntity.isAttackable || entity is Player) return
             val f2 = 1.0f
 
-            var f1 = EnchantmentHelper.getDamageBonus(nmsItem, nmsEntity.type)
+            val damageSource = nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY)
+            var f1 = EnchantmentHelper.modifyDamage(
+                nmsEntity.level() as ServerLevel,
+                nmsItem,
+                nmsEntity,
+                damageSource,
+                f.toFloat()
+            )
 
             f = (f * (0.2f + f2 * f2 * 0.8f)).toInt()
             f1 *= f2
@@ -92,7 +99,7 @@ object DamageHandler {
                     f3 = nmsEntity.health
                     if (j > 0 && !nmsEntity.isOnFire()) {
                         flag4 = true
-                        nmsEntity.igniteForSeconds(1, false)
+                        nmsEntity.igniteForSeconds(1f, false)
                     }
                 }
 
@@ -102,7 +109,7 @@ object DamageHandler {
                     return
                 }
 
-                val flag5 = nmsEntity.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f.toFloat())
+                val flag5 = nmsEntity.hurt(damageSource, f.toFloat())
 
                 if (flag5) {
                     if (i > 0) {
@@ -124,7 +131,7 @@ object DamageHandler {
                     if (flag3) {
                         val sweep = source.getTool()?.getEnchantmentLevel(Enchantment.SWEEPING_EDGE) ?: 0
                         val f4 =
-                            1.0f + if (sweep > 0) EnchantmentHelper.getSweepingDamageRatio(sweep) else 0.0f * f
+                            1.0f + if (sweep > 0) getSweepingDamageRatio(sweep) else 0.0f * f
                         val list: List<LivingEntity> = (source.getLocation().world as CraftWorld).handle
                             .getEntitiesOfClass(LivingEntity::class.java, nmsEntity.boundingBox.inflate(1.0, 0.25, 1.0))
                             .filter { it !is Player }
@@ -182,7 +189,7 @@ object DamageHandler {
                         val f5: Float = f3 - nmsEntity.health
 
                         if (j > 0) {
-                            nmsEntity.igniteForSeconds(j * 4, false)
+                            nmsEntity.igniteForSeconds(j * 4f, false)
                         }
 
                         if ((source.getLocation().world as CraftWorld).handle is ServerLevel && f5 > 2.0f) {
@@ -209,5 +216,9 @@ object DamageHandler {
             }
             this.minion = null
         }
+    }
+
+    fun getSweepingDamageRatio(level: Int): Float {
+        return 1.0f - 1.0f / (level + 1).toFloat()
     }
 }

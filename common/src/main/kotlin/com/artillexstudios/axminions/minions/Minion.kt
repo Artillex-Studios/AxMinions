@@ -1,15 +1,16 @@
 package com.artillexstudios.axminions.minions
 
-import com.artillexstudios.axapi.entity.PacketEntityFactory
-import com.artillexstudios.axapi.entity.impl.PacketArmorStand
-import com.artillexstudios.axapi.entity.impl.PacketEntity
 import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
 import com.artillexstudios.axapi.hologram.HologramLine
+import com.artillexstudios.axapi.items.WrappedItemStack
+import com.artillexstudios.axapi.nms.NMSHandlers
+import com.artillexstudios.axapi.packetentity.PacketEntity
+import com.artillexstudios.axapi.packetentity.meta.entity.ArmorStandMeta
+import com.artillexstudios.axapi.packetentity.meta.serializer.Accessors
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.EquipmentSlot
 import com.artillexstudios.axapi.utils.ItemBuilder
-import com.artillexstudios.axapi.utils.RotationType
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -73,7 +74,7 @@ class Minion(
         }
     }
 
-    private lateinit var entity: PacketArmorStand
+    private lateinit var entity: PacketEntity
     private var nextAction = 0
     private var range = 0.0
 
@@ -105,14 +106,16 @@ class Minion(
     override fun spawn() {
         location.x += 0.5
         location.z += 0.5
-        entity = PacketEntityFactory.get().spawnEntity(location, EntityType.ARMOR_STAND) as PacketArmorStand
-        entity.setHasBasePlate(false)
-        entity.setSmall(true)
-        entity.setHasArms(true)
+        entity = NMSHandlers.getNmsHandler().createEntity(EntityType.ARMOR_STAND, location)
+        val meta = entity.meta() as ArmorStandMeta
 
-        entity.onClick { event ->
+        meta.setNoBasePlate(true)
+        meta.small(true)
+        meta.showArms(true)
+
+        entity.onInteract { event ->
             if (broken.get()) {
-                return@onClick
+                return@onInteract
             }
 
             // We want to do this, so we don't accidentally cause dupes...
@@ -124,7 +127,7 @@ class Minion(
             Scheduler.get().runAt(location) {
                 val canBuildAt = AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
                     event.player,
-                    event.packetEntity.location
+                    event.packetEntity.location()
                 )
 
                 if (event.isAttack) {
@@ -145,11 +148,13 @@ class Minion(
             }
         }
 
-        entity.name = StringUtils.format(
-            type.getConfig().get("entity.name"),
-            Placeholder.unparsed("owner", owner.name ?: "???"),
-            Placeholder.unparsed("level", level.toString()),
-            Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+        meta.name(
+            StringUtils.format(
+                type.getConfig().get("entity.name"),
+                Placeholder.unparsed("owner", owner.name ?: "???"),
+                Placeholder.unparsed("level", level.toString()),
+                Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+            )
         )
 
         if (Config.DEBUG()) {
@@ -436,7 +441,7 @@ class Minion(
         if (this.tool?.type == Material.AIR) {
             entity.setItem(EquipmentSlot.MAIN_HAND, null)
         } else {
-            entity.setItem(EquipmentSlot.MAIN_HAND, tool.clone())
+            entity.setItem(EquipmentSlot.MAIN_HAND, WrappedItemStack.wrap(tool.clone()))
         }
 
         if (save) {
@@ -459,11 +464,14 @@ class Minion(
         updateArmour()
         updateInventories()
 
-        entity.name = StringUtils.format(
-            type.getConfig().get("entity.name"),
-            Placeholder.unparsed("owner", owner.name ?: "???"),
-            Placeholder.unparsed("level", level.toString()),
-            Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+        val meta = entity.meta()
+        meta.name(
+            StringUtils.format(
+                type.getConfig().get("entity.name"),
+                Placeholder.unparsed("owner", owner.name ?: "???"),
+                Placeholder.unparsed("level", level.toString()),
+                Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+            )
         )
 
         AxMinionsPlugin.dataQueue.submit {
@@ -502,7 +510,8 @@ class Minion(
     override fun animate() {
         if (armTick >= 2) return
 
-        entity.setRotation(RotationType.RIGHT_ARM, EulerAngle(-2 + armTick, 0.0, 0.0))
+        val meta = entity.meta() as ArmorStandMeta
+        meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, EulerAngle(-2 + armTick, 0.0, 0.0))
         armTick += 0.2
     }
 
@@ -599,19 +608,19 @@ class Minion(
         setTool(this.tool ?: ItemStack(Material.AIR), false)
 
         type.getSection("items.helmet", level)?.let {
-            entity.setItem(EquipmentSlot.HELMET, ItemBuilder(it).get())
+            entity.setItem(EquipmentSlot.HELMET, WrappedItemStack.wrap(ItemBuilder(it).get()))
         }
 
         type.getSection("items.chestplate", level)?.let {
-            entity.setItem(EquipmentSlot.CHEST_PLATE, ItemBuilder(it).get())
+            entity.setItem(EquipmentSlot.CHEST_PLATE, WrappedItemStack.wrap(ItemBuilder(it).get()))
         }
 
         type.getSection("items.leggings", level)?.let {
-            entity.setItem(EquipmentSlot.LEGGINGS, ItemBuilder(it).get())
+            entity.setItem(EquipmentSlot.LEGGINGS, WrappedItemStack.wrap(ItemBuilder(it).get()))
         }
 
         type.getSection("items.boots", level)?.let {
-            entity.setItem(EquipmentSlot.BOOTS, ItemBuilder(it).get())
+            entity.setItem(EquipmentSlot.BOOTS, WrappedItemStack.wrap(ItemBuilder(it).get()))
         }
     }
 
@@ -693,7 +702,9 @@ class Minion(
                         return
                     }
 
-                    if (!item.type.isAir && (item.itemMeta as? Damageable ?: return).damage + 1 > item.type.maxDurability) {
+                    if (!item.type.isAir && (item.itemMeta as? Damageable
+                            ?: return).damage + 1 > item.type.maxDurability
+                    ) {
                         return
                     }
                 } else {
@@ -710,7 +721,9 @@ class Minion(
                         return
                     }
 
-                    if (!item.type.isAir && (item.itemMeta as? Damageable ?: return).damage + 1 > item.type.maxDurability) {
+                    if (!item.type.isAir && (item.itemMeta as? Damageable
+                            ?: return).damage + 1 > item.type.maxDurability
+                    ) {
                         return
                     }
                 }
@@ -751,7 +764,9 @@ class Minion(
                         return true
                     }
 
-                    if (!item.type.isAir && (item.itemMeta as? Damageable ?: return false).damage + 1 > item.type.maxDurability) {
+                    if (!item.type.isAir && (item.itemMeta as? Damageable
+                            ?: return false).damage + 1 > item.type.maxDurability
+                    ) {
                         return canUseTool()
                     }
                 } else {
@@ -768,7 +783,9 @@ class Minion(
                         return true
                     }
 
-                    if (!item.type.isAir && (item.itemMeta as? Damageable ?: return false).damage + 1 > item.type.maxDurability) {
+                    if (!item.type.isAir && (item.itemMeta as? Damageable
+                            ?: return false).damage + 1 > item.type.maxDurability
+                    ) {
                         return canUseTool()
                     }
                 }

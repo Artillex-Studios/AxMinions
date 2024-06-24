@@ -77,32 +77,32 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
     }
 
     private fun getSaplingType(material: Material): Material {
-        return when (material) {
-            Material.DARK_OAK_LOG -> {
+        return when (material.name) {
+            "DARK_OAK_LOG" -> {
                 Material.DARK_OAK_SAPLING
             }
 
-            Material.BIRCH_LOG -> {
+            "BIRCH_LOG" -> {
                 Material.BIRCH_SAPLING
             }
 
-            Material.ACACIA_LOG -> {
+            "ACACIA_LOG" -> {
                 Material.ACACIA_SAPLING
             }
 
-            Material.JUNGLE_LOG -> {
+            "JUNGLE_LOG" -> {
                 Material.JUNGLE_SAPLING
             }
 
-            Material.SPRUCE_LOG -> {
+            "SPRUCE_LOG" -> {
                 Material.SPRUCE_SAPLING
             }
 
-            Material.MANGROVE_LOG -> {
+            "MANGROVE_LOG" -> {
                 Material.MANGROVE_PROPAGULE
             }
 
-            Material.CHERRY_LOG -> {
+            "CHERRY_LOG" -> {
                 Material.CHERRY_SAPLING
             }
 
