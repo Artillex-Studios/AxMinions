@@ -439,7 +439,7 @@ class Minion(
         dirty = true
 
         if (this.tool?.type == Material.AIR) {
-            entity.setItem(EquipmentSlot.MAIN_HAND, null)
+            entity.setItem(EquipmentSlot.MAIN_HAND, WrappedItemStack.wrap(ItemStack(Material.AIR)))
         } else {
             entity.setItem(EquipmentSlot.MAIN_HAND, WrappedItemStack.wrap(tool.clone()))
         }
@@ -602,7 +602,7 @@ class Minion(
 
     override fun updateArmour() {
         for (entry in EquipmentSlot.entries) {
-            entity.setItem(entry, null)
+            entity.setItem(entry,  WrappedItemStack.wrap(ItemStack(Material.AIR)))
         }
 
         setTool(this.tool ?: ItemStack(Material.AIR), false)
