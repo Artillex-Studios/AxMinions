@@ -132,16 +132,24 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     }
 
     private fun canCraftShapeless(recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>): Boolean {
+        val clone = contents.clone() as HashMap<ItemStack, Int>
         for (recipeChoice in recipe.choiceList) {
             if (recipeChoice == null) continue
             if (recipeChoice.itemStack == null) continue
             var amount = 0
 
-            val iterator = contents.entries.iterator()
+            val iterator = clone.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
                 if (recipeChoice.test(next.key)) {
+                    val amt = next.value - recipeChoice.itemStack.amount
+                    if (amt == 0) {
+                        iterator.remove()
+                    } else {
+                        next.setValue(amount)
+                    }
+
                     amount += next.value
                 }
             }
@@ -155,32 +163,29 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     }
 
     private fun canCraftShaped(recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>): Boolean {
-        val frequencyMap = HashMap<Char, Int>()
-        for (s in recipe.shape) {
-            println("Line $s")
-            for (c in s.toCharArray()) {
-                println("Char $c")
-                frequencyMap[c] = frequencyMap.getOrDefault(c, 0)
-            }
-        }
-
-        println("Map $frequencyMap")
-
+        val clone = contents.clone() as HashMap<ItemStack, Int>
         for (recipeChoice in recipe.choiceMap) {
             if (recipeChoice.value == null) continue
             if (recipeChoice.value.itemStack == null) continue
             var amount = 0
 
-            val iterator = contents.entries.iterator()
+            val iterator = clone.entries.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
                 if (recipeChoice.value.test(next.key)) {
+                    val amt = next.value - recipeChoice.value.itemStack.amount
+                    if (amt == 0) {
+                        iterator.remove()
+                    } else {
+                        next.setValue(amount)
+                    }
+
                     amount += next.value
                 }
             }
 
-            if (amount < frequencyMap[recipeChoice.key]!! * recipeChoice.value.itemStack.amount) {
+            if (amount < recipeChoice.value.itemStack.amount) {
                 return false
             }
         }
@@ -194,6 +199,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
             if (recipeChoice.itemStack == null) continue
 
             for (content in inventory.contents) {
+                if (content == null) continue
                 if (recipeChoice.test(content)) {
                     content.amount -= recipeChoice.itemStack.amount
                     break
@@ -237,6 +243,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
             if (recipeChoice.value.itemStack == null) continue
 
             for (content in inventory.contents) {
+                if (content == null) continue
                 if (recipeChoice.value.test(content)) {
                     content.amount -= recipeChoice.value.itemStack.amount
                     break
