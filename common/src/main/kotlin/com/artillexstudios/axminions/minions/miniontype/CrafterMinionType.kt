@@ -155,6 +155,17 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     }
 
     private fun canCraftShaped(recipe: ShapedRecipe, contents: HashMap<ItemStack, Int>): Boolean {
+        val frequencyMap = HashMap<Char, Int>()
+        for (s in recipe.shape) {
+            println("Line $s")
+            for (c in s.toCharArray()) {
+                println("Char $c")
+                frequencyMap[c] = frequencyMap.getOrDefault(c, 0)
+            }
+        }
+
+        println("Map $frequencyMap")
+
         for (recipeChoice in recipe.choiceMap) {
             if (recipeChoice.value == null) continue
             if (recipeChoice.value.itemStack == null) continue
@@ -169,7 +180,7 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
                 }
             }
 
-            if (amount < recipeChoice.value.itemStack.amount) {
+            if (amount < frequencyMap[recipeChoice.key]!! * recipeChoice.value.itemStack.amount) {
                 return false
             }
         }
