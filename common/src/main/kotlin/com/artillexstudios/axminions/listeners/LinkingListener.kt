@@ -15,6 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
+import kotlin.math.min
 
 class LinkingListener : Listener {
     companion object {
@@ -47,6 +48,11 @@ class LinkingListener : Listener {
                 .distanceSquared(event.clickedBlock!!.location) > Config.MAX_LINKING_DISTANCE() * Config.MAX_LINKING_DISTANCE()
         ) {
             event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_FAIL()))
+            return
+        }
+
+        val min = minion as com.artillexstudios.axminions.minions.Minion
+        if (min.broken.get()) {
             return
         }
 

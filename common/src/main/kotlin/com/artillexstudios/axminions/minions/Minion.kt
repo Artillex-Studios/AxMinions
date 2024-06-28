@@ -92,7 +92,7 @@ class Minion(
     @Volatile
     private var ticking = false
     private var debugHologram: Hologram? = null
-    private val broken = AtomicBoolean(false)
+    val broken = AtomicBoolean(false)
     private var ownerOnline = false
 
     init {
