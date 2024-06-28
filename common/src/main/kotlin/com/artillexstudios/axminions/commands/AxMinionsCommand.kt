@@ -10,9 +10,13 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.converter.LitMinionsConverter
+import com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration
+import com.artillexstudios.axminions.minions.Minions
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.World.Environment
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import revxrsal.commands.annotation.AutoComplete
@@ -132,5 +136,44 @@ class AxMinionsCommand {
                 Placeholder.unparsed("total", total.toString())
             )
         )
+    }
+
+    @Subcommand("recalc")
+    @CommandPermission("axminions.command.recalc")
+    fun recalc(player: Player) {
+        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(player.location)
+        AxMinionsPlugin.dataQueue.submit {
+            if (islandId.isNotBlank()) {
+                val islandPlaced = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
+                if (Config.DEBUG()) {
+                    player.sendMessage("Placed: $islandPlaced")
+                }
+
+                for (i in islandPlaced downTo 0) {
+                    AxMinionsPlugin.dataHandler.islandBreak(islandId)
+                }
+            }
+
+            val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
+            if (integration is SuperiorSkyBlock2Integration) {
+                val island = SuperiorSkyblockAPI.getIslandAt(player.location)
+                if (island == null) return@submit
+
+                val minions = Minions.getMinions()
+                Environment.entries.forEach { entry ->
+                    try {
+                        island.getAllChunksAsync(entry, true) { }.forEach { chunk ->
+                            minions.forEach { minion ->
+                                if (minion.getLocation().chunk == chunk) {
+                                    AxMinionsPlugin.dataHandler.islandPlace(islandId)
+                                }
+                            }
+                        }
+                    } catch (_: NullPointerException) {
+                        // SuperiorSkyBlock api does it this way aswell
+                    }
+                }
+            }
+        }
     }
 }
