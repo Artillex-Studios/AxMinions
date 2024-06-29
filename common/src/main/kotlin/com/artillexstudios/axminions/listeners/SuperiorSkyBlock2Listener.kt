@@ -5,6 +5,7 @@ import com.bgsoftware.superiorskyblock.api.events.IslandDisbandEvent
 import org.bukkit.World.Environment
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import kotlin.math.min
 
 class SuperiorSkyBlock2Listener : Listener {
 
@@ -14,10 +15,13 @@ class SuperiorSkyBlock2Listener : Listener {
 
         Environment.entries.forEach { entry ->
             try {
-                event.island.getAllChunksAsync(entry, true) { }.forEach { chunk ->
-                    minions.forEach { minion ->
-                        if (minion.getLocation().chunk == chunk) {
-                            minion.remove()
+                event.island.getAllChunksAsync(entry, true) { }.forEach { future ->
+                    future.thenAccept { chunk ->
+                        minions.forEach { minion ->
+                            val ch = minion.getLocation().chunk
+                            if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
+                                minion.remove()
+                            }
                         }
                     }
                 }

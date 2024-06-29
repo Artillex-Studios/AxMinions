@@ -74,7 +74,9 @@ charge:
 tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
+recalc: "<green>Recalculated island minion count! <from> -> <to>"
+
 location-format: "<world>;<x>;<y>;<z>"
 
 # Do not change!
-config-version: 7
+config-version: 8

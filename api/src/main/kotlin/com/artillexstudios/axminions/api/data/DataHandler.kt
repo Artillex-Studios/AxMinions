@@ -34,6 +34,8 @@ interface DataHandler {
 
     fun islandBreak(island: String)
 
+    fun islandReset(island: String)
+
     fun getIsland(island: String): Int
 
     fun disable()

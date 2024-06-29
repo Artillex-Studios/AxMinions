@@ -385,6 +385,15 @@ class H2DataHandler : DataHandler {
         }
     }
 
+    override fun islandReset(island: String) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("UPDATE `axminions_island_counter` SET `placed` = 0 WHERE `island` = ?;").use { statement ->
+                statement.setString(1, island)
+                statement.executeUpdate()
+            }
+        }
+    }
+
     override fun islandBreak(island: String) {
         dataSource.connection.use { connection ->
             connection.prepareStatement("UPDATE `axminions_island_counter` SET `placed` = `placed` - 1 WHERE `island` = ?;").use { statement ->

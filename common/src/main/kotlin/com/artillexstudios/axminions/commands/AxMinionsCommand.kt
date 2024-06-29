@@ -13,19 +13,14 @@ import com.artillexstudios.axminions.converter.LitMinionsConverter
 import com.artillexstudios.axminions.integrations.island.SuperiorSkyBlock2Integration
 import com.artillexstudios.axminions.minions.Minions
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Chunk
 import org.bukkit.World.Environment
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import revxrsal.commands.annotation.AutoComplete
-import revxrsal.commands.annotation.Command
-import revxrsal.commands.annotation.Default
-import revxrsal.commands.annotation.Description
-import revxrsal.commands.annotation.Range
-import revxrsal.commands.annotation.Subcommand
+import revxrsal.commands.annotation.*
 import revxrsal.commands.bukkit.annotation.CommandPermission
+import java.util.concurrent.CompletableFuture
 
 @Command("axminions", "minion", "minions")
 class AxMinionsCommand {
@@ -143,31 +138,34 @@ class AxMinionsCommand {
     fun recalc(player: Player) {
         val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(player.location)
         AxMinionsPlugin.dataQueue.submit {
+            var original = 0
             if (islandId.isNotBlank()) {
-                val islandPlaced = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
-                if (Config.DEBUG()) {
-                    player.sendMessage("Placed: $islandPlaced")
-                }
+                original = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
 
-                for (i in islandPlaced downTo 0) {
-                    AxMinionsPlugin.dataHandler.islandBreak(islandId)
-                }
+                AxMinionsPlugin.dataHandler.islandReset(islandId)
             }
 
             val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
             if (integration is SuperiorSkyBlock2Integration) {
-                val island = SuperiorSkyblockAPI.getIslandAt(player.location)
-                if (island == null) return@submit
+                val island = SuperiorSkyblockAPI.getIslandAt(player.location) ?: return@submit
 
                 val minions = Minions.getMinions()
                 Environment.entries.forEach { entry ->
                     try {
-                        island.getAllChunksAsync(entry, true) { }.forEach { chunk ->
-                            minions.forEach { minion ->
-                                if (minion.getLocation().chunk == chunk) {
-                                    AxMinionsPlugin.dataHandler.islandPlace(islandId)
+                        val futures = arrayListOf<CompletableFuture<Chunk>>()
+                        island.getAllChunksAsync(entry, true) { }.forEach { future ->
+                            futures.add(future)
+                            future.thenAccept { chunk ->
+                                minions.forEach { minion ->
+                                    val ch = minion.getLocation().chunk
+                                    if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
+                                        AxMinionsPlugin.dataHandler.islandPlace(islandId)
+                                    }
                                 }
                             }
+                        }
+                        CompletableFuture.allOf(*futures.toTypedArray()).thenRun {
+                            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", futures.size.toString())))
                         }
                     } catch (_: NullPointerException) {
                         // SuperiorSkyBlock api does it this way aswell
