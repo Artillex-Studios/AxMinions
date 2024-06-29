@@ -136,7 +136,7 @@ class AxMinionsCommand {
     @Subcommand("recalc")
     @CommandPermission("axminions.command.recalc")
     fun recalc(player: Player) {
-        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(player.location)
+        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()?.getIslandAt(player.location) ?: return
         AxMinionsPlugin.dataQueue.submit {
             var original = 0
             if (islandId.isNotBlank()) {
@@ -149,6 +149,7 @@ class AxMinionsCommand {
             if (integration is SuperiorSkyBlock2Integration) {
                 val island = SuperiorSkyblockAPI.getIslandAt(player.location) ?: return@submit
 
+                var counter = 0
                 val minions = Minions.getMinions()
                 Environment.entries.forEach { entry ->
                     try {
@@ -160,12 +161,13 @@ class AxMinionsCommand {
                                     val ch = minion.getLocation().chunk
                                     if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
                                         AxMinionsPlugin.dataHandler.islandPlace(islandId)
+                                        counter++
                                     }
                                 }
                             }
                         }
                         CompletableFuture.allOf(*futures.toTypedArray()).thenRun {
-                            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", futures.size.toString())))
+                            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", counter.toString())))
                         }
                     } catch (_: NullPointerException) {
                         // SuperiorSkyBlock api does it this way aswell

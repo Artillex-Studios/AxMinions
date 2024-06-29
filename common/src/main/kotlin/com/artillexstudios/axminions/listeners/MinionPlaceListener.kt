@@ -113,6 +113,7 @@ class MinionPlaceListener : Listener {
                         if (Config.DEBUG()) {
                             event.player.sendMessage("Not return ${islandPlaced >= islandLimit} ${!event.player.hasPermission("axminions.limit.*")}")
                         }
+                        islandPlaced++
                     }
                 }
             }
