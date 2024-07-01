@@ -428,13 +428,17 @@ class H2DataHandler : DataHandler {
     }
 
     override fun addUser(uuid: UUID, name: String) {
-        dataSource.connection.use { connection ->
-            connection.prepareStatement("INSERT IGNORE INTO `axminions_users`(`uuid`, `name`, `island_slots`) VALUES (?,?,?);").use { statement ->
-                statement.setObject(1, uuid)
-                statement.setString(2, name)
-                statement.setInt(3, 0)
-                statement.executeUpdate()
+        try {
+            dataSource.connection.use { connection ->
+                connection.prepareStatement("INSERT INTO `axminions_users`(`uuid`, `name`, `island_slots`) VALUES (?,?,?);").use { statement ->
+                    statement.setObject(1, uuid)
+                    statement.setString(2, name)
+                    statement.setInt(3, 0)
+                    statement.executeUpdate()
+                }
             }
+        } catch (exception: Exception) {
+
         }
     }
 
