@@ -75,8 +75,11 @@ tools:
   wrong-tool: "<red>You can't place this item as the tool if this minion!"
 
 recalc: "<green>Recalculated island minion count! <from> -> <to>"
+not-on-island: "<#FF0000>You are currently not on an island!"
+slot-give: "<green>You have given <player> <amount> island minion slots!"
+slot-receive: "<green>You were given <amount> new island minion slots! (<from> -> <to>)"
 
 location-format: "<world>;<x>;<y>;<z>"
 
 # Do not change!
-config-version: 8
+config-version: 9

@@ -17,6 +17,10 @@ class IridiumSkyBlockIntegration : IslandIntegration {
         return ""
     }
 
+    override fun getExtra(location: Location): Int {
+        return 0
+    }
+
 
     override fun handleBlockBreak(block: Block) {
 

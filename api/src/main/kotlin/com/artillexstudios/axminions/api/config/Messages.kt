@@ -80,6 +80,12 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun RECALC() = AxMinionsAPI.INSTANCE.getMessages().get<String>("recalc")
         @JvmStatic
+        fun NOT_ON_ISLAND() = AxMinionsAPI.INSTANCE.getMessages().get<String>("not-on-island")
+        @JvmStatic
+        fun SLOT_GIVE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("slot-give")
+        @JvmStatic
+        fun SLOT_RECEIVE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("slot-receive")
+        @JvmStatic
         fun LOCATION_FORMAT() = AxMinionsAPI.INSTANCE.getMessages().get<String>("location-format")
     }
 

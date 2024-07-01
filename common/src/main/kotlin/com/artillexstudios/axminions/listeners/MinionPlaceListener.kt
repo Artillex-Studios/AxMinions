@@ -75,11 +75,13 @@ class MinionPlaceListener : Listener {
         AxMinionsPlugin.dataQueue.submit {
             val placed = AxMinionsPlugin.dataHandler.getMinionAmount(event.player.uniqueId)
 
-            val islandLimit = Config.ISLAND_LIMIT()
+            var islandLimit = Config.ISLAND_LIMIT()
             var islandPlaced = 0
             var islandId = ""
             if (islandLimit > 0 && AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration() != null) {
                 islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getIslandAt(location)
+                islandLimit += AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()!!.getExtra(location)
+
                 if (Config.DEBUG()) {
                     event.player.sendMessage("Island ID: $islandId, limit: $islandLimit")
                 }

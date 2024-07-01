@@ -15,13 +15,11 @@ class SuperiorSkyBlock2Listener : Listener {
 
         Environment.entries.forEach { entry ->
             try {
-                event.island.getAllChunksAsync(entry, true) { }.forEach { future ->
-                    future.thenAccept { chunk ->
-                        minions.forEach { minion ->
-                            val ch = minion.getLocation().chunk
-                            if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
-                                minion.remove()
-                            }
+                event.island.getAllChunksAsync(entry, true) { chunk ->
+                    minions.forEach { minion ->
+                        val ch = minion.getLocation().chunk
+                        if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
+                            minion.remove()
                         }
                     }
                 }

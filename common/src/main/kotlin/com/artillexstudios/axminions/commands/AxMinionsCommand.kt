@@ -1,11 +1,13 @@
 package com.artillexstudios.axminions.commands
 
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.config.Messages
+import com.artillexstudios.axminions.api.data.DataHandler
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
@@ -15,6 +17,7 @@ import com.artillexstudios.axminions.minions.Minions
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Chunk
+import org.bukkit.OfflinePlayer
 import org.bukkit.World.Environment
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -136,7 +139,12 @@ class AxMinionsCommand {
     @Subcommand("recalc")
     @CommandPermission("axminions.command.recalc")
     fun recalc(player: Player) {
-        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()?.getIslandAt(player.location) ?: return
+        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()?.getIslandAt(player.location)
+        if (islandId == null) {
+            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.NOT_ON_ISLAND()))
+            return
+        }
+
         AxMinionsPlugin.dataQueue.submit {
             var original = 0
             if (islandId.isNotBlank()) {
@@ -147,33 +155,49 @@ class AxMinionsCommand {
 
             val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
             if (integration is SuperiorSkyBlock2Integration) {
-                val island = SuperiorSkyblockAPI.getIslandAt(player.location) ?: return@submit
+                Scheduler.get().run {
+                    val island = SuperiorSkyblockAPI.getIslandAt(player.location) ?: return@run
+                    var counter = 0
+                    val minions = Minions.getMinions()
+                    val futures = arrayListOf<CompletableFuture<Chunk>>()
 
-                var counter = 0
-                val minions = Minions.getMinions()
-                Environment.entries.forEach { entry ->
-                    try {
-                        val futures = arrayListOf<CompletableFuture<Chunk>>()
-                        island.getAllChunksAsync(entry, true) { }.forEach { future ->
-                            futures.add(future)
-                            future.thenAccept { chunk ->
-                                minions.forEach { minion ->
-                                    val ch = minion.getLocation().chunk
-                                    if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
-                                        AxMinionsPlugin.dataHandler.islandPlace(islandId)
-                                        counter++
+                    Environment.entries.forEach { entry ->
+                        try {
+                            island.getAllChunksAsync(entry, true) { }.forEach { future ->
+                                futures.add(future)
+                                future.thenAccept { chunk ->
+                                    minions.forEach { minion ->
+                                        val ch = minion.getLocation().chunk
+                                        if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
+                                            AxMinionsPlugin.dataQueue.submit {
+                                                AxMinionsPlugin.dataHandler.islandPlace(islandId)
+                                            }
+                                            counter++
+                                        }
                                     }
                                 }
                             }
+                        } catch (_: NullPointerException) {
+                            // SuperiorSkyBlock api does it this way aswell
                         }
-                        CompletableFuture.allOf(*futures.toTypedArray()).thenRun {
-                            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", counter.toString())))
-                        }
-                    } catch (_: NullPointerException) {
-                        // SuperiorSkyBlock api does it this way aswell
+                    }
+
+                    CompletableFuture.allOf(*futures.toTypedArray()).thenRun {
+                        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", counter.toString())))
                     }
                 }
             }
+        }
+    }
+
+    @Subcommand("extraslot")
+    @CommandPermission("axminions.command.extraslot")
+    fun extraSlot(commandSender: CommandSender, offlinePlayer: OfflinePlayer, amount: Int) {
+        AxMinionsPlugin.dataQueue.submit {
+            val original = AxMinionsPlugin.dataHandler.getExtraSlots(offlinePlayer.uniqueId)
+            AxMinionsPlugin.dataHandler.addExtraSlot(offlinePlayer.uniqueId, amount)
+            commandSender.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.SLOT_GIVE(), Placeholder.unparsed("player", offlinePlayer.name ?: "???"), Placeholder.unparsed("amount", amount.toString())))
+            offlinePlayer.player?.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.SLOT_RECEIVE(), Placeholder.unparsed("amount", amount.toString()), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", (original + amount).toString())))
         }
     }
 }
