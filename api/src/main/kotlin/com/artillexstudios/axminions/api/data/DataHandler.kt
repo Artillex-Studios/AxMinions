@@ -38,6 +38,8 @@ interface DataHandler {
 
     fun getIsland(island: String): Int
 
+    fun addUser(uuid: UUID, name: String)
+
     fun addExtraSlot(user: UUID, amount: Int)
 
     fun getExtraSlots(user: UUID): Int

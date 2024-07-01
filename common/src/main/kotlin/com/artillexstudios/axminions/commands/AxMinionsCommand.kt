@@ -195,6 +195,7 @@ class AxMinionsCommand {
     fun extraSlot(commandSender: CommandSender, offlinePlayer: OfflinePlayer, amount: Int) {
         AxMinionsPlugin.dataQueue.submit {
             val original = AxMinionsPlugin.dataHandler.getExtraSlots(offlinePlayer.uniqueId)
+            AxMinionsPlugin.dataHandler.addUser(offlinePlayer.uniqueId, offlinePlayer.name ?: "---")
             AxMinionsPlugin.dataHandler.addExtraSlot(offlinePlayer.uniqueId, amount)
             commandSender.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.SLOT_GIVE(), Placeholder.unparsed("player", offlinePlayer.name ?: "???"), Placeholder.unparsed("amount", amount.toString())))
             offlinePlayer.player?.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.SLOT_RECEIVE(), Placeholder.unparsed("amount", amount.toString()), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", (original + amount).toString())))

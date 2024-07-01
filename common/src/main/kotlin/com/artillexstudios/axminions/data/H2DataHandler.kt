@@ -427,6 +427,17 @@ class H2DataHandler : DataHandler {
         return 0
     }
 
+    override fun addUser(uuid: UUID, name: String) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("INSERT IGNORE INTO `axminions_users`(`uuid`, `name`, `island_slots`) VALUES (?,?,?);").use { statement ->
+                statement.setObject(1, uuid)
+                statement.setString(2, name)
+                statement.setInt(3, 0)
+                statement.executeUpdate()
+            }
+        }
+    }
+
     override fun addExtraSlot(user: UUID, amount: Int) {
         dataSource.connection.use { connection ->
             connection.prepareStatement("UPDATE `axminions_users` SET `island_slots` = `island_slots` + ? WHERE `uuid` = ?;").use { statement ->
