@@ -136,57 +136,19 @@ class AxMinionsCommand {
         )
     }
 
-    @Subcommand("recalc")
-    @CommandPermission("axminions.command.recalc")
-    fun recalc(player: Player) {
-        val islandId = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()?.getIslandAt(player.location)
-        if (islandId == null) {
-            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.NOT_ON_ISLAND()))
-            return
-        }
-
+    @Subcommand("reset")
+    @CommandPermission("axminions.command.reset")
+    fun reset(sender: CommandSender, offlinePlayer: OfflinePlayer) {
+        val minions = AxMinionsAPI.INSTANCE.getMinions()
+        val ownerUUID = offlinePlayer.uniqueId
         AxMinionsPlugin.dataQueue.submit {
-            var original = 0
-            if (islandId.isNotBlank()) {
-                original = AxMinionsAPI.INSTANCE.getDataHandler().getIsland(islandId)
-
-                AxMinionsPlugin.dataHandler.islandReset(islandId)
-            }
-
-            val integration = AxMinionsAPI.INSTANCE.getIntegrations().getIslandIntegration()
-            if (integration is SuperiorSkyBlock2Integration) {
-                Scheduler.get().run {
-                    val island = SuperiorSkyblockAPI.getIslandAt(player.location) ?: return@run
-                    var counter = 0
-                    val minions = Minions.getMinions()
-                    val futures = arrayListOf<CompletableFuture<Chunk>>()
-
-                    Environment.entries.forEach { entry ->
-                        try {
-                            island.getAllChunksAsync(entry, true) { }.forEach { future ->
-                                futures.add(future)
-                                future.thenAccept { chunk ->
-                                    minions.forEach { minion ->
-                                        val ch = minion.getLocation().chunk
-                                        if (ch.x == chunk.x && ch.z == chunk.z && ch.world == chunk.world) {
-                                            AxMinionsPlugin.dataQueue.submit {
-                                                AxMinionsPlugin.dataHandler.islandPlace(islandId)
-                                            }
-                                            counter++
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (_: NullPointerException) {
-                            // SuperiorSkyBlock api does it this way aswell
-                        }
-                    }
-
-                    CompletableFuture.allOf(*futures.toTypedArray()).thenRun {
-                        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RECALC(), Placeholder.unparsed("from", original.toString()), Placeholder.unparsed("to", counter.toString())))
-                    }
+            minions.fastFor {
+                if (it.getOwnerUUID() == ownerUUID) {
+                    it.remove()
                 }
             }
+
+            sender.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.RESET(), Placeholder.unparsed("player", offlinePlayer.name ?: "---")))
         }
     }
 

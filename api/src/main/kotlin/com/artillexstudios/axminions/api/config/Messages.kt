@@ -78,7 +78,7 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun UPGRADE_FAIL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("upgrades.fail")
         @JvmStatic
-        fun RECALC() = AxMinionsAPI.INSTANCE.getMessages().get<String>("recalc")
+        fun RESET() = AxMinionsAPI.INSTANCE.getMessages().get<String>("reset")
         @JvmStatic
         fun NOT_ON_ISLAND() = AxMinionsAPI.INSTANCE.getMessages().get<String>("not-on-island")
         @JvmStatic

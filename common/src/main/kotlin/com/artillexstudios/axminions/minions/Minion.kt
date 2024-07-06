@@ -94,6 +94,7 @@ class Minion(
     private var debugHologram: Hologram? = null
     val broken = AtomicBoolean(false)
     private var ownerOnline = false
+    private var unbreakable = false
 
     init {
         spawn()
@@ -444,8 +445,10 @@ class Minion(
 
         if (this.tool?.type == Material.AIR) {
             entity.setItem(EquipmentSlot.MAIN_HAND, null)
+            unbreakable = false
         } else {
             entity.setItem(EquipmentSlot.MAIN_HAND, WrappedItemStack.wrap(tool.clone()))
+            unbreakable = notDurable.contains(tool.type)
         }
 
         if (save) {
@@ -678,7 +681,7 @@ class Minion(
         val tool = tool ?: return
         val toolMeta = toolMeta as? Damageable ?: return
 
-        if (!tool.type.isAir && notDurable.contains(tool.type)) {
+        if (!tool.type.isAir && unbreakable) {
             return
         }
 
@@ -745,7 +748,7 @@ class Minion(
         val tool = tool ?: return false
         val toolMeta = toolMeta as? Damageable ?: return false
 
-        if (!tool.type.isAir && notDurable.contains(tool.type)) {
+        if (!tool.type.isAir && unbreakable) {
             return true
         }
 
