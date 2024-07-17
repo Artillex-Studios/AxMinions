@@ -22,6 +22,8 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+import java.util.concurrent.TimeUnit;
+
 public final class AxMinionsPlugin extends AxPlugin {
     private static AxMinionsPlugin instance;
     private Metrics metrics;
@@ -74,8 +76,8 @@ public final class AxMinionsPlugin extends AxPlugin {
         }
 
         MinionTicker.cancel();
-        DataHandler.databaseExecutor().stop();
         CommandAPI.onDisable();
+        DataHandler.stop();
         DatabaseConnector.getInstance().close();
     }
 

@@ -1,11 +1,12 @@
 package com.artillexstudios.axminions.database;
 
-import com.artillexstudios.axapi.data.ThreadedExecutor;
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
@@ -13,16 +14,29 @@ import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class DataHandler {
-    private static final ThreadedExecutor databaseExecutor = new ThreadedExecutor("AxMinions-Database-Thread");
+    private static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(3, new ThreadFactory() {
+        private static final AtomicInteger counter = new AtomicInteger(1);
+
+        @Override
+        public Thread newThread(@NotNull Runnable r) {
+            return new Thread(null, r, "AxMinions-Database-Thread" + counter.getAndIncrement());
+        }
+    });
     private static final int FAILED_QUERY = -3042141;
     private static final Logger log = LoggerFactory.getLogger(DataHandler.class);
 
     public static CompletionStage<Void> setup() {
-        CompletableFuture<Integer>[] futures = new CompletableFuture[2];
+        ArrayList<CompletableFuture<Integer>> futures = new ArrayList<>();
 
         CompletionStage<Integer> types = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.TYPES)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
@@ -34,7 +48,7 @@ public final class DataHandler {
                     return FAILED_QUERY;
                 });
 
-        futures[0] = types.toCompletableFuture();
+        futures.add(types.toCompletableFuture());
         CompletionStage<Integer> users = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.USERS)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
                 .column(Fields.UUID, SQLDataType.UUID)
@@ -49,8 +63,20 @@ public final class DataHandler {
                     return FAILED_QUERY;
                 });
 
-        futures[1] = users.toCompletableFuture();
-        return CompletableFuture.allOf(futures);
+        if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
+            CompletableFuture<Integer> pragma = new CompletableFuture<>();
+            databaseExecutor.submit(() -> {
+                DatabaseConnector.getInstance().context().fetch("PRAGMA journal_mode=WAL;");
+                DatabaseConnector.getInstance().context().execute("PRAGMA synchronous = off;");
+                DatabaseConnector.getInstance().context().execute("PRAGMA page_size = 32768;");
+                DatabaseConnector.getInstance().context().fetch("PRAGMA mmap_size = 30000000000;");
+                pragma.complete(1);
+            });
+            futures.add(pragma);
+        }
+
+        futures.add(users.toCompletableFuture());
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
     public static CompletionStage<Result<Record1<Integer>>> updateUser(Player player) {
@@ -101,7 +127,16 @@ public final class DataHandler {
         });
     }
 
-    public static ThreadedExecutor databaseExecutor() {
+    public static void stop() {
+        try {
+            databaseExecutor.shutdown();
+            databaseExecutor.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ExecutorService databaseExecutor() {
         return databaseExecutor;
     }
 }

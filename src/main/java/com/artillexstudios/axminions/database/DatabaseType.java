@@ -12,6 +12,7 @@ public enum DatabaseType {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
             hikariConfig.setPoolName("axminions-database-pool");
+            hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
             hikariConfig.addDataSourceProperty("url", "jdbc:h2:./" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data");
             return hikariConfig;
         }
@@ -22,7 +23,8 @@ public enum DatabaseType {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDriverClassName("org.sqlite.JDBC");
             hikariConfig.setPoolName("axminions-database-pool");
-            hikariConfig.addDataSourceProperty("url", "jdbc:h2:./" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data");
+            hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
+            hikariConfig.setJdbcUrl("jdbc:sqlite:" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data");
             return hikariConfig;
         }
     },
