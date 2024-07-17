@@ -1,0 +1,100 @@
+package com.artillexstudios.axminions.minions;
+
+import com.artillexstudios.axapi.config.Config;
+import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
+import com.artillexstudios.axminions.database.DataHandler;
+import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
+import com.artillexstudios.axminions.minions.actions.CompiledAction;
+import com.artillexstudios.axminions.utils.LogUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.bukkit.Bukkit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public final class MinionType {
+    private static final int UNINITIALIZED = -412341210;
+    private static final Logger log = LoggerFactory.getLogger(MinionType.class);
+    private final ObjectArrayList<CompiledAction> actions = new ObjectArrayList<>();
+    private final Int2ObjectArrayMap<Level> levels = new Int2ObjectArrayMap<>();
+    private final String name;
+    private final AtomicInteger id = new AtomicInteger(UNINITIALIZED);
+    private final Config config;
+
+    public MinionType(String name, Config config) {
+        this.name = name;
+        this.config = config;
+
+        DataHandler.insertType(this).thenAccept(result -> {
+            if (result == null) {
+                return;
+            }
+
+            if (!this.id.compareAndSet(UNINITIALIZED, result)) {
+                log.error("Abandon ship! Something went really sideways, and this miniontype ({}) has already been initialized!", this.name);
+                return;
+            }
+
+            List<Map<Object, Object>> actions = this.config.getMapList("actions");
+            for (Map<Object, Object> action : actions) {
+                this.actions.add(CompiledAction.of(action));
+            }
+
+            int maxLevel = this.config.getInt("max-level");
+            List<Map<Object, Object>> levels = this.config.getMapList("levels");
+            for (Map<Object, Object> level : levels) {
+                Level levelInstance = Level.of(level);
+                if (levelInstance == null) {
+                    continue;
+                }
+
+                this.levels.put(levelInstance.id(), levelInstance);
+            }
+
+            // Fill back up the things
+            for (int i = 1; i <= maxLevel; i++) {
+                Level level = this.levels.get(i);
+                if (level == null) {
+                    this.levels.put(i, this.levels.get(i - 1));
+                }
+            }
+
+            MinionTypes.register(this);
+            Bukkit.getPluginManager().callEvent(new MinionTypeLoadEvent(this));
+        }).exceptionallyAsync(throwable -> {
+            LogUtils.warn("An unexpected error occurred on miniontype registration!", throwable);
+            return null;
+        });
+    }
+
+    public boolean tick(Minion minion) {
+        for (CompiledAction action : this.actions) {
+            if (!action.run(minion)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Level level(int level) {
+        return this.levels.get(level);
+    }
+
+    public int id() {
+        int id = this.id.get();
+        if (id == UNINITIALIZED) {
+            throw new MinionTypeNotYetLoadedException();
+        }
+
+        return id;
+    }
+
+    public String name() {
+        return this.name;
+    }
+}

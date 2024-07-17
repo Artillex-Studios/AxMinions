@@ -1,0 +1,14 @@
+miner:
+  - slot: helmet
+    item:
+      material: player_head
+      owner: <owner>
+  - slot: chestplate
+    item:
+      material: iron_chestplate
+  - slot: leggings
+    item:
+      material: leather_leggings
+  - slot: boots
+    item:
+      material: gold_boots

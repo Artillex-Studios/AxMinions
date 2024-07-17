@@ -1,0 +1,57 @@
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+  name: "<#00AAFF>Miner <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>It mines them blockz."
+    - ""
+    - "<#00AAFF>Statistics"
+    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00AAFF>❙ <white>Blocks broken: <#FFEEAA><actions>"
+    - ""
+    - "<#00AAFF><b>(!)</b> Place the minion and give it a pickaxe!"
+
+upgrades:
+  - type: "smelt"
+    price:
+      - currency: item
+        amount: 10
+
+max-level: 10
+
+levels:
+  - level: 1
+    action-ticks: "300 - <level> * 20"
+    price:
+      - type: "money"
+        amount: "<level> * 10000"
+      - type: "actions"
+        amount: "<level> * 15"
+    skin: "miner"
+
+actions:
+  - collector:
+      id: "block"
+      shape: "sphere"
+      radius: "<level> * 2"
+      filters:
+        - id: "material"
+          whitelist:
+            - "red_*"
+          blacklist:
+            - "red_stained_glass_pane"
+    effects:
+      - id: "break"
+        effects:
+          - id: "smelt"
+            requirements:
+              - type: "expression"
+                expression: "<level> > 2"
+            effects:
+              - id: "add_to_container"
+                requirements:
+                  - type: "expression"
+                    expression: "<level> > 2"
+                else: "drop_at_minion"
+            else: "drop_at_minion"

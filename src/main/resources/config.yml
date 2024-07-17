@@ -1,0 +1,37 @@
+database:
+  type: "H2" # h2, sqlite or mysql
+  address: 127.0.0.1
+  port: 3306
+  database: admin
+  username: admin
+  password: 'admin'
+  pool:
+    maximum-pool-size: 10
+    minimum-idle: 10
+    maximum-lifetime: 1800000
+    keepalive-time: 0
+    connection-timeout: 5000
+
+# If the minions should show a hand animation
+# This has a minimal impact on performance
+show-hand-animation: true
+
+# If the minions should require a tool to be provided by the player.
+# If this option is false, the minion's default tool will be used
+require-tool: true
+
+# What language file should we load from the lang folder?
+# You can create your own aswell! We would appreciate if you
+# contributed to the plugin by creating a pull request with your translation!
+language: "en_US"
+
+# Allow sending anonymous statistics about the plugin usage.
+# We'd appreciate if you kept it enabled, as it helps us track
+# how many servers use our plugin
+use-bstats: true
+
+# If we should send debug messages in the console
+# You shouldn't enable this, unless you want to see what happens in the code
+debug: false
+
+config-version: 1
