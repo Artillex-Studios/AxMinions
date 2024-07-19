@@ -6,7 +6,6 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -29,7 +28,7 @@ public class BreakEffect extends Effect<Location, ItemCollection> {
         World world = argument.getWorld();
 
         if (world == null) {
-            throw MinionTickFailException.INSTANCE;
+            throw new MinionTickFailException("World is null!");
         }
 
         world.setBlockData(argument, AIR);

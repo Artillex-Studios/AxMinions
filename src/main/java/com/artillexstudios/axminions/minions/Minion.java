@@ -22,6 +22,7 @@ public final class Minion {
     private final AtomicBoolean needsSaving = new AtomicBoolean(false);
     private int tick = 0;
     private int armTick = 0;
+    private boolean ticking = false;
     private MinionData minionData;
 
     public Minion(Location location, MinionData data) {
@@ -40,7 +41,7 @@ public final class Minion {
             if (Config.SHOW_HAND_ANIMATION) {
                 if (this.armTick >= 20) return;
                 ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
-                meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((double) (-2 + this.armTick) / 10, 0, 0));
+                meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) this.armTick / 10)), 0, 0));
                 this.armTick += 2;
             }
             return;
@@ -48,7 +49,6 @@ public final class Minion {
 
         this.tick = 0;
         if (Config.SHOW_HAND_ANIMATION & this.minionData.type().tick(this)) {
-            // TODO: Animation
             this.armTick = 0;
         }
     }
@@ -74,6 +74,10 @@ public final class Minion {
         return this.minionData.skin();
     }
 
+    public MinionType type() {
+        return this.minionData.type();
+    }
+
     public void spawn() {
         this.entity.spawn();
     }
@@ -88,6 +92,14 @@ public final class Minion {
 
     public Location location() {
         return this.location;
+    }
+
+    public boolean ticking() {
+        return this.ticking;
+    }
+
+    public void ticking(boolean ticking) {
+        this.ticking = ticking;
     }
 
     @Override

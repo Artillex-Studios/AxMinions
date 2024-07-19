@@ -98,12 +98,12 @@ public final class CompiledAction {
                 try {
                     effect.dispatch(minion, collected);
                 } catch (MinionTickFailException exception) {
-                    LogUtils.warn("An unexpected error occurred while ticking minion {} at {}!", minion, minion.location(), exception);
+                    LogUtils.warn("An unexpected error occurred while ticking minion {} at {}!", minion.type().name(), minion.location(), exception);
                     throw exception;
                 }
             }
         });
-        // TODO: Return false if the actions can't be ran
+
         return true;
     }
 }

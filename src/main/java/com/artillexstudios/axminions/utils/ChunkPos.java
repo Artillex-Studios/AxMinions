@@ -9,6 +9,10 @@ public record ChunkPos(int x, int z, AtomicBoolean ticking, ObjectArrayList<Mini
 
     public void ticking(boolean ticking) {
         this.ticking.set(ticking);
+
+        for (Minion minion : this.minions) {
+            minion.ticking(ticking);
+        }
     }
 
     public boolean isTicking() {
