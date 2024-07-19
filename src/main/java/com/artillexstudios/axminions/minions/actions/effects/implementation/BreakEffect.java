@@ -1,11 +1,12 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -27,10 +28,11 @@ public class BreakEffect extends Effect<Location, ItemCollection> {
         Collection<ItemStack> drops = block.getDrops();
         World world = argument.getWorld();
 
-        if (world != null) {
-            world.setBlockData(argument, AIR);
+        if (world == null) {
+            throw MinionTickFailException.INSTANCE;
         }
 
+        world.setBlockData(argument, AIR);
         // TODO: Block integration get block, event call
         return new ItemCollection(drops);
     }

@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.database;
 
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +30,8 @@ public final class DataHandler {
         private static final AtomicInteger counter = new AtomicInteger(1);
 
         @Override
-        public Thread newThread(@NotNull Runnable r) {
-            return new Thread(null, r, "AxMinions-Database-Thread" + counter.getAndIncrement());
+        public Thread newThread(@NotNull Runnable runnable) {
+            return new Thread(null, runnable, "AxMinions-Database-Thread-" + counter.getAndIncrement());
         }
     });
     private static final int FAILED_QUERY = -3042141;
@@ -39,7 +41,7 @@ public final class DataHandler {
         ArrayList<CompletableFuture<Integer>> futures = new ArrayList<>();
 
         CompletionStage<Integer> types = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.TYPES)
-                .column(Fields.ID, SQLDataType.INTEGER.identity(true))
+                .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
                 .column(Fields.NAME, SQLDataType.VARCHAR(64))
                 .primaryKey(Fields.ID)
                 .executeAsync(databaseExecutor)
@@ -63,6 +65,53 @@ public final class DataHandler {
                     return FAILED_QUERY;
                 });
 
+        futures.add(users.toCompletableFuture());
+
+        CompletionStage<Integer> worlds = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.WORLDS)
+                .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
+                .column(Fields.WORLD_UUID, SQLDataType.UUID)
+                .primaryKey(Fields.ID)
+                .executeAsync(databaseExecutor)
+                .exceptionallyAsync(throwable -> {
+                    log.error("An unexpected error occurred while running world table creation query!", throwable);
+                    return FAILED_QUERY;
+                });
+
+        futures.add(worlds.toCompletableFuture());
+
+        CompletionStage<Integer> locations = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.LOCATIONS)
+                .column(Fields.ID, SQLDataType.INTEGER.identity(true))
+                .column(Fields.WORLD_ID, SQLDataType.SMALLINT)
+                .column(Fields.LOCATION_X, SQLDataType.INTEGER)
+                .column(Fields.LOCATION_Y, SQLDataType.INTEGER)
+                .column(Fields.LOCATION_Z, SQLDataType.INTEGER)
+                .primaryKey(Fields.ID)
+                .executeAsync(databaseExecutor)
+                .exceptionallyAsync(throwable -> {
+                    log.error("An unexpected error occurred while running locations table creation query!", throwable);
+                    return FAILED_QUERY;
+                });
+
+        futures.add(locations.toCompletableFuture());
+
+        CompletionStage<Integer> minions = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.LOCATIONS)
+                .column(Fields.ID, SQLDataType.INTEGER.identity(true))
+                .column(Fields.LOCATION_ID, SQLDataType.INTEGER)
+                .column(Fields.OWNER_ID, SQLDataType.INTEGER)
+                .column(Fields.TYPE_ID, SQLDataType.SMALLINT)
+                .column(Fields.LEVEL, SQLDataType.SMALLINT)
+                .column(Fields.CHARGE, SQLDataType.BIGINT)
+                .column(Fields.FACING, SQLDataType.SMALLINT)
+                .column(Fields.TOOL, SQLDataType.CLOB)
+                .column(Fields.EXTRA_DATA, SQLDataType.CLOB)
+                .primaryKey(Fields.ID)
+                .executeAsync(databaseExecutor)
+                .exceptionallyAsync(throwable -> {
+                    log.error("An unexpected error occurred while running minions table creation query!", throwable);
+                    return FAILED_QUERY;
+                });
+
+        futures.add(minions.toCompletableFuture());
         if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
             CompletableFuture<Integer> pragma = new CompletableFuture<>();
             databaseExecutor.submit(() -> {
@@ -75,7 +124,6 @@ public final class DataHandler {
             futures.add(pragma);
         }
 
-        futures.add(users.toCompletableFuture());
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
@@ -93,6 +141,10 @@ public final class DataHandler {
                     log.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
                     return null;
                 });
+    }
+
+    public static CompletionStage<Integer> insertMinion(Minion minion) {
+        return null;
     }
 
     public static CompletionStage<Integer> insertType(MinionType type) {
@@ -131,8 +183,8 @@ public final class DataHandler {
         try {
             databaseExecutor.shutdown();
             databaseExecutor.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException exception) {
+            log.error("An unexpected error occurred while stopping DataHandler!", exception);
         }
     }
 

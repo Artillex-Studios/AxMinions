@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import redempt.crunch.CompiledExpression;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class BlockCollector extends Collector<Location> {
     private final CollectorShape shape;
@@ -26,11 +27,10 @@ public class BlockCollector extends Collector<Location> {
     }
 
     @Override
-    public List<Location> collect(Minion minion) {
-        double radius = expression.getVariableCount() == 0 ? expression.evaluate() : expression.evaluate(minion.level().id());
+    public void collect(Minion minion, Consumer<Location> consumer) {
+        double radius = this.expression.getVariableCount() == 0 ? this.expression.evaluate() : this.expression.evaluate(minion.level().id());
         Location location = minion.location();
 
-        // TODO: Filters
-        return shape.getBlocks(location, radius);
+        this.shape.getBlocks(location, radius, this.filters, consumer);
     }
 }

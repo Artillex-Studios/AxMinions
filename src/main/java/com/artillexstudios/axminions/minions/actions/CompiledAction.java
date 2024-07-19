@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
+import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.collectors.Collector;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
@@ -19,7 +20,7 @@ public final class CompiledAction {
         this.effects = new ObjectArrayList<>();
         this.effects.addAll(this.compileEffects(null, (List<Map<Object, Object>>) map.get("effects")));
 
-        LogUtils.debug("Printing!");
+        LogUtils.debug("Printing children of compiledaction!");
         for (Effect<Object, Object> effect : this.effects) {
             printChildren(effect);
         }
@@ -30,7 +31,7 @@ public final class CompiledAction {
     }
 
     private void printChildren(Effect<?, ?> effect) {
-        if (effect.children().isEmpty()) {
+        if (effect.children() == null || effect.children().isEmpty()) {
             LogUtils.debug("Has no children");
             return;
         }
@@ -90,11 +91,18 @@ public final class CompiledAction {
 
     public boolean run(Minion minion) {
         // TODO: Optimize: can we somehow batch actions/lazily evaluate instead of eager evaluation
-        for (Object collected : this.collector.collect(minion)) {
+        // We want this collector to avoid the initialization of a list. I'd think that
+        // this is cheaper than a whole array/list initialization.
+        this.collector.collect(minion, collected -> {
             for (Effect<Object, Object> effect : this.effects) {
-                effect.dispatch(minion, collected);
+                try {
+                    effect.dispatch(minion, collected);
+                } catch (MinionTickFailException exception) {
+                    LogUtils.warn("An unexpected error occurred while ticking minion {} at {}!", minion, minion.location(), exception);
+                    throw exception;
+                }
             }
-        }
+        });
         // TODO: Return false if the actions can't be ran
         return true;
     }

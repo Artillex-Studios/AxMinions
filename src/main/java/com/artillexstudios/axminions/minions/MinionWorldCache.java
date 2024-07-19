@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions;
 
+import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.World;
 
 import java.util.Collection;
@@ -10,6 +11,7 @@ public final class MinionWorldCache {
 
     public static void loadArea(World world) {
         if (worlds.containsKey(world)) {
+            LogUtils.warn("An area is already present for world {}", world.getName());
             return;
         }
 

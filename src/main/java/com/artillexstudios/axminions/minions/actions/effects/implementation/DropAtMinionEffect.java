@@ -3,7 +3,6 @@ package com.artillexstudios.axminions.minions.actions.effects.implementation;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +21,7 @@ public class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
             return ItemCollection.EMPTY;
         }
 
-        for (ItemStack itemStack : argument) {
+        for (ItemStack itemStack : argument.items()) {
             world.dropItem(minion.location(), itemStack);
         }
 

@@ -5,7 +5,6 @@ import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -37,7 +36,7 @@ public class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, ItemCollection argument) {
-        for (ItemStack itemStack : argument) {
+        for (ItemStack itemStack : argument.items()) {
             Material material = itemStack.getType();
             Material to = recipes.get(material);
             if (to == null) {

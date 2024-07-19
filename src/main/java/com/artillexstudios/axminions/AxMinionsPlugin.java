@@ -2,6 +2,7 @@ package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.utils.FeatureFlags;
+import com.artillexstudios.axapi.utils.PaperUtils;
 import com.artillexstudios.axminions.command.AxMinionsCommand;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
@@ -15,6 +16,8 @@ import com.artillexstudios.axminions.listeners.PlayerListener;
 import com.artillexstudios.axminions.listeners.WorldListener;
 import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
+import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
+import com.artillexstudios.axminions.minions.ticker.FoliaMinionTicker;
 import com.artillexstudios.axminions.utils.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
@@ -22,11 +25,10 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
-import java.util.concurrent.TimeUnit;
-
 public final class AxMinionsPlugin extends AxPlugin {
     private static AxMinionsPlugin instance;
     private Metrics metrics;
+    private MinionTicker ticker;
 
     public static AxMinionsPlugin getInstance() {
         return instance;
@@ -63,8 +65,13 @@ public final class AxMinionsPlugin extends AxPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(), this);
 
-        MinionTicker.start();
+        if (PaperUtils.isFolia()) {
+            ticker = new FoliaMinionTicker();
+        } else {
+            ticker = new BukkitMinionTicker();
+        }
 
+        ticker.start();
         AxMinionsCommand.register();
         CommandAPI.onEnable();
     }
@@ -75,7 +82,7 @@ public final class AxMinionsPlugin extends AxPlugin {
             this.metrics.shutdown();
         }
 
-        MinionTicker.cancel();
+        ticker.cancel();
         CommandAPI.onDisable();
         DataHandler.stop();
         DatabaseConnector.getInstance().close();

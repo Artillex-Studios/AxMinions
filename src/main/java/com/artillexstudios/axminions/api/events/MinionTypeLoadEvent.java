@@ -19,6 +19,7 @@ public final class MinionTypeLoadEvent extends Event {
         return this.type;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;
     }

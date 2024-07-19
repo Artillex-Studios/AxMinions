@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Minion {
@@ -87,5 +88,20 @@ public final class Minion {
 
     public Location location() {
         return this.location;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Minion minion)) return false;
+
+        return tick == minion.tick && Objects.equals(location, minion.location);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(location);
+        result = 31 * result + tick;
+        return result;
     }
 }

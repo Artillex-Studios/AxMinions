@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public abstract class Collector<T> {
 
@@ -52,5 +53,5 @@ public abstract class Collector<T> {
 
     public abstract Class<?> getCollectedClass();
 
-    public abstract List<T> collect(Minion minion);
+    public abstract void collect(Minion minion, Consumer<T> consumer);
 }

@@ -1,18 +1,20 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
+import com.artillexstudios.axminions.exception.MinionTickFailException;
+import com.artillexstudios.axminions.minions.actions.filters.Filter;
+import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public enum CollectorShape {
     SPHERE {
         @Override
-        public List<Location> getBlocks(Location location, final double range) {
-            int preSize = (int) (3.45 * range * range * range);
-            final ObjectArrayList<Location> list = new ObjectArrayList<>(preSize);
+        public void getBlocks(Location location, final double range, List<Filter<?>> filters, Consumer<Location> consumer) {
             final int blockX = location.getBlockX();
             final int blockY = location.getBlockY();
             final int blockZ = location.getBlockZ();
@@ -35,45 +37,48 @@ public enum CollectorShape {
                         final double distance = xDistance + yDistance + zDistance;
 
                         if (distance < rangeSquared && distance < smallRangeSquared) {
-                            list.add(new Location(location.getWorld(), x, y, z));
+                            try {
+                                consumer.accept(new Location(location.getWorld(), x, y, z));
+                            } catch (MinionTickFailException exception) {
+                                LogUtils.debug("Tick failed, aborting!");
+                                return;
+                            }
                         }
                     }
                 }
             }
-
-            return list;
         }
     },
     CIRCLE {
         @Override
-        public List<Location> getBlocks(Location location, double range) {
-            return List.of();
+        public void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer) {
+
         }
     },
     SQUARE {
         @Override
-        public List<Location> getBlocks(Location location, double range) {
-            return List.of();
+        public void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer) {
+
         }
     },
     CUBE {
         @Override
-        public List<Location> getBlocks(Location location, double range) {
-            return List.of();
+        public void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer) {
+
         }
     },
     FACE {
         @Override
-        public List<Location> getBlocks(Location location, double range) {
-            return List.of();
+        public void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer) {
+
         }
     },
     LINE {
         private static final BlockFace[] faces = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 
         @Override
-        public List<Location> getBlocks(Location location, double range) {
-            return List.of();
+        public void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer) {
+
         }
     };
 
@@ -89,5 +94,5 @@ public enum CollectorShape {
         return Optional.empty();
     }
 
-    public abstract List<Location> getBlocks(Location location, double range);
+    public abstract void getBlocks(Location location, double range, List<Filter<?>> filters, Consumer<Location> consumer);
 }
