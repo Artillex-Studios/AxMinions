@@ -29,7 +29,7 @@ class MinionDamageListener : Listener {
         )
         event.minion.setStorage(coerced)
 
-        Scheduler.get().runLaterAt(event.target.location, {
+        Scheduler.get().runLaterAt(event.target.location, { task ->
             event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0)
                 .filterIsInstance<Item>().fastFor { item ->
                 if (event.minion.getLinkedInventory()?.firstEmpty() == -1) {

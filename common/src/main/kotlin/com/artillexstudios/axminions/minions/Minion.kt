@@ -126,7 +126,7 @@ class Minion(
                 broken.set(true)
             }
 
-            Scheduler.get().runAt(location) {
+            Scheduler.get().runAt(location) { task ->
                 val canBuildAt = AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(
                     event.player,
                     event.packetEntity.location()
@@ -653,7 +653,7 @@ class Minion(
         if (linkedChest == null) return
 
         if (ticking) {
-            Scheduler.get().runAt(linkedChest) {
+            Scheduler.get().executeAt(linkedChest) {
                 if (linkedChest!!.world!!.isChunkLoaded(linkedChest!!.blockX shr 4, linkedChest!!.blockZ shr 4)) {
                     linkedInventory = (linkedChest?.block?.state as? Container)?.inventory
                 }

@@ -175,7 +175,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 }
 
                                 if (canBreak) {
-                                    Scheduler.get().run {
+                                    Scheduler.get().run { task ->
                                         val block = location.block
                                         val drops = block.getDrops(minion.getTool())
                                         xp += NMSHandler.get().getExp(block, minion.getTool() ?: return@run)
