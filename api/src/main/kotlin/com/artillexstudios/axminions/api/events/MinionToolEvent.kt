@@ -7,7 +7,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.inventory.ItemStack
 
-class MinionToolEvent(minion: Minion, private val player: Player, private val newTool: ItemStack) : MinionEvent(minion), Cancellable {
+class MinionToolEvent(minion: Minion, private val player: Player, var newTool: ItemStack, var oldTool: ItemStack) : MinionEvent(minion), Cancellable {
     companion object {
         private val handlerList = HandlerList()
 
@@ -27,10 +27,6 @@ class MinionToolEvent(minion: Minion, private val player: Player, private val ne
 
     fun getPlayer(): Player {
         return player
-    }
-
-    fun getNewTool(): ItemStack {
-        return newTool
     }
 
     override fun setCancelled(cancelled: Boolean) {

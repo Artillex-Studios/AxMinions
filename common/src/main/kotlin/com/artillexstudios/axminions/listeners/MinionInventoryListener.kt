@@ -69,19 +69,20 @@ class MinionInventoryListener : Listener {
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.WRONG_TOOL()))
                 return
             }
-            val minionToolEvent = MinionToolEvent(minion, player, event.currentItem!!)
+
+            val minionToolEvent = MinionToolEvent(minion, player, event.currentItem!!.clone(), minion.getTool()!!.clone())
             Bukkit.getPluginManager().callEvent(minionToolEvent)
             if (minionToolEvent.isCancelled) return
 
             if (minion.getTool()?.type != Material.AIR) {
-                val current = event.currentItem!!.clone()
-                val tool = minion.getTool()?.clone()
+                val current = minionToolEvent.newTool
+                val tool = minionToolEvent.oldTool
                 minion.setTool(current)
                 minion.updateArmour()
                 event.currentItem!!.amount = 0
                 event.clickedInventory!!.addItem(tool)
             } else {
-                minion.setTool(event.currentItem!!)
+                minion.setTool(minionToolEvent.newTool)
                 event.currentItem!!.amount = 0
             }
 
@@ -95,18 +96,19 @@ class MinionInventoryListener : Listener {
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.ERROR_INVENTORY_FULL()))
                 return
             }
-            val minionToolEvent = MinionToolEvent(minion, player, ItemStack(Material.AIR))
+            val tool = minion.getTool()?.clone() ?: return
+
+            val minionToolEvent = MinionToolEvent(minion, player, ItemStack(Material.AIR), tool)
             Bukkit.getPluginManager().callEvent(minionToolEvent)
             if (minionToolEvent.isCancelled) return
 
-            val tool = minion.getTool()?.clone() ?: return
             minion.setTool(ItemStack(Material.AIR))
             minion.updateArmour()
-            val toolMeta = tool.itemMeta ?: return
+            val toolMeta = minionToolEvent.oldTool.itemMeta ?: return
             toolMeta.persistentDataContainer.remove(Keys.GUI)
-            tool.setItemMeta(toolMeta)
+            minionToolEvent.oldTool.setItemMeta(toolMeta)
 
-            player.inventory.addItem(tool)
+            player.inventory.addItem(minionToolEvent.oldTool)
             minion.updateInventories()
             return
         }
