@@ -16,7 +16,7 @@ public class BreakEffect extends Effect<Location, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Location argument) {
-        return Integrations.BLOCK.lootAndBreak(argument, minion.tool());
+        return new ItemCollection(Integrations.BLOCK.lootAndBreak(argument, minion.tool()));
     }
 
     @Override

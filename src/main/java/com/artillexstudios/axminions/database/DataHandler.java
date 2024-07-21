@@ -6,6 +6,8 @@ import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
@@ -143,8 +146,108 @@ public final class DataHandler {
                 });
     }
 
-    public static CompletionStage<Integer> insertMinion(Minion minion) {
-        return null;
+    public static int worldId(World world) {
+        Result<Record> select = DatabaseConnector.getInstance().context()
+                .select()
+                .from(Tables.WORLDS)
+                .where(Fields.WORLD_UUID.eq(world.getUID()))
+                .fetch();
+
+        if (!select.isEmpty()) {
+            Record record = select.get(0);
+            LogUtils.debug("World select record: {}", record);
+            return (Integer) record.get("ID");
+        }
+
+        Record1<Integer> insert = DatabaseConnector.getInstance().context()
+                .insertInto(Tables.TYPES)
+                .set(Fields.WORLD_UUID, world.getUID())
+                .returningResult(Fields.ID)
+                .fetchOne();
+
+        if (insert == null) {
+            return FAILED_QUERY;
+        }
+
+        return insert.get(Fields.ID);
+    }
+
+    public static int ownerId(Player player) {
+        Result<Record> select = DatabaseConnector.getInstance().context()
+                .select()
+                .from(Tables.USERS)
+                .where(Fields.UUID.eq(player.getUniqueId()))
+                .fetch();
+
+        if (!select.isEmpty()) {
+            Record record = select.get(0);
+            LogUtils.debug("World select record: {}", record);
+            return (Integer) record.get("ID");
+        }
+
+        return FAILED_QUERY;
+    }
+
+    public static int locationId(int world, Location location) {
+        Result<Record> select = DatabaseConnector.getInstance().context()
+                .select()
+                .from(Tables.LOCATIONS)
+                .where(Fields.WORLD_ID.eq(world)
+                        .and(Fields.LOCATION_X.eq(location.getBlockX()))
+                        .and(Fields.LOCATION_Y.eq(location.getBlockY()))
+                        .and(Fields.LOCATION_Z.eq(location.getBlockZ())))
+                .fetch();
+
+        if (!select.isEmpty()) {
+            Record record = select.get(0);
+            LogUtils.debug("Location select record: {}", record);
+            return (Integer) record.get("ID");
+        }
+
+        Record1<Integer> insert = DatabaseConnector.getInstance().context()
+                .insertInto(Tables.TYPES)
+                .set(Fields.WORLD_ID, world)
+                .set(Fields.LOCATION_X, location.getBlockX())
+                .set(Fields.LOCATION_Y, location.getBlockY())
+                .set(Fields.LOCATION_Z, location.getBlockZ())
+                .returningResult(Fields.ID)
+                .fetchOne();
+
+        if (insert == null) {
+            return FAILED_QUERY;
+        }
+
+        return insert.get(Fields.ID);
+    }
+
+    public static CompletionStage<Void> insertMinion(Minion minion) {
+        return CompletableFuture.runAsync(() -> {
+            World world = minion.location().getWorld();
+            if (world == null) {
+                return;
+            }
+
+            int worldId = worldId(world);
+            if (worldId == FAILED_QUERY) {
+                log.error("Failed worldId fetching!");
+                return;
+            }
+
+            int locationId = locationId(worldId, minion.location());
+            if (locationId == FAILED_QUERY) {
+                log.error("Failed locationId fetching!");
+                return;
+            }
+
+            DatabaseConnector.getInstance().context()
+                    .insertInto(Tables.MINIONS)
+                    .set(Fields.LOCATION_ID, locationId)
+                    .set(Fields.OWNER_ID, locationId)
+                    .execute();
+        }, databaseExecutor).exceptionallyAsync(throwable -> {
+            log.error("An unexpected error occurred while inserting minion!", throwable);
+            return null;
+        });
     }
 
     public static CompletionStage<Integer> insertType(MinionType type) {
