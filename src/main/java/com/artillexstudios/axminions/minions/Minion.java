@@ -7,9 +7,11 @@ import com.artillexstudios.axapi.packetentity.meta.entity.ArmorStandMeta;
 import com.artillexstudios.axapi.packetentity.meta.serializer.Accessors;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import java.util.Map;
@@ -51,6 +53,12 @@ public final class Minion {
         if (Config.SHOW_HAND_ANIMATION & this.minionData.type().tick(this)) {
             this.armTick = 0;
         }
+
+        Integrations.STORAGE.flush(this.minionData.linkedChest());
+    }
+
+    public void refresh() {
+
     }
 
     public void skin(Skin skin) {
@@ -61,9 +69,22 @@ public final class Minion {
     }
 
     private void applySkin() {
-        for (Map.Entry<EquipmentSlot, WrappedItemStack> entry : this.minionData.skin().items().entrySet()) {
+        Skin skin = this.minionData.skin();
+        if (skin == null) {
+            skin = this.minionData.level().skin();
+        }
+
+        if (skin == null) {
+            return;
+        }
+
+        for (Map.Entry<EquipmentSlot, WrappedItemStack> entry : skin.items().entrySet()) {
             this.entity.setItem(entry.getKey(), entry.getValue());
         }
+    }
+
+    public ItemStack tool() {
+        return this.minionData.tool();
     }
 
     public Level level() {

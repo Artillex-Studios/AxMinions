@@ -4,6 +4,11 @@ reload:
   success: "<#00FF00>Successfully reloaded the configurations of the plugin in <white><time></white>ms!"
   fail: "<#FF0000>There were some issues while reloading file(s): <white><files></white>! Please check out the console for more information! <br>Reload done in: <white><time></white>ms!"
 
+error:
+  type-not-found: "<#FF0000>No minion type could be found with name <name>!"
+  invalid-number: "<#FF0000>The number you have provided is invalid! (<number>)"
+  invalid-level: "<#FF0000>The level provided does not exist for this minion! (<level>)"
+
 update-notifier:
   new-version-available: "<#00FF00>A new version of this plugin is available! <gray>(<white>Current:</white> <#FF0000><current></#FF0000> <gray>| <white>Latest:</white> <#00FF00><latest></#00FF00>)</gray>"
 

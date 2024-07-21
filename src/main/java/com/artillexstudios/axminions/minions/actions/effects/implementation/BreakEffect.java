@@ -1,21 +1,14 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
-import com.artillexstudios.axminions.exception.MinionTickFailException;
+import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class BreakEffect extends Effect<Location, ItemCollection> {
-    private static final BlockData AIR = Material.AIR.createBlockData();
 
     public BreakEffect(Map<Object, Object> configuration) {
         super(configuration);
@@ -23,17 +16,7 @@ public class BreakEffect extends Effect<Location, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Location argument) {
-        Block block = argument.getBlock();
-        Collection<ItemStack> drops = block.getDrops();
-        World world = argument.getWorld();
-
-        if (world == null) {
-            throw new MinionTickFailException("World is null!");
-        }
-
-        world.setBlockData(argument, AIR);
-        // TODO: Block integration get block, event call
-        return new ItemCollection(drops);
+        return Integrations.BLOCK.lootAndBreak(argument, minion.tool());
     }
 
     @Override

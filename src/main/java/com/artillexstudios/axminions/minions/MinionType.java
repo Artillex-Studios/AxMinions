@@ -1,14 +1,20 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.config.Config;
+import com.artillexstudios.axapi.items.WrappedItemStack;
+import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.nbt.CompoundTag;
+import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
 import com.artillexstudios.axminions.minions.actions.CompiledAction;
+import com.artillexstudios.axminions.utils.FieldAccessors;
 import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +87,21 @@ public final class MinionType {
         return true;
     }
 
+    public ItemStack item(MinionData data) {
+        ItemBuilder builder = new ItemBuilder(this.config.getSection("item"));
+        WrappedItemStack wrappedItemStack = FieldAccessors.STACK_ACCESSOR.get(builder);
+        CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
+        // TODO: Store statistics, level, etc
+        tag.putString("axminions_minion_type", this.name);
+        return wrappedItemStack.toBukkit();
+    }
+
     public Level level(int level) {
         return this.levels.get(level);
+    }
+
+    public Int2ObjectArrayMap<Level> levels() {
+        return levels;
     }
 
     public int id() {

@@ -1,9 +1,9 @@
 package com.artillexstudios.axminions.minions.skins;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.reflection.FastFieldAccessor;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.ItemBuilder;
+import com.artillexstudios.axminions.utils.FieldAccessors;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.slf4j.Logger;
@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
-    private static final FastFieldAccessor STACK_ACCESSOR = FastFieldAccessor.forClassField(ItemBuilder.class, "stack");
     private static final WrappedItemStack AIR = WrappedItemStack.wrap(new ItemStack(Material.AIR));
     private static final EquipmentSlot[] equipmentSlots = EquipmentSlot.values();
     private static final Logger log = LoggerFactory.getLogger(Skin.class);
@@ -55,7 +54,7 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
                 continue;
             }
 
-            equipment.put(equipmentSlot, STACK_ACCESSOR.get(new ItemBuilder(section)));
+            equipment.put(equipmentSlot, FieldAccessors.STACK_ACCESSOR.get(new ItemBuilder(section)));
         }
 
         for (EquipmentSlot equipmentSlot : equipmentSlots) {

@@ -23,8 +23,11 @@ public final class Language {
     public static String PREFIX = "";
     public static String RELOAD_SUCCESS = "<#00FF00>Successfully reloaded the configurations of the plugin in <white><time></white>ms!";
     public static String RELOAD_FAIL = "<#FF0000>There were some issues while reloading file(s): <white><files></white>! Please check out the console for more information! <br>Reload done in: <white><time></white>ms!";
+    public static String ERROR_TYPE_NOT_FOUND = "<#FF0000>No minion type could be found with name <name>!";
+    public static String ERROR_INVALID_NUMBER = "<#FF0000>The number you have provided is invalid! (<number>)";
+    public static String ERROR_INVALID_LEVEL = "<#FF0000>The level provided does not exist for this minion! (<level>)";
     private com.artillexstudios.axapi.config.Config config = null;
-    private String lastLanguage;
+    public static String lastLanguage;
 
     public static boolean reload() {
         LogUtils.debug("Reload called on language!");
@@ -34,7 +37,7 @@ public final class Language {
     }
 
     private boolean refreshConfig() {
-        LogUtils.debug("Refershing config");
+        LogUtils.debug("Refreshing language");
         File file = LANGUAGE_DIRECTORY.resolve(Config.LANGUAGE + ".yml").toFile();
         boolean shouldDefault = false;
         if (file.exists()) {
@@ -76,5 +79,7 @@ public final class Language {
         }
 
         PREFIX = config.getString("prefix", PREFIX);
+        ERROR_TYPE_NOT_FOUND = config.getString("error.type-not-found", ERROR_TYPE_NOT_FOUND);
+        ERROR_INVALID_NUMBER = config.getString("error.invalid-number", ERROR_INVALID_NUMBER);
     }
 }

@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.utils.CollectionUtils;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -9,12 +10,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 // The data needed to spawn a minion
-public record MinionData(int ownerId, MinionType type, Level level, ItemStack tool, Skin skin, HashMap<String, String> storage) {
+public record MinionData(int ownerId, MinionType type, Location linkedChest, Level level, ItemStack tool, Skin skin, HashMap<String, String> storage) {
     private static final Pattern SEMICOLON = Pattern.compile(";");
     private static final Pattern DASH = Pattern.compile("-");
 
     public MinionData withSkin(Skin skin) {
-        return new MinionData(this.ownerId, this.type, this.level, this.tool, skin, this.storage);
+        return new MinionData(this.ownerId, this.type, this.linkedChest, this.level, this.tool, skin, this.storage);
     }
 
     public static String serialize(Map<String, String> map) {

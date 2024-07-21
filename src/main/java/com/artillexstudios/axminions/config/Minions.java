@@ -51,7 +51,7 @@ public final class Minions {
         }
     }
 
-    public List<File> failedToLoad() {
-        return this.failedToLoadImmutable;
+    public static List<File> failedToLoad() {
+        return INSTANCE.failedToLoadImmutable;
     }
 }

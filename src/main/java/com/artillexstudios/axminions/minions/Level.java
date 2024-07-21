@@ -3,6 +3,9 @@ package com.artillexstudios.axminions.minions;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.minions.skins.SkinRegistry;
 import com.artillexstudios.axminions.utils.LogUtils;
+import redempt.crunch.CompiledExpression;
+import redempt.crunch.Crunch;
+import redempt.crunch.exceptions.ExpressionCompilationException;
 
 import java.util.Map;
 
@@ -19,9 +22,16 @@ public record Level(int id, int actionTicks, Skin skin) {
             return null;
         }
 
-        Integer actionTicks = (Integer) map.get("action-ticks");
+        String actionTicks = (String) map.get("action-ticks");
         if (actionTicks == null) {
             LogUtils.warn("Could not find action-ticks in level configuration!");
+            return null;
+        }
+
+        CompiledExpression expression;
+        try {
+            expression = Crunch.compileExpression(actionTicks.replace("<level>", "$1"));
+        } catch (ExpressionCompilationException exception) {
             return null;
         }
 
@@ -37,6 +47,6 @@ public record Level(int id, int actionTicks, Skin skin) {
             return null;
         }
 
-        return new Level(level, actionTicks, skin);
+        return new Level(level, expression.getVariableCount() == 0 ? (int) Math.round(expression.evaluate()) : (int) Math.round(expression.evaluate(level)), skin);
     }
 }
