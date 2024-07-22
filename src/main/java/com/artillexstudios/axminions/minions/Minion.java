@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
+import com.artillexstudios.axminions.utils.Direction;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -81,6 +82,22 @@ public final class Minion {
         for (Map.Entry<EquipmentSlot, WrappedItemStack> entry : skin.items().entrySet()) {
             this.entity.setItem(entry.getKey(), entry.getValue());
         }
+    }
+
+    public Map<String, String> extraData() {
+        return this.minionData.extraData();
+    }
+
+    public Direction facing() {
+        return this.minionData.direction();
+    }
+
+    public long charge() {
+        return this.minionData.charge();
+    }
+
+    public int ownerId() {
+        return this.minionData.ownerId();
     }
 
     public ItemStack tool() {

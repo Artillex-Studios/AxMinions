@@ -12,6 +12,7 @@ import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.database.DatabaseConnector;
 import com.artillexstudios.axminions.listeners.BlockPlaceListener;
 import com.artillexstudios.axminions.listeners.ChunkListener;
+import com.artillexstudios.axminions.listeners.MinionPlaceListener;
 import com.artillexstudios.axminions.listeners.PlayerListener;
 import com.artillexstudios.axminions.listeners.WorldListener;
 import com.artillexstudios.axminions.minions.MinionTicker;
@@ -64,6 +65,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         Bukkit.getPluginManager().registerEvents(new ChunkListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MinionPlaceListener(), this);
 
         if (PaperUtils.isFolia()) {
             ticker = new FoliaMinionTicker();

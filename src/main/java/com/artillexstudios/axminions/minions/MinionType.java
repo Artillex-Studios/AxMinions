@@ -93,6 +93,8 @@ public final class MinionType {
         CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
         // TODO: Store statistics, level, etc
         tag.putString("axminions_minion_type", this.name);
+        wrappedItemStack.set(DataComponents.customData(), tag);
+        wrappedItemStack.finishEdit();
         return wrappedItemStack.toBukkit();
     }
 

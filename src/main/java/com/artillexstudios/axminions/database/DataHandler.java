@@ -1,8 +1,10 @@
 package com.artillexstudios.axminions.database;
 
+import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.MinionData;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
@@ -13,13 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
@@ -97,7 +97,7 @@ public final class DataHandler {
 
         futures.add(locations.toCompletableFuture());
 
-        CompletionStage<Integer> minions = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.LOCATIONS)
+        CompletionStage<Integer> minions = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.MINIONS)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
                 .column(Fields.LOCATION_ID, SQLDataType.INTEGER)
                 .column(Fields.OWNER_ID, SQLDataType.INTEGER)
@@ -160,7 +160,7 @@ public final class DataHandler {
         }
 
         Record1<Integer> insert = DatabaseConnector.getInstance().context()
-                .insertInto(Tables.TYPES)
+                .insertInto(Tables.WORLDS)
                 .set(Fields.WORLD_UUID, world.getUID())
                 .returningResult(Fields.ID)
                 .fetchOne();
@@ -170,22 +170,6 @@ public final class DataHandler {
         }
 
         return insert.get(Fields.ID);
-    }
-
-    public static int ownerId(Player player) {
-        Result<Record> select = DatabaseConnector.getInstance().context()
-                .select()
-                .from(Tables.USERS)
-                .where(Fields.UUID.eq(player.getUniqueId()))
-                .fetch();
-
-        if (!select.isEmpty()) {
-            Record record = select.get(0);
-            LogUtils.debug("World select record: {}", record);
-            return (Integer) record.get("ID");
-        }
-
-        return FAILED_QUERY;
     }
 
     public static int locationId(int world, Location location) {
@@ -205,7 +189,7 @@ public final class DataHandler {
         }
 
         Record1<Integer> insert = DatabaseConnector.getInstance().context()
-                .insertInto(Tables.TYPES)
+                .insertInto(Tables.LOCATIONS)
                 .set(Fields.WORLD_ID, world)
                 .set(Fields.LOCATION_X, location.getBlockX())
                 .set(Fields.LOCATION_Y, location.getBlockY())
@@ -242,7 +226,13 @@ public final class DataHandler {
             DatabaseConnector.getInstance().context()
                     .insertInto(Tables.MINIONS)
                     .set(Fields.LOCATION_ID, locationId)
-                    .set(Fields.OWNER_ID, locationId)
+                    .set(Fields.OWNER_ID, minion.ownerId())
+                    .set(Fields.TYPE_ID, minion.type().id())
+                    .set(Fields.LEVEL, minion.level().id())
+                    .set(Fields.CHARGE, minion.charge())
+                    .set(Fields.FACING, minion.facing().ordinal())
+                    .set(Fields.TOOL, minion.tool() == null || minion.tool().getType().isAir() ? null : WrappedItemStack.wrap(minion.tool()).serialize())
+                    .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                     .execute();
         }, databaseExecutor).exceptionallyAsync(throwable -> {
             log.error("An unexpected error occurred while inserting minion!", throwable);

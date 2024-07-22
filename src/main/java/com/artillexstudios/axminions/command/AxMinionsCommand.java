@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.command;
 
+import com.artillexstudios.axapi.utils.ContainerUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.command.arguments.MinionLevelArgument;
@@ -14,6 +15,7 @@ import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionData;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
+import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.FileUtils;
 import com.artillexstudios.axminions.utils.LocationUtils;
 import dev.jorel.commandapi.CommandTree;
@@ -44,7 +46,13 @@ public final class AxMinionsCommand {
                                 .then(MinionTypeArgument.minionType("miniontype")
                                         .then(MinionLevelArgument.level("level")
                                                 .then(new IntegerArgument("amount")
-
+                                                        .executes((sender, args) -> {
+                                                            Player player = args.getByClass("player", Player.class);
+                                                            MinionType type = args.getByClass("miniontype", MinionType.class);
+                                                            Level level = args.getByClass("level", Level.class);
+                                                            Integer amount = args.getByClass("amount", Integer.class);
+                                                            handleGive(sender, player, type, level, amount);
+                                                        })
                                                 )
                                         )
                                 )
@@ -102,7 +110,7 @@ public final class AxMinionsCommand {
                                                     MinionType type = args.getByClass("miniontype", MinionType.class);
                                                     Level level = args.getByClass("level", Level.class);
                                                     Location location = LocationUtils.toBlockCenter(sender.getLocation());
-                                                    MinionData data = new MinionData(0, type, null, level, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
+                                                    MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
                                                     Minion minion = new Minion(location, data);
                                                     minion.spawn();
                                                     MinionArea area = MinionWorldCache.getArea(location.getWorld());
@@ -117,6 +125,8 @@ public final class AxMinionsCommand {
     }
 
     private static void handleGive(CommandSender sender, Player player, MinionType type, Level level, Integer amount) {
-
+        ItemStack item = type.item(new MinionData(0, type, null, null, level, 0, null, null, new HashMap<>(0)));
+        item.setAmount(amount);
+        ContainerUtils.INSTANCE.addOrDrop(player.getInventory(), List.of(item), player.getLocation());
     }
 }
