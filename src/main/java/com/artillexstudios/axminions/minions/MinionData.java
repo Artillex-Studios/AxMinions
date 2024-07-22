@@ -36,7 +36,7 @@ public record MinionData(int ownerId, MinionType type, Direction direction, Loca
         }
 
         String[] split = SEMICOLON.split(string);
-        Map<String, String> map = CollectionUtils.hashMap(split.length);
+        HashMap<String, String> map = CollectionUtils.hashMap(split.length);
         for (String value : split) {
             String[] keyValue = DASH.split(value);
             if (keyValue.length != 2) continue;
