@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.actions.collectors;
 
 import com.artillexstudios.axapi.reflection.FastMethodInvoker;
 import com.artillexstudios.axminions.minions.actions.collectors.implementation.BlockCollector;
+import com.artillexstudios.axminions.minions.actions.collectors.implementation.EntityCollector;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import redempt.crunch.CompiledExpression;
 
@@ -17,6 +18,7 @@ public final class CollectorRegistry {
 
     static {
         register("block", BlockCollector::new);
+        register("entity", EntityCollector::new);
     }
 
     public static void register(String id, FastMethodInvoker.TriFunction<Collector<?>, CollectorShape, CompiledExpression, List<Filter<?>>> function) {
