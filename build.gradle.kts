@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:1.4.310:all")
+    implementation("com.artillexstudios.axapi:axapi:1.4.314:all")
     implementation("dev.jorel:commandapi-bukkit-shade:9.5.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")

@@ -3,11 +3,17 @@ package com.artillexstudios.axminions.database;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionData;
 import com.artillexstudios.axminions.minions.MinionType;
+import com.artillexstudios.axminions.minions.MinionTypes;
+import com.artillexstudios.axminions.minions.MinionWorldCache;
+import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.IntLongPair;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -15,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +163,7 @@ public final class DataHandler {
         if (!select.isEmpty()) {
             Record record = select.get(0);
             LogUtils.debug("World select record: {}", record);
-            return (Integer) record.get("ID");
+            return record.get(Fields.ID);
         }
 
         Record1<Integer> insert = DatabaseConnector.getInstance().context()
@@ -185,7 +192,7 @@ public final class DataHandler {
         if (!select.isEmpty()) {
             Record record = select.get(0);
             LogUtils.debug("Location select record: {}", record);
-            return (Integer) record.get("ID");
+            return record.get(Fields.ID);
         }
 
         Record1<Integer> insert = DatabaseConnector.getInstance().context()
@@ -202,6 +209,14 @@ public final class DataHandler {
         }
 
         return insert.get(Fields.ID);
+    }
+
+    public static String minionType(short id) {
+        return DatabaseConnector.getInstance().context()
+                .select()
+                .from(Tables.TYPES)
+                .where(Fields.ID.eq((int) id))
+                .fetchSingle(Fields.NAME);
     }
 
     public static CompletionStage<Void> insertMinion(Minion minion) {
@@ -240,6 +255,72 @@ public final class DataHandler {
         });
     }
 
+    public static CompletionStage<IntLongPair> loadMinions(World world) {
+        return CompletableFuture.supplyAsync(() -> {
+            int loadedMinions = 0;
+            long start = System.nanoTime();
+            int worldId = worldId(world);
+            if (worldId == FAILED_QUERY) {
+                log.error("Failed worldId fetching when loading minions!");
+                return IntLongPair.of(0, 0);
+            }
+
+            Result<Record> locations = DatabaseConnector.getInstance().context()
+                    .select()
+                    .from(Tables.LOCATIONS)
+                    .where(Fields.WORLD_ID.eq(worldId))
+                    .fetch();
+
+            for (Record location : locations) {
+                int id = location.get(Fields.ID);
+                Result<Record> minions = DatabaseConnector.getInstance().context()
+                        .select()
+                        .from(Tables.MINIONS)
+                        .where(Fields.LOCATION_ID.eq(id))
+                        .fetch();
+
+                if (minions.isEmpty()) {
+                    continue;
+                }
+
+                Record record = minions.get(0);
+                short typeId = record.get(Fields.TYPE_ID, short.class);
+                int x = location.get(Fields.LOCATION_X, int.class);
+                int y = location.get(Fields.LOCATION_Y, int.class);
+                int z = location.get(Fields.LOCATION_Z, int.class);
+                MinionType type = MinionTypes.parse(typeId);
+                if (type == null) {
+                    LogUtils.warn("Failed to load minion in world {} at ({};{};{})! Unregistered miniontype: {}", world.getName(), x, y, z, minionType(typeId));
+                    continue;
+                }
+
+                int ownerId = record.get(Fields.OWNER_ID, int.class);
+                short level = record.get(Fields.LEVEL, short.class);
+                long charge = record.get(Fields.CHARGE, long.class);
+                short facing = record.get(Fields.FACING, short.class);
+                byte[] tool = record.get(Fields.TOOL, byte[].class);
+                String extraData = record.get(Fields.EXTRA_DATA, String.class);
+                Level minionLevel = type.level(level);
+
+                if (minionLevel == null) {
+                    LogUtils.warn("Failed to load minion in world {} at ({};{};{})! Level does not exist: {}", world.getName(), x, y, z, level);
+                    continue;
+                }
+
+                MinionData data = new MinionData(ownerId, type, Direction.entries[facing], null, minionLevel, charge, WrappedItemStack.wrap(tool).toBukkit(), null, MinionData.deserialize(extraData));
+                Minion minion = new Minion(new Location(world, x, y, z), data);
+                MinionWorldCache.add(minion);
+                minion.spawn();
+                loadedMinions++;
+            }
+            long took = System.nanoTime() - start;
+            return IntLongPair.of(loadedMinions, took);
+        }, databaseExecutor).exceptionallyAsync(throwable -> {
+            log.error("An unexpected error occurred while loading minions in world {}!", world.getName(), throwable);
+            return IntLongPair.of(0, 0);
+        });
+    }
+
     public static CompletionStage<Integer> insertType(MinionType type) {
         Preconditions.checkNotNull(type, "Tried to insert null miniontype");
         return CompletableFuture.supplyAsync(() -> {
@@ -252,7 +333,7 @@ public final class DataHandler {
             if (!select.isEmpty()) {
                 Record record = select.get(0);
                 LogUtils.debug("select record: {}", record);
-                return (Integer) record.get("ID");
+                return record.get(Fields.ID);
             }
 
             Record1<Integer> insert = DatabaseConnector.getInstance().context()

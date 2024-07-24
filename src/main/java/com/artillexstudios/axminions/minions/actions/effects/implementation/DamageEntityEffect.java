@@ -1,5 +1,9 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.loot.LootContextParamSets;
+import com.artillexstudios.axapi.loot.LootContextParams;
+import com.artillexstudios.axapi.loot.LootParams;
+import com.artillexstudios.axapi.loot.LootTables;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
@@ -8,12 +12,9 @@ import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.loot.LootContext;
-import org.bukkit.loot.LootTables;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Random;
 
 public class DamageEntityEffect extends Effect<Entity, ItemCollection> {
     private static final Player dummyPlayer = NMSHandlers.getNmsHandler().dummyPlayer();
@@ -24,11 +25,19 @@ public class DamageEntityEffect extends Effect<Entity, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Entity argument) {
-        Collection<ItemStack> items = LootTables.ZOMBIE.getLootTable().populateLoot(new Random(), new LootContext.Builder(argument.getLocation())
-                .killer(dummyPlayer)
-                .lootedEntity(argument)
-                .build()
-        );
+        dummyPlayer.getInventory().setItemInMainHand(minion.tool());
+        LootParams params = new LootParams.Builder(argument.getWorld())
+                .withParameter(LootContextParams.THIS_ENTITY, argument)
+                .withParameter(LootContextParams.ORIGIN, argument.getLocation())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, dummyPlayer)
+                .withParameter(LootContextParams.ATTACKING_ENTITY, dummyPlayer)
+                .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, dummyPlayer)
+                .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, dummyPlayer)
+                .build(LootContextParamSets.ENTITY);
+
+        Collection<ItemStack> items = LootTables.entityLootTable(argument.getType())
+                .randomItems(params);
+
         LogUtils.debug("DamageEntityEffect, {} items: {}", argument, items);
         return new ItemCollection(items);
     }

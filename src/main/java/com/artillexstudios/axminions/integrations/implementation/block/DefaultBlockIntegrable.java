@@ -12,8 +12,8 @@ public final class DefaultBlockIntegrable implements BlockIntegrable {
     @Override
     public Collection<ItemStack> lootAndBreak(Location location, ItemStack itemStack) {
         Block block = location.getBlock();
-
         Collection<ItemStack> drops = block.getDrops(itemStack);
+
         block.setType(Material.AIR, true);
         return drops;
     }

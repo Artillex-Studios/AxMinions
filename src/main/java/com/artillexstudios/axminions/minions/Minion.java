@@ -11,6 +11,7 @@ import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.utils.Direction;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Minion {
+    private static final ItemStack AIR = new ItemStack(Material.AIR);
     private final Location location;
     private final PacketEntity entity;
     private final AtomicBoolean needsSaving = new AtomicBoolean(false);
@@ -101,7 +103,7 @@ public final class Minion {
     }
 
     public ItemStack tool() {
-        return this.minionData.tool();
+        return this.minionData.tool() == null ? AIR : this.minionData.tool();
     }
 
     public Level level() {

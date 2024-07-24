@@ -8,6 +8,7 @@ public enum Direction {
     SOUTH(0f, BlockFace.SOUTH),
     EAST(-90f, BlockFace.EAST);
 
+    public static final Direction[] entries = Direction.values();
     private final float yaw;
     private final BlockFace face;
 

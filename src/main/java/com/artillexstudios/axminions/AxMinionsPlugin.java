@@ -55,7 +55,13 @@ public final class AxMinionsPlugin extends AxPlugin {
         }
 
         DataHandler.setup().thenRun(() -> LogUtils.debug("Loaded database!"));
+
         this.reload();
+        for (World world : Bukkit.getWorlds()) {
+            DataHandler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
+                LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+            });
+        }
 
         for (World world : Bukkit.getWorlds()) {
             MinionWorldCache.loadArea(world);
