@@ -10,13 +10,16 @@ import com.artillexstudios.axminions.minions.MinionData;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
+import com.artillexstudios.axminions.utils.AsyncUtils;
 import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntLongPair;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -36,14 +39,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class DataHandler {
-    private static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(3, new ThreadFactory() {
-        private static final AtomicInteger counter = new AtomicInteger(1);
-
-        @Override
-        public Thread newThread(@NotNull Runnable runnable) {
-            return new Thread(null, runnable, "AxMinions-Database-Thread-" + counter.getAndIncrement());
-        }
-    });
     private static final int FAILED_QUERY = -3042141;
     private static final Logger log = LoggerFactory.getLogger(DataHandler.class);
 
@@ -54,7 +49,7 @@ public final class DataHandler {
                 .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
                 .column(Fields.NAME, SQLDataType.VARCHAR(64))
                 .primaryKey(Fields.ID)
-                .executeAsync(databaseExecutor)
+                .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while running type table creation query!", throwable);
                     return FAILED_QUERY;
@@ -69,7 +64,7 @@ public final class DataHandler {
                 .column(Fields.EXTRA_SLOTS, SQLDataType.INTEGER.default_(0))
                 .column(Fields.ISLAND_SLOTS, SQLDataType.INTEGER.default_(0))
                 .primaryKey(Fields.ID)
-                .executeAsync(databaseExecutor)
+                .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while running user table creation query!", throwable);
                     return FAILED_QUERY;
@@ -81,7 +76,7 @@ public final class DataHandler {
                 .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
                 .column(Fields.WORLD_UUID, SQLDataType.UUID)
                 .primaryKey(Fields.ID)
-                .executeAsync(databaseExecutor)
+                .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while running world table creation query!", throwable);
                     return FAILED_QUERY;
@@ -96,7 +91,7 @@ public final class DataHandler {
                 .column(Fields.LOCATION_Y, SQLDataType.INTEGER)
                 .column(Fields.LOCATION_Z, SQLDataType.INTEGER)
                 .primaryKey(Fields.ID)
-                .executeAsync(databaseExecutor)
+                .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while running locations table creation query!", throwable);
                     return FAILED_QUERY;
@@ -115,7 +110,7 @@ public final class DataHandler {
                 .column(Fields.TOOL, SQLDataType.CLOB)
                 .column(Fields.EXTRA_DATA, SQLDataType.CLOB)
                 .primaryKey(Fields.ID)
-                .executeAsync(databaseExecutor)
+                .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while running minions table creation query!", throwable);
                     return FAILED_QUERY;
@@ -124,7 +119,7 @@ public final class DataHandler {
         futures.add(minions.toCompletableFuture());
         if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
             CompletableFuture<Integer> pragma = new CompletableFuture<>();
-            databaseExecutor.submit(() -> {
+            AsyncUtils.executor().submit(() -> {
                 DatabaseConnector.getInstance().context().fetch("PRAGMA journal_mode=WAL;");
                 DatabaseConnector.getInstance().context().execute("PRAGMA synchronous = off;");
                 DatabaseConnector.getInstance().context().execute("PRAGMA page_size = 32768;");
@@ -146,7 +141,7 @@ public final class DataHandler {
                 .set(Fields.NAME, player.getName())
                 .set(Fields.TEXTURE, texture)
                 .returningResult(Fields.ID)
-                .fetchAsync(databaseExecutor)
+                .fetchAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
                     log.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
                     return null;
@@ -249,7 +244,7 @@ public final class DataHandler {
                     .set(Fields.TOOL, minion.tool() == null || minion.tool().getType().isAir() ? null : WrappedItemStack.wrap(minion.tool()).serialize())
                     .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                     .execute();
-        }, databaseExecutor).exceptionallyAsync(throwable -> {
+        }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
             log.error("An unexpected error occurred while inserting minion!", throwable);
             return null;
         });
@@ -307,7 +302,7 @@ public final class DataHandler {
                     continue;
                 }
 
-                MinionData data = new MinionData(ownerId, type, Direction.entries[facing], null, minionLevel, charge, WrappedItemStack.wrap(tool).toBukkit(), null, MinionData.deserialize(extraData));
+                MinionData data = new MinionData(ownerId, type, Direction.entries[facing], null, minionLevel, charge, tool == null ? new ItemStack(Material.AIR) : WrappedItemStack.wrap(tool).toBukkit(), null, MinionData.deserialize(extraData));
                 Minion minion = new Minion(new Location(world, x, y, z), data);
                 MinionWorldCache.add(minion);
                 minion.spawn();
@@ -315,7 +310,7 @@ public final class DataHandler {
             }
             long took = System.nanoTime() - start;
             return IntLongPair.of(loadedMinions, took);
-        }, databaseExecutor).exceptionallyAsync(throwable -> {
+        }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
             log.error("An unexpected error occurred while loading minions in world {}!", world.getName(), throwable);
             return IntLongPair.of(0, 0);
         });
@@ -351,18 +346,5 @@ public final class DataHandler {
             log.error("An unexpected error occurred while inserting minion type {}!", type.name(), throwable);
             return FAILED_QUERY;
         });
-    }
-
-    public static void stop() {
-        try {
-            databaseExecutor.shutdown();
-            databaseExecutor.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException exception) {
-            log.error("An unexpected error occurred while stopping DataHandler!", exception);
-        }
-    }
-
-    public static ExecutorService databaseExecutor() {
-        return databaseExecutor;
     }
 }

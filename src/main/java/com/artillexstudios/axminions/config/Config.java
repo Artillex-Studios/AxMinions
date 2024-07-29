@@ -28,6 +28,8 @@ public final class Config {
     public static int DATABASE_CONNECTION_TIMEOUT = 5000;
     public static DatabaseType DATABASE_TYPE = DatabaseType.H2;
     public static boolean SHOW_HAND_ANIMATION = true;
+    public static boolean ASYNC_HAND_ANIMATION = false;
+    public static int ASYNC_PROCESSOR_POOL_SIZE = 3;
     public static boolean REQUIRE_TOOL = true;
     public static String LANGUAGE = "en_US";
     public static boolean USE_BSTATS = true;
@@ -75,6 +77,8 @@ public final class Config {
         DATABASE_KEEPALIVE_TIME = config.getInt("database.pool.keepalive-time", DATABASE_KEEPALIVE_TIME);
         DATABASE_CONNECTION_TIMEOUT = config.getInt("database.pool.connection-timeout", DATABASE_CONNECTION_TIMEOUT);
         SHOW_HAND_ANIMATION = config.getBoolean("show-hand-animation", SHOW_HAND_ANIMATION);
+        ASYNC_HAND_ANIMATION = config.getBoolean("async-hand-animation", ASYNC_HAND_ANIMATION);
+        ASYNC_PROCESSOR_POOL_SIZE = config.getInt("async-processor-pool-size", ASYNC_PROCESSOR_POOL_SIZE);
         REQUIRE_TOOL = config.getBoolean("require-tool", REQUIRE_TOOL);
         LANGUAGE = config.getString("language", LANGUAGE);
         USE_BSTATS = config.getBoolean("use-bstats", USE_BSTATS);

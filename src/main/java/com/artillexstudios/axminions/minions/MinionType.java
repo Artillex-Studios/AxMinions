@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MinionType {
@@ -34,8 +36,10 @@ public final class MinionType {
     public MinionType(String name, Config config) {
         this.name = name;
         this.config = config;
+    }
 
-        DataHandler.insertType(this).thenAccept(result -> {
+    public CompletionStage<Void> load() {
+        return DataHandler.insertType(this).thenAccept(result -> {
             if (result == null) {
                 return;
             }

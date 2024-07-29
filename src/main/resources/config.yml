@@ -16,6 +16,18 @@ database:
 # This has a minimal impact on performance
 show-hand-animation: true
 
+# If we should process hand animations
+# on a different thread from the server thread
+# this has a minimal impact on performance,
+# it might even be slower in some cases due to thread
+# context switching.
+async-hand-animation: false
+
+# The pool size of the asynchronous executor
+# we use to process some things asynchronously,
+# like database queries and asynchronous hand animations.
+async-processor-pool-size: 3
+
 # If the minions should require a tool to be provided by the player.
 # If this option is false, the minion's default tool will be used
 require-tool: true

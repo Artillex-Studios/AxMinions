@@ -13,6 +13,7 @@ import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.utils.Direction;
+import com.artillexstudios.axminions.utils.LocationUtils;
 import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -75,7 +76,7 @@ public final class MinionPlaceListener implements Listener {
 
         // TODO: level
         itemStack.setAmount(itemStack.getAmount() - 1);
-        Location location = clickedBlock.getRelative(event.getBlockFace()).getLocation();
+        Location location = LocationUtils.toBlockCenter(clickedBlock.getRelative(event.getBlockFace()).getLocation());
         // TODO: Database queries, etc..
         // TODO: ownerId
         MinionData data = new MinionData(0, minionType, Direction.NORTH, null, minionType.level(1), 0, null, null, new HashMap<>());

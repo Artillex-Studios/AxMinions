@@ -12,11 +12,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public final class Minions {
     private static final Minions INSTANCE = new Minions();
     private final File minionsDirectory = com.artillexstudios.axminions.utils.FileUtils.PLUGIN_DIRECTORY.resolve("minions").toFile();
     private final ObjectArrayList<File> failedToLoad = new ObjectArrayList<>();
+    private final ObjectArrayList<CompletableFuture<Void>> loadingMinions = new ObjectArrayList<>();
     private final List<File> failedToLoadImmutable = Collections.unmodifiableList(failedToLoad);
 
     public static void reload() {
@@ -24,6 +26,11 @@ public final class Minions {
     }
 
     public void reload0() {
+        for (CompletableFuture<Void> loadingMinion : this.loadingMinions) {
+            loadingMinion.join();
+        }
+        this.loadingMinions.clear();
+
         LogUtils.debug("Reloading minions!");
         for (String minion : MinionTypes.types().toArray(new String[0])) {
             LogUtils.debug("Unregistering {}", minion);
@@ -47,8 +54,13 @@ public final class Minions {
                     .replace(".yaml", "");
 
             Config config = new Config(file);
-            new MinionType(name, config);
+            MinionType type = new MinionType(name, config);
+            this.loadingMinions.add(type.load().toCompletableFuture());
         }
+    }
+
+    public static ObjectArrayList<CompletableFuture<Void>> loadingMinions() {
+        return INSTANCE.loadingMinions;
     }
 
     public static List<File> failedToLoad() {

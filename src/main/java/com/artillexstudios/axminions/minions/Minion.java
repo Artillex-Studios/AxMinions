@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
+import com.artillexstudios.axminions.utils.AsyncUtils;
 import com.artillexstudios.axminions.utils.Direction;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,10 +45,12 @@ public final class Minion {
         this.tick++;
         if (this.tick < this.minionData.level().actionTicks()) {
             if (Config.SHOW_HAND_ANIMATION) {
-                if (this.armTick >= 20) return;
-                ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
-                meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) this.armTick / 10)), 0, 0));
-                this.armTick += 2;
+                AsyncUtils.run(() -> {
+                    if (this.armTick >= 20) return;
+                    ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
+                    meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) this.armTick / 10)), 0, 0));
+                    this.armTick += 2;
+                }, Config.ASYNC_HAND_ANIMATION);
             }
             return;
         }
