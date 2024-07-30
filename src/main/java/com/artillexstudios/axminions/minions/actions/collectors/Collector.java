@@ -1,7 +1,10 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
 import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.actions.filters.Filter;
+import com.artillexstudios.axminions.minions.actions.filters.Filters;
 import com.artillexstudios.axminions.utils.LogUtils;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import redempt.crunch.Crunch;
 
 import java.util.Arrays;
@@ -47,8 +50,28 @@ public abstract class Collector<T> {
             return null;
         }
 
-        // TODO: Filters
-        return CollectorRegistry.get(collectorID, collectorShape.get(), Crunch.compileExpression(radius.replace("<level>", "$1")), List.of());
+        List<Map<Object, Object>> filterMap = (List<Map<Object, Object>>) config.get("filters");
+        List<Filter<?>> filters = new ObjectArrayList<>(1);
+        if (filterMap != null) {
+            for (Map<Object, Object> map : filterMap) {
+                String filterId = (String) map.get("id");
+
+                if (filterId == null) {
+                    LogUtils.warn("Could not find id in filter config!");
+                    continue;
+                }
+
+                Filter<?> filter = Filters.parse(filterId, map);
+                if (filter == null) {
+                    LogUtils.warn("Could not find filter with id {}!", filterId);
+                    continue;
+                }
+
+                filters.add(filter);
+            }
+        }
+
+        return CollectorRegistry.get(collectorID, collectorShape.get(), Crunch.compileExpression(radius.replace("<level>", "$1")), filters);
     }
 
     public abstract Class<?> getCollectedClass();
