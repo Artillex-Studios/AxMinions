@@ -5,69 +5,50 @@ import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;
 import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class MaterialFilter extends Filter<Material> {
-    private final HashSet<Material> allowed = new HashSet<>();
+public final class EntityTypeFilter extends Filter<EntityType> {
+    private final HashSet<EntityType> allowed = new HashSet<>();
 
-    public MaterialFilter(Map<Object, Object> configuration) {
-        this.addTransformer(Location.class, new Transformer<Location, Material>() {
+    public EntityTypeFilter(Map<Object, Object> configuration) {
+        this.addTransformer(Entity.class, new Transformer<Entity, EntityType>() {
             @Override
-            public Material transform(Object object) {
-                return ((Location) object).getBlock().getType();
+            public EntityType transform(Object object) {
+                return ((Entity) object).getType();
             }
 
             @Override
             public Class<?> inputClass() {
-                return Location.class;
+                return Entity.class;
             }
 
             @Override
             public Class<?> outputClass() {
-                return Material.class;
+                return EntityType.class;
             }
         });
 
-        this.addTransformer(Block.class, new Transformer<Block, Material>() {
+        this.addTransformer(EntityType.class, new Transformer<EntityType, EntityType>() {
             @Override
-            public Material transform(Object object) {
-                return ((Block) object).getType();
+            public EntityType transform(Object object) {
+                return (EntityType) object;
             }
 
             @Override
             public Class<?> inputClass() {
-                return Block.class;
+                return EntityType.class;
             }
 
             @Override
             public Class<?> outputClass() {
-                return Material.class;
-            }
-        });
-
-        this.addTransformer(Material.class, new Transformer<Material, Material>() {
-            @Override
-            public Material transform(Object object) {
-                return (Material) object;
-            }
-
-            @Override
-            public Class<?> inputClass() {
-                return Material.class;
-            }
-
-            @Override
-            public Class<?> outputClass() {
-                return Material.class;
+                return EntityType.class;
             }
         });
 
@@ -75,15 +56,15 @@ public final class MaterialFilter extends Filter<Material> {
         if (whitelist != null) {
             for (String s : whitelist) {
                 if (s.equals("*")) {
-                    this.allowed.addAll(List.of(Material.values()));
+                    this.allowed.addAll(List.of(EntityType.values()));
                 } else {
-                    List<Material> materials = match(s);
-                    if (materials == null) {
-                        LogUtils.warn("No materials matching {} were found!", s);
+                    List<EntityType> entityTypes = match(s);
+                    if (entityTypes == null) {
+                        LogUtils.warn("No entitytype matching {} were found!", s);
                         continue;
                     }
 
-                    this.allowed.addAll(materials);
+                    this.allowed.addAll(entityTypes);
                 }
             }
         }
@@ -92,25 +73,25 @@ public final class MaterialFilter extends Filter<Material> {
         if (blacklist != null) {
             for (String s : blacklist) {
                 if (s.equals("*")) {
-                    List.of(Material.values()).forEach(this.allowed::remove);
+                    List.of(EntityType.values()).forEach(this.allowed::remove);
                 } else {
-                    List<Material> materials = match(s);
-                    if (materials == null) {
+                    List<EntityType> entityTypes = match(s);
+                    if (entityTypes == null) {
                         LogUtils.warn("No materials matching {} were found!", s);
                         continue;
                     }
 
-                    materials.forEach(this.allowed::remove);
+                    entityTypes.forEach(this.allowed::remove);
                 }
             }
         }
     }
 
-    private static List<Material> match(String material) {
-        ObjectArrayList<Material> materials = null;
+    private static List<EntityType> match(String material) {
+        ObjectArrayList<EntityType> materials = null;
         Pattern pattern = Pattern.compile(material, Pattern.CASE_INSENSITIVE);
 
-        for (Material m : Material.values()) {
+        for (EntityType m : EntityType.values()) {
             Matcher matcher = pattern.matcher(m.name());
             if (!matcher.find()) {
                 continue;
@@ -129,8 +110,8 @@ public final class MaterialFilter extends Filter<Material> {
     @Override
     public boolean isAllowed(Object object) {
         try {
-            Transformer<?, Material> transformer = transformer(object.getClass());
-            Material transformed = transformer.transform(object);
+            Transformer<?, EntityType> transformer = transformer(object.getClass());
+            EntityType transformed = transformer.transform(object);
             return this.allowed.contains(transformed);
         } catch (TransformerNotPresentException exception) {
             LogUtils.error("No transformer found for input class {}!");
@@ -140,6 +121,6 @@ public final class MaterialFilter extends Filter<Material> {
 
     @Override
     public List<Class<?>> inputClasses() {
-        return List.of(Material.class, Location.class, Block.class);
+        return List.of();
     }
 }

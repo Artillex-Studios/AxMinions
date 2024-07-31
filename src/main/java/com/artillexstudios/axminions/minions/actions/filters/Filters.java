@@ -1,6 +1,8 @@
 package com.artillexstudios.axminions.minions.actions.filters;
 
+import com.artillexstudios.axminions.minions.actions.filters.implementation.EntityTypeFilter;
 import com.artillexstudios.axminions.minions.actions.filters.implementation.MaterialFilter;
+import com.artillexstudios.axminions.minions.actions.filters.implementation.StoneGeneratorFilter;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -12,6 +14,8 @@ public final class Filters {
 
     static {
         register("material", MaterialFilter::new);
+        register("stone_generator", StoneGeneratorFilter::new);
+        register("entity", EntityTypeFilter::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Filter<?>> supplier) {
