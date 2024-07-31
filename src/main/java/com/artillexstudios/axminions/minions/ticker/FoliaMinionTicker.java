@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.ticker;
 
 import com.artillexstudios.axapi.scheduler.ScheduledTask;
 import com.artillexstudios.axapi.scheduler.Scheduler;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.jfr.MinionTickEvent;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
@@ -26,7 +27,7 @@ public final class FoliaMinionTicker implements MinionTicker {
                 });
             }
             event.commit();
-        }, 1, 1);
+        }, 1, Config.TICK_FREQUENCY);
     }
 
     private void tickChunk(ChunkPos position) {
