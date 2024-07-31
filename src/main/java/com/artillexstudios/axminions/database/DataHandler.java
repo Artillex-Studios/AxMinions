@@ -5,7 +5,6 @@ import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
-import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionData;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
@@ -20,11 +19,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class DataHandler {
     private static final int FAILED_QUERY = -3042141;
@@ -303,7 +295,7 @@ public final class DataHandler {
                 }
 
                 MinionData data = new MinionData(ownerId, type, Direction.entries[facing], null, minionLevel, charge, tool == null ? new ItemStack(Material.AIR) : WrappedItemStack.wrap(tool).toBukkit(), null, MinionData.deserialize(extraData));
-                Minion minion = new Minion(new Location(world, x, y, z), data);
+                Minion minion = new Minion(new Location(world, x + 0.5, y, z + 0.5), data);
                 MinionWorldCache.add(minion);
                 minion.spawn();
                 loadedMinions++;
