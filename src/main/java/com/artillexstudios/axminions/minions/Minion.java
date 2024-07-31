@@ -42,14 +42,14 @@ public final class Minion {
     }
 
     public void tick() {
-        this.tick++;
+        this.tick += Config.TICK_FREQUENCY;
         if (this.tick < this.minionData.level().actionTicks()) {
             if (Config.SHOW_HAND_ANIMATION) {
                 AsyncUtils.run(() -> {
                     if (this.armTick >= 20) return;
                     ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
                     meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) this.armTick / 10)), 0, 0));
-                    this.armTick += 2;
+                    this.armTick += (2 * Config.TICK_FREQUENCY);
                 }, Config.ASYNC_HAND_ANIMATION);
             }
             return;

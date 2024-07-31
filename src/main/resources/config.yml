@@ -12,6 +12,11 @@ database:
     keepalive-time: 0
     connection-timeout: 5000
 
+# How often should we tick minions?
+# Increasing this might improve performance a bit.
+# If this is increased, minion animations might look a bit choppy.
+tick-frequency: 1
+
 # If the minions should show a hand animation
 # This has a minimal impact on performance
 show-hand-animation: true

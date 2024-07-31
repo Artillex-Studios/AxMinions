@@ -27,6 +27,7 @@ public final class Config {
     public static int DATABASE_KEEPALIVE_TIME = 0;
     public static int DATABASE_CONNECTION_TIMEOUT = 5000;
     public static DatabaseType DATABASE_TYPE = DatabaseType.H2;
+    public static int TICK_FREQUENCY = 1;
     public static boolean SHOW_HAND_ANIMATION = true;
     public static boolean ASYNC_HAND_ANIMATION = false;
     public static int ASYNC_PROCESSOR_POOL_SIZE = 3;
@@ -76,6 +77,7 @@ public final class Config {
         DATABASE_MAXIMUM_LIFETIME = config.getInt("database.pool.maximum-lifetime", DATABASE_MAXIMUM_LIFETIME);
         DATABASE_KEEPALIVE_TIME = config.getInt("database.pool.keepalive-time", DATABASE_KEEPALIVE_TIME);
         DATABASE_CONNECTION_TIMEOUT = config.getInt("database.pool.connection-timeout", DATABASE_CONNECTION_TIMEOUT);
+        TICK_FREQUENCY = config.getInt("tick-frequency", TICK_FREQUENCY);
         SHOW_HAND_ANIMATION = config.getBoolean("show-hand-animation", SHOW_HAND_ANIMATION);
         ASYNC_HAND_ANIMATION = config.getBoolean("async-hand-animation", ASYNC_HAND_ANIMATION);
         ASYNC_PROCESSOR_POOL_SIZE = config.getInt("async-processor-pool-size", ASYNC_PROCESSOR_POOL_SIZE);

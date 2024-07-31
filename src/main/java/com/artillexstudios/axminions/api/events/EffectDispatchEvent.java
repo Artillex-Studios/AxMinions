@@ -5,7 +5,7 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class EffectDispatchEvent extends MinionEvent {
+public final class EffectDispatchEvent extends MinionEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     private final Effect<?, ?> effect;
     private final Object argument;
