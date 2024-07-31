@@ -60,7 +60,7 @@ public final class EntityTypeFilter extends Filter<EntityType> {
                 } else {
                     List<EntityType> entityTypes = match(s);
                     if (entityTypes == null) {
-                        LogUtils.warn("No entitytype matching {} were found!", s);
+                        LogUtils.warn("No entitytype matching {} was found!", s);
                         continue;
                     }
 
@@ -77,7 +77,7 @@ public final class EntityTypeFilter extends Filter<EntityType> {
                 } else {
                     List<EntityType> entityTypes = match(s);
                     if (entityTypes == null) {
-                        LogUtils.warn("No materials matching {} were found!", s);
+                        LogUtils.warn("No entitytype matching {} was found!", s);
                         continue;
                     }
 
