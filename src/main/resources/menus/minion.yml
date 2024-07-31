@@ -1,0 +1,7 @@
+title: "<white>Minion"
+rows: 3
+
+items:
+  filler:
+    material: "light_gray_stained_glass_pane"
+    slots: 0-26

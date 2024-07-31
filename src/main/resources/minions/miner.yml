@@ -12,6 +12,21 @@ item:
     - ""
     - "<#00AAFF><b>(!)</b> Place the minion and give it a pickaxe!"
 
+tool:
+  # This only applies if require-tool is disabled in the config.yml
+  default:
+    material: "diamond_pickaxe"
+  allowed-items:
+    - material: netherite_pickaxe
+    - material: diamond_pickaxe
+    - material: golden_pickaxe
+    - material: iron_pickaxe
+    - material: stone_pickaxe
+    - material: wooden_pickaxe
+
+click-actions:
+  - "[menu] minion.yml"
+
 upgrades:
   - type: "smelt"
     price:
