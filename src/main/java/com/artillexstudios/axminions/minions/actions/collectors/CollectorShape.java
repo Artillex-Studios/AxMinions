@@ -32,13 +32,21 @@ public enum CollectorShape {
                 final int xDistance = (blockX - x) * (blockX - x);
                 for (int y = yStart; y <= yEnd; y++) {
                     final int yDistance = (blockY - y) * (blockY - y);
+                    z:
                     for (int z = zStart; z < zEnd; z++) {
                         final int zDistance = (blockZ - z) * (blockZ - z);
                         final int distance = xDistance + yDistance + zDistance;
 
                         if (distance < rangeSquared && distance < smallRangeSquared) {
                             try {
-                                consumer.accept(new Location(location.getWorld(), x, y, z));
+                                Location newLocation = new Location(location.getWorld(), x, y, z);
+                                for (Filter<?> filter : filters) {
+                                    if (!filter.isAllowed(newLocation)) {
+                                        continue z;
+                                    }
+                                }
+
+                                consumer.accept(newLocation);
                             } catch (MinionTickFailException exception) {
                                 LogUtils.debug("Tick failed, aborting!");
                                 return;
@@ -72,13 +80,21 @@ public enum CollectorShape {
 
             for (int x = xStart; x <= xEnd; x++) {
                 final int xDistance = (blockX - x) * (blockX - x);
+                z:
                 for (int z = zStart; z < zEnd; z++) {
                     final int zDistance = (blockZ - z) * (blockZ - z);
                     final int distance = xDistance + zDistance;
 
                     if (distance < rangeSquared && distance < smallRangeSquared) {
                         try {
-                            consumer.accept(new Location(location.getWorld(), x, blockY, z));
+                            Location newLocation = new Location(location.getWorld(), x, blockY, z);
+                            for (Filter<?> filter : filters) {
+                                if (!filter.isAllowed(newLocation)) {
+                                    continue z;
+                                }
+                            }
+
+                            consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
                             LogUtils.debug("Tick failed, aborting!");
                             return;
@@ -108,9 +124,17 @@ public enum CollectorShape {
             final int zEnd = (int) Math.round(blockZ + range);
 
             for (int x = xStart; x <= xEnd; x++) {
+                z:
                 for (int z = zStart; z <= zEnd; z++) {
                     try {
-                        consumer.accept(new Location(location.getWorld(), x, blockY, z));
+                        Location newLocation = new Location(location.getWorld(), x, blockY, z);
+                        for (Filter<?> filter : filters) {
+                            if (!filter.isAllowed(newLocation)) {
+                                continue z;
+                            }
+                        }
+
+                        consumer.accept(newLocation);
                     } catch (MinionTickFailException exception) {
                         LogUtils.debug("Tick failed, aborting!");
                         return;
@@ -142,9 +166,17 @@ public enum CollectorShape {
 
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
+                    z:
                     for (int z = zStart; z <= zEnd; z++) {
                         try {
-                            consumer.accept(new Location(location.getWorld(), x, y, z));
+                            Location newLocation = new Location(location.getWorld(), x, y, z);
+                            for (Filter<?> filter : filters) {
+                                if (!filter.isAllowed(newLocation)) {
+                                    continue z;
+                                }
+                            }
+
+                            consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
                             LogUtils.debug("Tick failed, aborting!");
                             return;

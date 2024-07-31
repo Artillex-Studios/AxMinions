@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
+import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;
 import com.artillexstudios.axminions.utils.LogUtils;
@@ -19,10 +20,10 @@ public final class MaterialFilter extends Filter<Material> {
     private final HashSet<Material> allowed = new HashSet<>();
 
     public MaterialFilter(Map<Object, Object> configuration) {
-        this.addTransformer(new Transformer<Location, Material>() {
+        this.addTransformer(Location.class, new Transformer<Location, Material>() {
             @Override
-            public Material transform(Location object) {
-                return object.getBlock().getType();
+            public Material transform(Object object) {
+                return ((Location) object).getBlock().getType();
             }
 
             @Override
@@ -36,15 +37,32 @@ public final class MaterialFilter extends Filter<Material> {
             }
         });
 
-        this.addTransformer(new Transformer<Block, Material>() {
+        this.addTransformer(Block.class, new Transformer<Block, Material>() {
             @Override
-            public Material transform(Block object) {
-                return object.getType();
+            public Material transform(Object object) {
+                return ((Block) object).getType();
             }
 
             @Override
             public Class<?> inputClass() {
                 return Block.class;
+            }
+
+            @Override
+            public Class<?> outputClass() {
+                return Material.class;
+            }
+        });
+
+        this.addTransformer(Material.class, new Transformer<Material, Material>() {
+            @Override
+            public Material transform(Object object) {
+                return (Material) object;
+            }
+
+            @Override
+            public Class<?> inputClass() {
+                return Material.class;
             }
 
             @Override
@@ -109,12 +127,19 @@ public final class MaterialFilter extends Filter<Material> {
     }
 
     @Override
-    public boolean isAllowed(Material object) {
-        return this.allowed.contains(object);
+    public boolean isAllowed(Object object) {
+        try {
+            Transformer<?, Material> transformer = transformer(object.getClass());
+            Material transformed = transformer.transform(object);
+            return this.allowed.contains(transformed);
+        } catch (TransformerNotPresentException exception) {
+            LogUtils.error("No transformer found for input class {}!");
+            return false;
+        }
     }
 
     @Override
-    public Class<?> inputClass() {
-        return Material.class;
+    public List<Class<?>> inputClasses() {
+        return List.of(Material.class, Location.class, Block.class);
     }
 }

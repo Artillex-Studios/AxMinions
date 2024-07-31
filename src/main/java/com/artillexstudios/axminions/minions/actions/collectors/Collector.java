@@ -67,6 +67,13 @@ public abstract class Collector<T> {
                     continue;
                 }
 
+                List<Class<?>> inputClasses = filter.inputClasses();
+                Class<?> collectedClass = CollectorRegistry.getCollectedClass(collectorID);
+                if (!inputClasses.contains(collectedClass)) {
+                    LogUtils.error("Could not apply filter with id {} to collector {} due to mismatching input! Filter input: {}, Collector output: {}.", filterId, collectorID, String.join(", ", inputClasses.stream().map(Class::getName).toList()), collectedClass.getName());
+                    continue;
+                }
+
                 filters.add(filter);
             }
         }

@@ -23,6 +23,10 @@ public final class LogUtils {
         LoggerFactory.getLogger(STACK_WALKER.getCallerClass()).warn(message, arguments);
     }
 
+    public static void error(String message, Object... arguments) {
+        LoggerFactory.getLogger(STACK_WALKER.getCallerClass()).error(message, arguments);
+    }
+
     public static void info(String message, Object... arguments) {
         LoggerFactory.getLogger(STACK_WALKER.getCallerClass()).info(message, arguments);
     }
