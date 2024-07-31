@@ -29,9 +29,13 @@ public abstract class Effect<T, Z> {
     }
 
     public void dispatch(Minion minion, T argument) {
+        new EffectDispatchEvent(minion, this, argument).call();
         Z out = run(minion, argument);
 
-        new EffectDispatchEvent(minion, this, argument).call();
+        if (out == null) {
+            return;
+        }
+
         ObjectArrayList<Effect<Z, ?>> children = this.children;
         if (children == null) {
             return;

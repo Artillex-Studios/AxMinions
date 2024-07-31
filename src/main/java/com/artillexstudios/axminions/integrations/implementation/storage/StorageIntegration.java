@@ -13,6 +13,16 @@ public final class StorageIntegration extends Integration<StorageIntegrable> {
         this.register(new DefaultStorageIntegrable());
     }
 
+    public boolean isFull(Location location) {
+        for (StorageIntegrable integration : this.integrations()) {
+            if (integration.isFull(location)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void push(Location location, ItemStack... itemStacks) {
         ObjectArrayList<ItemStack> items = this.items.get(location);
         if (items != null) {

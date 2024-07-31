@@ -9,6 +9,16 @@ import org.bukkit.inventory.ItemStack;
 public final class DefaultStorageIntegrable implements StorageIntegrable {
 
     @Override
+    public boolean isFull(Location location) {
+        BlockState state = location.getBlock().getState();
+        if (state instanceof Container container) {
+            return container.getInventory().firstEmpty() == -1;
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean flush(Location location, ObjectArrayList<ItemStack> items) {
         BlockState state = location.getBlock().getState();
         if (state instanceof Container container) {

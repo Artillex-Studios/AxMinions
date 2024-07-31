@@ -7,5 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 public interface StorageIntegrable extends Integrable {
 
+    boolean isFull(Location location);
+
     boolean flush(Location location, ObjectArrayList<ItemStack> items);
 }

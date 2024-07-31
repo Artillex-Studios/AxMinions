@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.utils;
 
+import com.artillexstudios.axapi.reflection.FastFieldAccessor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ItemCollection {
+    private static final FastFieldAccessor ELEMENT_DATA = FastFieldAccessor.forClassField(ArrayList.class, "elementData");
     public static final ItemCollection EMPTY = new ItemCollection(0) {
         @Override
         public ItemStack remove(int index) {
@@ -52,6 +54,7 @@ public class ItemCollection {
     }
 
     public ItemCollection(Collection<ItemStack> collection) {
+        LogUtils.debug("ItemCollection with class: {}", collection.getClass());
         this.items = collection instanceof List<ItemStack> list ? list : new ArrayList<>(collection);
     }
 
@@ -93,6 +96,10 @@ public class ItemCollection {
 
     public List<ItemStack> items() {
         return this.items;
+    }
+
+    public ItemStack[] elements() {
+        return ELEMENT_DATA.get(this.items);
     }
 
     @NotNull

@@ -17,6 +17,10 @@ public class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, ItemCollection argument) {
+        if (argument == ItemCollection.EMPTY) {
+            return null;
+        }
+
         World world = minion.location().getWorld();
         if (world == null) {
             throw new MinionTickFailException("World is null!");
@@ -26,7 +30,7 @@ public class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
             world.dropItem(minion.location(), itemStack);
         }
 
-        return ItemCollection.EMPTY;
+        return null;
     }
 
     @Override

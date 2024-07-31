@@ -89,6 +89,10 @@ public final class Minion {
         }
     }
 
+    public Location linkedChest() {
+        return this.minionData.linkedChest();
+    }
+
     public Map<String, String> extraData() {
         return this.minionData.extraData();
     }
