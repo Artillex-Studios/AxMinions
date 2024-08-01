@@ -37,6 +37,10 @@ async-processor-pool-size: 3
 # If this option is false, the minion's default tool will be used
 require-tool: true
 
+# If the minion should kill the entity instantly, and not
+# deal the amount of damage the item would deal.
+instant-kill: false
+
 # What language file should we load from the lang folder?
 # You can create your own aswell! We would appreciate if you
 # contributed to the plugin by creating a pull request with your translation!

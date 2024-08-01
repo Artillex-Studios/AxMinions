@@ -5,15 +5,14 @@ import com.artillexstudios.axapi.loot.LootContextParams;
 import com.artillexstudios.axapi.loot.LootParams;
 import com.artillexstudios.axapi.loot.LootTables;
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class DamageEntityEffect extends Effect<Entity, ItemCollection> {
@@ -25,21 +24,26 @@ public class DamageEntityEffect extends Effect<Entity, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Entity argument) {
-        dummyPlayer.getInventory().setItemInMainHand(minion.tool());
-        LootParams params = new LootParams.Builder(argument.getWorld())
-                .withParameter(LootContextParams.THIS_ENTITY, argument)
-                .withParameter(LootContextParams.ORIGIN, argument.getLocation())
-                .withParameter(LootContextParams.DAMAGE_SOURCE, dummyPlayer)
-                .withParameter(LootContextParams.ATTACKING_ENTITY, dummyPlayer)
-                .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, dummyPlayer)
-                .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, dummyPlayer)
-                .build(LootContextParamSets.ENTITY);
+        if (Config.INSTANT_KILL) {
+            // TODO: maybe we can get the loot of an entity with the stacker's api
+            long stackSize = Integrations.STACKER.getStackSize(argument);
 
-        Collection<ItemStack> items = LootTables.entityLootTable(argument.getType())
-                .randomItems(params);
+            dummyPlayer.getInventory().setItemInMainHand(minion.tool());
+            // TODO: We need to handle looting enchantment
+            LootParams params = new LootParams.Builder(argument.getWorld())
+                    .withParameter(LootContextParams.THIS_ENTITY, argument)
+                    .withParameter(LootContextParams.ORIGIN, argument.getLocation())
+                    .withParameter(LootContextParams.DAMAGE_SOURCE, dummyPlayer)
+                    .withParameter(LootContextParams.ATTACKING_ENTITY, dummyPlayer)
+                    .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, dummyPlayer)
+                    .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, dummyPlayer)
+                    .build(LootContextParamSets.ENTITY);
 
-        LogUtils.debug("DamageEntityEffect, {} items: {}", argument, items);
-        return new ItemCollection(items);
+            return new ItemCollection(LootTables.entityLootTable(argument.getType())
+                    .randomItems(params));
+        }
+
+        return ItemCollection.EMPTY;
     }
 
     @Override

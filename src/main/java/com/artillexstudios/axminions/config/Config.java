@@ -32,6 +32,7 @@ public final class Config {
     public static boolean ASYNC_HAND_ANIMATION = false;
     public static int ASYNC_PROCESSOR_POOL_SIZE = 3;
     public static boolean REQUIRE_TOOL = true;
+    public static boolean INSTANT_KILL = false;
     public static String LANGUAGE = "en_US";
     public static boolean USE_BSTATS = true;
     public static boolean DEBUG = false;
@@ -82,6 +83,7 @@ public final class Config {
         ASYNC_HAND_ANIMATION = config.getBoolean("async-hand-animation", ASYNC_HAND_ANIMATION);
         ASYNC_PROCESSOR_POOL_SIZE = config.getInt("async-processor-pool-size", ASYNC_PROCESSOR_POOL_SIZE);
         REQUIRE_TOOL = config.getBoolean("require-tool", REQUIRE_TOOL);
+        INSTANT_KILL = config.getBoolean("instant-kill", INSTANT_KILL);
         LANGUAGE = config.getString("language", LANGUAGE);
         USE_BSTATS = config.getBoolean("use-bstats", USE_BSTATS);
         DEBUG = config.getBoolean("debug", DEBUG);
