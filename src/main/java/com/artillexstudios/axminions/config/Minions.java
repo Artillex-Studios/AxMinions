@@ -38,7 +38,9 @@ public final class Minions {
         }
 
         this.failedToLoad.clear();
-        com.artillexstudios.axminions.utils.FileUtils.copyFromResource("minions");
+        if (this.minionsDirectory.mkdir()) {
+            com.artillexstudios.axminions.utils.FileUtils.copyFromResource("minions");
+        }
         Collection<File> files = FileUtils.listFiles(this.minionsDirectory, new String[]{"yaml", "yml"}, true);
 
         LogUtils.debug("Parsing minion configs {}", String.join(", ", files.stream().map(File::getName).toList()));
