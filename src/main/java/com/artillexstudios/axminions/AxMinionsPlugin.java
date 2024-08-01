@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
+import com.artillexstudios.axapi.libs.libby.BukkitLibraryManager;
 import com.artillexstudios.axapi.utils.FeatureFlags;
 import com.artillexstudios.axapi.utils.PaperUtils;
 import com.artillexstudios.axminions.command.AxMinionsCommand;
@@ -45,6 +46,9 @@ public final class AxMinionsPlugin extends AxPlugin {
 
     @Override
     public void load() {
+        BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
+        libraryManager.configureFromJSON();
+
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
                 .setNamespace("axminions")
                 .skipReloadDatapacks(true)

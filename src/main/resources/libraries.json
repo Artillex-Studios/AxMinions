@@ -1,0 +1,30 @@
+{
+  "version": 0,
+  "repositories": [
+    "https://repo.maven.apache.org/maven2/"
+  ],
+  "libraries": [
+    {
+      "groupId": "com.github.Redempt",
+      "artifactId": "Crunch",
+      "version": "2.0.3",
+      "resolveTransitiveDependencies": true
+    },
+    {
+      "groupId": "org.jooq",
+      "artifactId": "jooq",
+      "version": "3.19.10",
+      "resolveTransitiveDependencies": true
+    }
+  ],
+  "relocations": [
+    {
+      "pattern": "org.jooq",
+      "relocatedPattern": "com.artillexstudios.axminions.jooq"
+    },
+    {
+      "pattern": "redempt.crunch",
+      "relocatedPattern": "com.artillexstudios.axminions.crunch"
+    }
+  ]
+}

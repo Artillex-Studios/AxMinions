@@ -21,12 +21,12 @@ dependencies {
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
     compileOnly("org.apache.commons:commons-lang3:3.14.0")
-    implementation("com.github.Redempt:Crunch:2.0.3") // TODO: Load at runtime
+    compileOnly("com.github.Redempt:Crunch:2.0.3")
     compileOnly("commons-io:commons-io:2.16.1")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")
     compileOnly("org.slf4j:slf4j-api:2.0.9")
     compileOnly("com.zaxxer:HikariCP:5.1.0")
-    implementation("org.jooq:jooq:3.19.10") // TODO: Load at runtime
+    compileOnly("org.jooq:jooq:3.19.10")
 }
 
 tasks {
@@ -43,6 +43,8 @@ tasks {
     shadowJar {
         relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.axapi")
         relocate("dev.jorel.commandapi", "com.artillexstudios.axminions.commandapi")
+        relocate("redempt.crunch", "com.artillexstudios.axminions.crunch")
         relocate("org.bstats", "com.artillexstudios.axminions.bstats")
+        relocate("org.jooq", "com.artillexstudios.axminions.jooq")
     }
 }
