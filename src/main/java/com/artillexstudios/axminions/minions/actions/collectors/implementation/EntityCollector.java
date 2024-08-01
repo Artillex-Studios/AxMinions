@@ -11,7 +11,7 @@ import redempt.crunch.CompiledExpression;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class EntityCollector extends Collector<Entity> {
+public final class EntityCollector extends Collector<Entity> {
     private final CollectorShape shape;
     private final CompiledExpression expression;
     private final List<Filter<?>> filters;

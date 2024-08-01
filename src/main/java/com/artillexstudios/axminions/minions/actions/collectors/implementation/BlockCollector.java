@@ -10,7 +10,7 @@ import redempt.crunch.CompiledExpression;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class BlockCollector extends Collector<Location> {
+public final class BlockCollector extends Collector<Location> {
     private final CollectorShape shape;
     private final CompiledExpression expression;
     private final List<Filter<?>> filters;
