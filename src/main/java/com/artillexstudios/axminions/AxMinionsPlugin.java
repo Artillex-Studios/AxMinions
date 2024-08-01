@@ -47,7 +47,7 @@ public final class AxMinionsPlugin extends AxPlugin {
     @Override
     public void load() {
         BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
-        libraryManager.configureFromJSON();
+        libraryManager.configureFromJSON("libraries.json");
 
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
                 .setNamespace("axminions")
