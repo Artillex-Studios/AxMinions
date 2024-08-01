@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class DamageEntityEffect extends Effect<Entity, ItemCollection> {
+public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
     private static final Player dummyPlayer = NMSHandlers.getNmsHandler().dummyPlayer();
 
     public DamageEntityEffect(Map<Object, Object> configuration) {

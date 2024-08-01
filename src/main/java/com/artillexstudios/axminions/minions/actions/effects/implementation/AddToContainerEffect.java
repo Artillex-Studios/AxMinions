@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class AddToContainerEffect extends Effect<ItemCollection, ItemCollection> {
+public final class AddToContainerEffect extends Effect<ItemCollection, ItemCollection> {
 
     public AddToContainerEffect(Map<Object, Object> configuration) {
         super(configuration);

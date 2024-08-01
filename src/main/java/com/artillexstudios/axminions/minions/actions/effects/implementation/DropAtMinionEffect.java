@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
+public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
 
     public DropAtMinionEffect(Map<Object, Object> configuration) {
         super(configuration);

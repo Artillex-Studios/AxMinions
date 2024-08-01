@@ -8,7 +8,7 @@ import org.bukkit.Location;
 
 import java.util.Map;
 
-public class BreakEffect extends Effect<Location, ItemCollection> {
+public final class BreakEffect extends Effect<Location, ItemCollection> {
 
     public BreakEffect(Map<Object, Object> configuration) {
         super(configuration);

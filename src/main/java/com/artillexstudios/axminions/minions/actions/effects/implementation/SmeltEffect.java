@@ -15,7 +15,7 @@ import org.bukkit.inventory.Recipe;
 import java.util.Iterator;
 import java.util.Map;
 
-public class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
+public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
     private static final Object2ObjectLinkedOpenHashMap<Material, Material> recipes = new Object2ObjectLinkedOpenHashMap<>();
 
     static {
