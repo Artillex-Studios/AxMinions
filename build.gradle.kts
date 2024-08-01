@@ -20,7 +20,11 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade:9.5.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
-    compileOnly("me.kryniowesegryderiusz:kgenerators-core:7.3")
+    compileOnly("me.kryniowesegryderiusz:kgenerators-core:7.3") {
+        exclude("com.github.WaterArchery", "LitMinionsAPI")
+        exclude("com.github.Slimefun", "Slimefun4")
+        exclude("com.bgsoftware", "WildStackerAPI")
+    }
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
     compileOnly("org.apache.commons:commons-lang3:3.14.0")
     compileOnly("com.github.Redempt:Crunch:2.0.3")
