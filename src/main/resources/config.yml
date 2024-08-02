@@ -12,6 +12,12 @@ database:
     keepalive-time: 0
     connection-timeout: 5000
 
+# How often should changes to minions get saved?
+# This saves rotation, tool, statistics, etc.
+# Minions are automatically saved when placed.
+# This also doesn't affect minion removal saving.
+autosave-seconds: 300
+
 # How often should we tick minions?
 # Increasing this might improve performance a bit.
 # If this is increased, minion animations might look a bit choppy.

@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.database.DatabaseType;
 import com.artillexstudios.axminions.utils.FileUtils;
+import com.artillexstudios.axminions.utils.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public final class Config {
     public static int DATABASE_KEEPALIVE_TIME = 0;
     public static int DATABASE_CONNECTION_TIMEOUT = 5000;
     public static DatabaseType DATABASE_TYPE = DatabaseType.H2;
+    public static int AUTOSAVE_SECONDS = 300;
     public static int TICK_FREQUENCY = 1;
     public static boolean SHOW_HAND_ANIMATION = true;
     public static boolean ASYNC_HAND_ANIMATION = false;
@@ -78,6 +80,7 @@ public final class Config {
         DATABASE_MAXIMUM_LIFETIME = config.getInt("database.pool.maximum-lifetime", DATABASE_MAXIMUM_LIFETIME);
         DATABASE_KEEPALIVE_TIME = config.getInt("database.pool.keepalive-time", DATABASE_KEEPALIVE_TIME);
         DATABASE_CONNECTION_TIMEOUT = config.getInt("database.pool.connection-timeout", DATABASE_CONNECTION_TIMEOUT);
+        AUTOSAVE_SECONDS = config.getInt("autosave-seconds", AUTOSAVE_SECONDS);
         TICK_FREQUENCY = config.getInt("tick-frequency", TICK_FREQUENCY);
         SHOW_HAND_ANIMATION = config.getBoolean("show-hand-animation", SHOW_HAND_ANIMATION);
         ASYNC_HAND_ANIMATION = config.getBoolean("async-hand-animation", ASYNC_HAND_ANIMATION);
@@ -87,5 +90,18 @@ public final class Config {
         LANGUAGE = config.getString("language", LANGUAGE);
         USE_BSTATS = config.getBoolean("use-bstats", USE_BSTATS);
         DEBUG = config.getBoolean("debug", DEBUG);
+
+        this.validate();
+    }
+
+    private void validate() {
+        if (Config.AUTOSAVE_SECONDS <= 30) {
+            LogUtils.warn("It is not recommended to set autosave-seconds to 30, as this might degrade performance!");
+        }
+
+        if (Config.DATABASE_MAXIMUM_POOL_SIZE < 1) {
+            LogUtils.warn("Maximum database pool size is lower than 1! This is not supported! Defaulting to 1.");
+            DATABASE_MAXIMUM_POOL_SIZE = 1;
+        }
     }
 }
