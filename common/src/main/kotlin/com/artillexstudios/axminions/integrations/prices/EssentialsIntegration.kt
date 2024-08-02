@@ -9,7 +9,12 @@ class EssentialsIntegration : PricesIntegration {
     private lateinit var manager: IEssentials;
 
     override fun getPrice(itemStack: ItemStack): Double {
-        return manager.worth.getPrice(manager, itemStack).toDouble() * itemStack.amount
+        val price = manager.worth.getPrice(manager, itemStack)
+        if (price == null) {
+            return 0.0
+        }
+
+        return price.toDouble() * itemStack.amount
     }
 
     override fun register() {

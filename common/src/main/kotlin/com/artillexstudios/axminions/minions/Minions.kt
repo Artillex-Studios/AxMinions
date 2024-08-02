@@ -67,7 +67,26 @@ object Minions {
         val chunkZ = minion.getLocation().blockZ shr 4
         val world = minion.getLocation().world ?: return
 
-        lock.write {
+        if (!Bukkit.isPrimaryThread()) {
+            lock.write {
+                var pos: ChunkPos? = null
+                run breaking@{
+                    minions.forEach {
+                        if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
+                            pos = it
+                            return@breaking
+                        }
+                    }
+                }
+
+                if (pos == null) {
+                    pos = ChunkPos(world, chunkX, chunkZ, false)
+                    minions.add(pos!!)
+                }
+
+                pos!!.addMinion(minion)
+            }
+        } else {
             var pos: ChunkPos? = null
             run breaking@{
                 minions.forEach {
@@ -83,8 +102,7 @@ object Minions {
                 minions.add(pos!!)
             }
 
-
-            pos!!.addMinion(minion)
+           pos!!.addMinion(minion)
         }
     }
 
@@ -93,7 +111,21 @@ object Minions {
         val chunkZ = minion.getLocation().blockZ shr 4
         val world = minion.getLocation().world ?: return
 
-        lock.write {
+        if (!Bukkit.isPrimaryThread()) {
+            lock.write {
+                val iterator = minions.iterator()
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+
+                    if (world.uid == next.worldUUID && next.x == chunkX && next.z == chunkZ) {
+                        if (next.removeMinion(minion)) {
+                            iterator.remove()
+                        }
+                        break
+                    }
+                }
+            }
+        } else {
             val iterator = minions.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
