@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.integrations.implementation.block;
 
+import com.artillexstudios.axminions.utils.LogUtils;
 import me.kryniowesegryderiusz.kgenerators.Main;
 import me.kryniowesegryderiusz.kgenerators.generators.locations.objects.GeneratorLocation;
 import org.bukkit.Location;
@@ -13,6 +14,7 @@ public final class KGeneratorsIntegrable implements BlockIntegrable {
     @Override
     public Collection<ItemStack> lootAndBreak(Location location, ItemStack itemStack) {
         if (!Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+            LogUtils.debug("Chunk is not fully loaded");
             return null;
         }
 
