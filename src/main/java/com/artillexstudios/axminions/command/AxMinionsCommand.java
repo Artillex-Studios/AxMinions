@@ -120,6 +120,12 @@ public final class AxMinionsCommand {
                                         )
                                 )
                         )
+                        .then(new LiteralArgument("lockstats")
+                                .withPermission("axminions.command.debug.lockstats")
+                                .executes((sender, args) -> {
+                                    MessageUtils.sendMessage(sender, Language.PREFIX, "Total lock stats: <br> Writes: <writes> <br> Reads: <reads>", Placeholder.unparsed("writes", Long.toString(MinionWorldCache.worlds().stream().mapToLong(MinionArea::writeCount).sum())), Placeholder.unparsed("reads", Long.toString(MinionWorldCache.worlds().stream().mapToLong(MinionArea::readCount).sum())));
+                                })
+                        )
                 )
                 .register();
     }

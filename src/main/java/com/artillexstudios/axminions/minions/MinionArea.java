@@ -18,6 +18,8 @@ public final class MinionArea {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
     private final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+    private long readCount = 0;
+    private long writeCount = 0;
 
     private static boolean isSameBlock(int x, int y, int z, Location loc2) {
         return x == loc2.getBlockX() &&
@@ -59,6 +61,7 @@ public final class MinionArea {
 
             this.writeLock.lock();
             try {
+                this.writeCount++;
                 this.positions.add(chunkPos);
             } finally {
                 this.writeLock.unlock();
@@ -73,6 +76,7 @@ public final class MinionArea {
         Preconditions.checkNotNull(minions, "Minions are null!");
         this.writeLock.lock();
         try {
+            this.writeCount++;
             for (Minion minion : minions) {
                 Location location = minion.location();
 
@@ -101,6 +105,7 @@ public final class MinionArea {
 
         this.writeLock.lock();
         try {
+            this.writeCount++;
             // Load the list into stack memory for faster access
             ObjectArrayList<ChunkPos> positions = this.positions;
             ObjectListIterator<ChunkPos> positionIterator = positions.iterator();
@@ -130,6 +135,7 @@ public final class MinionArea {
 
         this.readLock.lock();
         try {
+            this.readCount++;
             ObjectArrayList<ChunkPos> positions = this.positions;
             int posSize = positions.size();
 
@@ -165,6 +171,7 @@ public final class MinionArea {
     public ChunkPos forChunk(int x, int z) {
         this.readLock.lock();
         try {
+            this.readCount++;
             // Load the list into stack memory for faster access
             ObjectArrayList<ChunkPos> positions = this.positions;
 
@@ -186,6 +193,7 @@ public final class MinionArea {
     public void forEachPos(Consumer<ChunkPos> consumer) {
         this.readLock.lock();
         try {
+            this.readCount++;
             // Load the list into stack memory for faster access
             ObjectArrayList<ChunkPos> positions = this.positions;
 
@@ -197,5 +205,13 @@ public final class MinionArea {
         } finally {
             this.readLock.unlock();
         }
+    }
+
+    public long readCount() {
+        return readCount;
+    }
+
+    public long writeCount() {
+        return writeCount;
     }
 }
