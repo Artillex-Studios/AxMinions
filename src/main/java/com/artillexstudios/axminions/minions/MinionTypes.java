@@ -39,7 +39,7 @@ public final class MinionTypes {
     public static void unregister(String minionType) {
         String lowercase = minionType.toLowerCase(Locale.ENGLISH);
         if (!TYPES.containsKey(lowercase)) {
-            log.warn("Attempted to unregister non-existent skin {}!", lowercase);
+            log.warn("Attempted to unregister non-existent miniontype {}!", lowercase);
             return;
         }
 
