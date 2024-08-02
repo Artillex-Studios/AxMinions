@@ -64,6 +64,7 @@ class AxMinionsPlugin : AxPlugin() {
 
     override fun updateFlags() {
         FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
+        FeatureFlags.USE_LEGACY_HEX_FORMATTER.set(true)
     }
 
     override fun load() {
