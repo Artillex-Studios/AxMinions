@@ -2,10 +2,12 @@ package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.utils.ChunkPos
+import com.artillexstudios.axapi.scheduler.Scheduler
 import java.util.Collections
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import org.bukkit.Bukkit
 import org.bukkit.Chunk
 
 object Minions {
@@ -17,8 +19,19 @@ object Minions {
         val chunkZ = chunk.z
         val world = chunk.world
 
-        run breaking@{
-            lock.read {
+        if (!Bukkit.isPrimaryThread()) { 
+            Scheduler.get().run { a ->
+                run breaking@{
+                    minions.forEach {
+                        if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
+                            it.setTicking(true)
+                            return@breaking
+                        }
+                    }
+                }
+            }
+        } else {
+            run breaking@{
                 minions.forEach {
                     if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(true)
@@ -27,6 +40,7 @@ object Minions {
                 }
             }
         }
+
     }
 
     fun isTicking(chunk: Chunk): Boolean {
@@ -34,14 +48,12 @@ object Minions {
         val chunkZ = chunk.z
         val world = chunk.world
 
-        lock.read {
-            minions.forEach {
-                if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
-                    return it.ticking
-                }
+        minions.forEach {
+            if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
+                return it.ticking
             }
         }
-
+        
         return false
     }
 
@@ -50,8 +62,19 @@ object Minions {
         val chunkZ = chunk.z
         val world = chunk.world
 
-        run breaking@{
-            lock.read {
+        if (!Bukkit.isPrimaryThread()) {
+            Scheduler.get().run {  a ->
+                run breaking@{
+                    minions.forEach {
+                        if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
+                            it.setTicking(false)
+                            return@breaking
+                        }
+                    }
+                }
+            }
+        } else {
+            run breaking@{
                 minions.forEach {
                     if (world.uid == it.worldUUID && it.x == chunkX && it.z == chunkZ) {
                         it.setTicking(false)
@@ -68,7 +91,7 @@ object Minions {
         val world = minion.getLocation().world ?: return
 
         if (!Bukkit.isPrimaryThread()) {
-            lock.write {
+            Scheduler.get().run { a ->
                 var pos: ChunkPos? = null
                 run breaking@{
                     minions.forEach {
@@ -112,7 +135,7 @@ object Minions {
         val world = minion.getLocation().world ?: return
 
         if (!Bukkit.isPrimaryThread()) {
-            lock.write {
+            Scheduler.get().run { a ->
                 val iterator = minions.iterator()
                 while (iterator.hasNext()) {
                     val next = iterator.next()
