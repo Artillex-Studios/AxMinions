@@ -103,16 +103,19 @@ public final class MinionArea {
         int chunkX = (int) Math.floor(location.getX()) >> 4;
         int chunkZ = (int) Math.floor(location.getZ()) >> 4;
 
-        this.writeLock.lock();
+        // Load the list into stack memory for faster access
+        ObjectArrayList<ChunkPos> positions = this.positions;
+
+        boolean needsWrite = false;
+        this.readLock.lock();
         try {
-            this.writeCount++;
-            // Load the list into stack memory for faster access
-            ObjectArrayList<ChunkPos> positions = this.positions;
+            this.readCount++;
             ObjectListIterator<ChunkPos> positionIterator = positions.iterator();
             while (positionIterator.hasNext()) {
                 ChunkPos nextPos = positionIterator.next();
                 if (nextPos.x() == chunkX && nextPos.z() == chunkZ) {
                     if (nextPos.removeMinion(minion)) {
+                        needsWrite = true;
                         positionIterator.remove();
                     }
 
@@ -120,7 +123,24 @@ public final class MinionArea {
                 }
             }
         } finally {
-            this.writeLock.unlock();
+            this.readLock.unlock();
+        }
+
+        if (needsWrite) {
+            this.writeLock.lock();
+            try {
+                this.writeCount++;
+                ObjectListIterator<ChunkPos> positionIterator = positions.iterator();
+                while (positionIterator.hasNext()) {
+                    ChunkPos nextPos = positionIterator.next();
+                    if (nextPos.x() == chunkX && nextPos.z() == chunkZ) {
+                        positionIterator.remove();
+                        break;
+                    }
+                }
+            } finally {
+                this.writeLock.unlock();
+            }
         }
     }
 
