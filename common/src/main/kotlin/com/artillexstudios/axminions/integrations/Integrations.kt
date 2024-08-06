@@ -189,12 +189,6 @@ class Integrations : Integrations {
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
         }
 
-        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            itemsAdderIntegration = true
-            Bukkit.getConsoleSender()
-                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
-        }
-
         if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
             register(TownyIntegration())
         }
