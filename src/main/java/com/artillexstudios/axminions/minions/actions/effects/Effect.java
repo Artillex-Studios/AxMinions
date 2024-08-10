@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.actions.effects;
 
 import com.artillexstudios.axminions.api.events.EffectDispatchEvent;
 import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.Map;
@@ -9,13 +10,12 @@ import java.util.Map;
 public abstract class Effect<T, Z> {
     private final Map<Object, Object> configuration;
     private ObjectArrayList<Effect<Z, ?>> children;
-    private Effect<?, T> parent;
-    // TODO: Requirement, else, etc.
+    private ObjectArrayList<Effect<T, ?>> elseBranch;
+    private ObjectArrayList<Requirement> requirements;
+    private Effect<?, ?> parent;
 
     public Effect(Map<Object, Object> configuration) {
         this.configuration = configuration;
-
-        // TODO: Else, requirements, etc.
     }
 
     public final void addChildren(Effect<Z, ?> effect) {
@@ -28,8 +28,31 @@ public abstract class Effect<T, Z> {
         effect.parent = this;
     }
 
+    public final void addElseBranch(Effect<T, ?> effect) {
+        if (this.elseBranch == null) {
+            this.elseBranch = ObjectArrayList.of(effect);
+        } else {
+            this.elseBranch.add(effect);
+        }
+    }
+
+    public final void addRequirement(Requirement requirement) {
+        if (this.requirements == null) {
+            this.requirements = ObjectArrayList.of(requirement);
+        } else {
+            this.requirements.add(requirement);
+        }
+    }
+
     public void dispatch(Minion minion, T argument) {
         new EffectDispatchEvent(minion, this, argument).call();
+        if (!this.areRequirementsMet(minion)) {
+            for (Effect<T, ?> branch : this.elseBranch) {
+                branch.dispatch(minion, argument);
+            }
+            return;
+        }
+
         Z out = run(minion, argument);
 
         if (out == null) {
@@ -48,8 +71,30 @@ public abstract class Effect<T, Z> {
         }
     }
 
+    public boolean areRequirementsMet(Minion minion) {
+        ObjectArrayList<Requirement> requirements = this.requirements;
+        if (requirements == null) {
+            return true;
+        }
+
+        int requirementsSize = requirements.size();
+
+        if (requirementsSize == 0) {
+            return true;
+        }
+
+        for (int i = 0; i < requirementsSize; i++) {
+            Requirement requirement = requirements.get(i);
+            if (!requirement.check(minion)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Map<Object, Object> configuration() {
-        return configuration;
+        return this.configuration;
     }
 
     public abstract Z run(Minion minion, T argument);
@@ -58,11 +103,11 @@ public abstract class Effect<T, Z> {
 
     public abstract Class<?> outputClass();
 
-    public final Effect<?, T> parent() {
-        return parent;
+    public final Effect<?, ?> parent() {
+        return this.parent;
     }
 
     public final ObjectArrayList<Effect<Z, ?>> children() {
-        return children;
+        return this.children;
     }
 }

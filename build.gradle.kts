@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:1.4.322:all")
+    implementation("com.artillexstudios.axapi:axapi:1.4.328:all")
     implementation("dev.jorel:commandapi-bukkit-shade:9.5.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
@@ -27,6 +27,7 @@ dependencies {
     }
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
     compileOnly("org.apache.commons:commons-lang3:3.14.0")
+    compileOnly("dev.triumphteam:triumph-gui:3.1.10")
     compileOnly("com.github.Redempt:Crunch:2.0.3")
     compileOnly("commons-io:commons-io:2.16.1")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")

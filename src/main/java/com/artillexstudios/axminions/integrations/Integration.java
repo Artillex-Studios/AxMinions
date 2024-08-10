@@ -10,6 +10,10 @@ public abstract class Integration<T extends Integrable> {
     private final ObjectArrayList<T> integrations = new ObjectArrayList<>();
     private final List<T> view = Collections.unmodifiableList(integrations);
 
+    public Integration() {
+        this.reload();
+    }
+
     public void register(T integration) {
         this.integrations.add(integration);
     }
@@ -17,6 +21,14 @@ public abstract class Integration<T extends Integrable> {
     public void register(int priority, T integration) {
         this.integrations.add(Math.clamp(0, integrations.size(), priority), integration);
     }
+
+    public void reload() {
+        this.integrations.clear();
+
+        this.reload0();
+    }
+
+    public abstract void reload0();
 
     public List<T> integrations() {
         return this.view;

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 public class ItemCollection {
     private static final FastFieldAccessor ELEMENT_DATA = FastFieldAccessor.forClassField(ArrayList.class, "elementData");
+    private static final ItemStack[] EMPTY_ARRAY = new ItemStack[0];
     public static final ItemCollection EMPTY = new ItemCollection(0) {
         @Override
         public ItemStack remove(int index) {
@@ -99,7 +100,7 @@ public class ItemCollection {
     }
 
     public ItemStack[] elements() {
-        return ELEMENT_DATA.get(this.items);
+        return this.items instanceof ArrayList ? ELEMENT_DATA.get(this.items) : EMPTY_ARRAY;
     }
 
     @NotNull

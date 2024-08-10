@@ -7,7 +7,8 @@ import java.util.OptionalLong;
 
 public final class StackerIntegration extends Integration<StackerIntegrable> {
 
-    public StackerIntegration() {
+    @Override
+    public void reload0() {
         this.register(new DefaultStackerIntegrable());
     }
 

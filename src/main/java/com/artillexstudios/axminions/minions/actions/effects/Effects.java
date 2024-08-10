@@ -5,6 +5,7 @@ import com.artillexstudios.axminions.minions.actions.effects.implementation.Brea
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DamageEntityEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DropAtMinionEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.SmeltEffect;
+import com.artillexstudios.axminions.minions.actions.effects.implementation.TerminateEffect;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -17,9 +18,10 @@ public final class Effects {
     static {
         register("add_to_container", AddToContainerEffect::new);
         register("break", BreakEffect::new);
+        register("damage", DamageEntityEffect::new);
         register("drop_at_minion", DropAtMinionEffect::new);
         register("smelt", SmeltEffect::new);
-        register("damage", DamageEntityEffect::new);
+        register("terminate", TerminateEffect::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Effect<?, ?>> supplier) {

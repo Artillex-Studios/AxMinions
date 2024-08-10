@@ -14,7 +14,7 @@ public final class KGeneratorsIntegrable implements BlockIntegrable {
     @Override
     public Collection<ItemStack> lootAndBreak(Location location, ItemStack itemStack) {
         if (!Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
-            LogUtils.debug("Chunk is not fully loaded");
+            LogUtils.warn("Chunk is not fully loaded");
             return null;
         }
 

@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 public final class StorageIntegration extends Integration<StorageIntegrable> {
     private final Object2ObjectLinkedOpenHashMap<Location, ObjectArrayList<ItemStack>> items = new Object2ObjectLinkedOpenHashMap<>();
 
-    public StorageIntegration() {
+    @Override
+    public void reload0() {
         this.register(new DefaultStorageIntegrable());
     }
 

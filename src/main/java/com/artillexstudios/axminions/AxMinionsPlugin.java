@@ -22,6 +22,7 @@ import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
 import com.artillexstudios.axminions.minions.ticker.FoliaMinionTicker;
 import com.artillexstudios.axminions.utils.AsyncUtils;
 import com.artillexstudios.axminions.utils.LogUtils;
+import com.artillexstudios.axminions.utils.ReloadUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bstats.bukkit.Metrics;
@@ -59,6 +60,12 @@ public final class AxMinionsPlugin extends AxPlugin {
     public void enable() {
         instance = this;
         Config.reload();
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(ReloadUtils::isReload)) {
+            LogUtils.error("AxMinions does not support reloading! Disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         AsyncUtils.setup();
 
         if (Config.USE_BSTATS) {

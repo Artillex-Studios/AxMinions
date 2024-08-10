@@ -7,6 +7,7 @@ import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
 import com.artillexstudios.axminions.database.DataHandler;
+import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
 import com.artillexstudios.axminions.minions.actions.CompiledAction;
 import com.artillexstudios.axminions.utils.FieldAccessors;
@@ -83,7 +84,10 @@ public final class MinionType {
 
     public boolean tick(Minion minion) {
         for (CompiledAction action : this.actions) {
-            if (!action.run(minion)) {
+            try {
+                action.run(minion);
+            } catch (MinionTickFailException exception) {
+                LogUtils.debug("Termination of tick due to exception!");
                 return false;
             }
         }

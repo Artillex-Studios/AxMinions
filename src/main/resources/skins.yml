@@ -2,7 +2,7 @@ miner:
   - slot: helmet
     item:
       material: player_head
-      owner: <owner>
+      texture: <owner>
   - slot: chestplate
     item:
       material: iron_chestplate

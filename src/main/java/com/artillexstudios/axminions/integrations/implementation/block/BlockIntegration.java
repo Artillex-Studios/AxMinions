@@ -10,12 +10,13 @@ import java.util.List;
 
 public final class BlockIntegration extends Integration<BlockIntegrable> {
 
-    public BlockIntegration() {
-        this.register(new DefaultBlockIntegrable());
-
+    @Override
+    public void reload0() {
         if (Bukkit.getPluginManager().getPlugin("KGenerators") != null) {
             this.register(new KGeneratorsIntegrable());
         }
+
+        this.register(new DefaultBlockIntegrable());
     }
 
     public Collection<ItemStack> lootAndBreak(Location location, ItemStack itemStack) {

@@ -49,7 +49,7 @@ public enum CollectorShape {
                                 consumer.accept(newLocation);
                             } catch (MinionTickFailException exception) {
                                 LogUtils.debug("Tick failed, aborting!");
-                                return;
+                                throw exception;
                             }
                         }
                     }
@@ -97,7 +97,7 @@ public enum CollectorShape {
                             consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
                             LogUtils.debug("Tick failed, aborting!");
-                            return;
+                            throw exception;
                         }
                     }
                 }
@@ -137,7 +137,7 @@ public enum CollectorShape {
                         consumer.accept(newLocation);
                     } catch (MinionTickFailException exception) {
                         LogUtils.debug("Tick failed, aborting!");
-                        return;
+                        throw exception;
                     }
                 }
             }
@@ -179,7 +179,7 @@ public enum CollectorShape {
                             consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
                             LogUtils.debug("Tick failed, aborting!");
-                            return;
+                            throw exception;
                         }
                     }
                 }

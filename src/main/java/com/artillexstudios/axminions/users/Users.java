@@ -1,16 +1,18 @@
 package com.artillexstudios.axminions.users;
 
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import org.bukkit.entity.Player;
 
-import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Users {
-    private static final AsyncLoadingCache<UUID, User> USER_CACHE = Caffeine.newBuilder()
-            .expireAfterAccess(Duration.ofMinutes(3))
-            .maximumSize(1000)
-            .buildAsync(loader -> {
-                return new User(null, null, null, 0, 0);
-            });
+    private static final ConcurrentHashMap<UUID, User> USER_CACHE = new ConcurrentHashMap<>(100);
+
+    public static void load(User user) {
+        USER_CACHE.put(user.uuid(), user);
+    }
+
+    public static User get(Player player) {
+        return USER_CACHE.get(player.getUniqueId());
+    }
 }

@@ -70,31 +70,27 @@ public final class StoneGeneratorFilter extends Filter<Block> {
                 Material type = relative.getType();
 
                 if (!hasLava && type == Material.LAVA) {
-                    hasLava = true;
-
                     if (hasWater) {
                         return true;
                     }
+
+                    hasLava = true;
                     continue;
                 }
 
                 if (!hasWater) {
                     if (type == Material.WATER) {
-                        hasWater = true;
-
                         if (hasLava) {
                             return true;
                         }
-                    }
 
-                    if (relative.getBlockData() instanceof Waterlogged blockData) {
-                        if (blockData.isWaterlogged()) {
-                            hasWater = true;
-
-                            if (hasLava) {
-                                return true;
-                            }
+                        hasWater = true;
+                    } else if (relative.getBlockData() instanceof Waterlogged blockData && blockData.isWaterlogged()) {
+                        if (hasLava) {
+                            return true;
                         }
+
+                        hasWater = true;
                     }
                 }
             }

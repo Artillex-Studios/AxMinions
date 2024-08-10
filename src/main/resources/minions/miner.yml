@@ -61,12 +61,12 @@ actions:
         effects:
           - id: "smelt"
             requirements:
-              - type: "expression"
-                expression: "<level> > 2"
+              - id: "level"
+                level: "2"
             effects:
               - id: "add_to_container"
                 requirements:
-                  - type: "expression"
-                    expression: "<level> > 2"
+                  - id: "level"
+                    level: "2"
                 else: "drop_at_minion"
             else: "drop_at_minion"

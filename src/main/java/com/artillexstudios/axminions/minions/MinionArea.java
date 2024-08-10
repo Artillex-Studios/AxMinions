@@ -228,10 +228,10 @@ public final class MinionArea {
     }
 
     public long readCount() {
-        return readCount;
+        return this.readCount;
     }
 
     public long writeCount() {
-        return writeCount;
+        return this.writeCount;
     }
 }

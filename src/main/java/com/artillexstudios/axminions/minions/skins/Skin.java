@@ -1,6 +1,8 @@
 package com.artillexstudios.axminions.minions.skins;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
+import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axminions.utils.FieldAccessors;
@@ -15,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
     private static final WrappedItemStack AIR = WrappedItemStack.wrap(new ItemStack(Material.AIR));
@@ -54,7 +57,17 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
                 continue;
             }
 
-            equipment.put(equipmentSlot, FieldAccessors.STACK_ACCESSOR.get(new ItemBuilder(section)));
+            AtomicBoolean ownerSkin = new AtomicBoolean();
+            Optional.ofNullable(section.get("texture")).ifPresent(texture -> {
+                ownerSkin.set(texture.equals("<owner>"));
+            });
+
+            WrappedItemStack wrapped = FieldAccessors.STACK_ACCESSOR.get(new ItemBuilder(section));
+            CompoundTag tag = wrapped.get(DataComponents.customData());
+            tag.putBoolean("axminions_ownerskin", ownerSkin.get());
+            wrapped.set(DataComponents.customData(), tag);
+
+            equipment.put(equipmentSlot, wrapped);
         }
 
         for (EquipmentSlot equipmentSlot : equipmentSlots) {
