@@ -44,6 +44,10 @@ public final class MinionWorldCache {
         return minions;
     }
 
+    public static ObjectArrayList<Minion> copy() {
+        return minions.clone();
+    }
+
     public static Collection<MinionArea> worlds() {
         return worlds.values();
     }

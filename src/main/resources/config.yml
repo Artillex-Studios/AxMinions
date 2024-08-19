@@ -12,6 +12,11 @@ database:
     keepalive-time: 0
     connection-timeout: 5000
 
+# This setting controls if the minion should retain its
+# statistics after being broken. This will make minions
+# with different statistics not stack, when picked up.
+save-statistics: true
+
 # How often should changes to minions get saved?
 # This saves rotation, tool, statistics, etc.
 # Minions are automatically saved when placed.

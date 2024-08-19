@@ -16,6 +16,7 @@ import com.artillexstudios.axminions.listeners.ChunkListener;
 import com.artillexstudios.axminions.listeners.MinionPlaceListener;
 import com.artillexstudios.axminions.listeners.PlayerListener;
 import com.artillexstudios.axminions.listeners.WorldListener;
+import com.artillexstudios.axminions.minions.MinionSaver;
 import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
@@ -35,6 +36,7 @@ public final class AxMinionsPlugin extends AxPlugin {
     private static AxMinionsPlugin instance;
     private Metrics metrics;
     private MinionTicker ticker;
+    private MinionSaver minionSaver;
 
     public static AxMinionsPlugin getInstance() {
         return instance;
@@ -96,13 +98,16 @@ public final class AxMinionsPlugin extends AxPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(), this);
         Bukkit.getPluginManager().registerEvents(new MinionPlaceListener(), this);
 
+        this.minionSaver = new MinionSaver();
+        this.minionSaver.start();
+
         if (PaperUtils.isFolia()) {
-            ticker = new FoliaMinionTicker();
+            this.ticker = new FoliaMinionTicker();
         } else {
-            ticker = new BukkitMinionTicker();
+            this.ticker = new BukkitMinionTicker();
         }
 
-        ticker.start();
+        this.ticker.start();
         AxMinionsCommand.register();
         CommandAPI.onEnable();
     }
@@ -113,7 +118,8 @@ public final class AxMinionsPlugin extends AxPlugin {
             this.metrics.shutdown();
         }
 
-        ticker.cancel();
+        this.minionSaver.stop();
+        this.ticker.cancel();
         CommandAPI.onDisable();
         AsyncUtils.stop();
         DatabaseConnector.getInstance().close();

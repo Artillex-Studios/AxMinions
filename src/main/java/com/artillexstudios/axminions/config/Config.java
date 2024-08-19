@@ -28,6 +28,7 @@ public final class Config {
     public static int DATABASE_KEEPALIVE_TIME = 0;
     public static int DATABASE_CONNECTION_TIMEOUT = 5000;
     public static DatabaseType DATABASE_TYPE = DatabaseType.H2;
+    public static boolean SAVE_STATISTICS = true;
     public static int AUTOSAVE_SECONDS = 300;
     public static int TICK_FREQUENCY = 1;
     public static boolean SHOW_HAND_ANIMATION = true;
@@ -80,6 +81,7 @@ public final class Config {
         DATABASE_MAXIMUM_LIFETIME = config.getInt("database.pool.maximum-lifetime", DATABASE_MAXIMUM_LIFETIME);
         DATABASE_KEEPALIVE_TIME = config.getInt("database.pool.keepalive-time", DATABASE_KEEPALIVE_TIME);
         DATABASE_CONNECTION_TIMEOUT = config.getInt("database.pool.connection-timeout", DATABASE_CONNECTION_TIMEOUT);
+        SAVE_STATISTICS = config.getBoolean("save-statistics", SAVE_STATISTICS);
         AUTOSAVE_SECONDS = config.getInt("autosave-seconds", AUTOSAVE_SECONDS);
         TICK_FREQUENCY = config.getInt("tick-frequency", TICK_FREQUENCY);
         SHOW_HAND_ANIMATION = config.getBoolean("show-hand-animation", SHOW_HAND_ANIMATION);

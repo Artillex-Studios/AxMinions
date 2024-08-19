@@ -1,6 +1,9 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
+import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.component.ProfileProperties;
+import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axapi.packetentity.PacketEntity;
 import com.artillexstudios.axapi.packetentity.meta.entity.ArmorStandMeta;
@@ -19,6 +22,7 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Minion {
@@ -85,7 +89,16 @@ public final class Minion {
         }
 
         for (Map.Entry<EquipmentSlot, WrappedItemStack> entry : skin.items().entrySet()) {
-            this.entity.setItem(entry.getKey(), entry.getValue());
+            WrappedItemStack wrappedItemStack = entry.getValue();
+            CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
+            if (tag.contains("axminions_ownerskin") && this.extraData().containsKey("owner_texture")) {
+                ProfileProperties properties = new ProfileProperties(UUID.randomUUID(), "axminions");
+                properties.put("textures", new ProfileProperties.Property("textures", this.extraData().get("owner_texture"), null));
+                wrappedItemStack = wrappedItemStack.copy();
+                wrappedItemStack.set(DataComponents.profile(), properties);
+            }
+
+            this.entity.setItem(entry.getKey(), wrappedItemStack);
         }
     }
 
@@ -134,7 +147,11 @@ public final class Minion {
     }
 
     public boolean needsSaving() {
-        return needsSaving.get();
+        return this.needsSaving.get();
+    }
+
+    public void save() {
+        this.needsSaving.set(false);
     }
 
     public Location location() {
@@ -154,13 +171,13 @@ public final class Minion {
         if (this == o) return true;
         if (!(o instanceof Minion minion)) return false;
 
-        return tick == minion.tick && Objects.equals(location, minion.location);
+        return this.tick == minion.tick && Objects.equals(this.location, minion.location);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(location);
-        result = 31 * result + tick;
+        int result = Objects.hashCode(this.location);
+        result = 31 * result + this.tick;
         return result;
     }
 }
