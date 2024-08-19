@@ -13,12 +13,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class Minions {
     private static final Minions INSTANCE = new Minions();
     private final File minionsDirectory = com.artillexstudios.axminions.utils.FileUtils.PLUGIN_DIRECTORY.resolve("minions").toFile();
     private final ObjectArrayList<File> failedToLoad = new ObjectArrayList<>();
-    private final ObjectArrayList<CompletableFuture<Void>> loadingMinions = new ObjectArrayList<>();
+    private final ConcurrentLinkedQueue<CompletableFuture<Void>> loadingMinions = new ConcurrentLinkedQueue<>();
     private final List<File> failedToLoadImmutable = Collections.unmodifiableList(failedToLoad);
 
     public static void reload() {
@@ -61,7 +62,7 @@ public final class Minions {
         }
     }
 
-    public static ObjectArrayList<CompletableFuture<Void>> loadingMinions() {
+    public static ConcurrentLinkedQueue<CompletableFuture<Void>> loadingMinions() {
         return INSTANCE.loadingMinions;
     }
 

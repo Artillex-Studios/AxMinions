@@ -227,6 +227,24 @@ public final class MinionArea {
         }
     }
 
+    public void clear() {
+        this.writeLock.lock();
+        try {
+            this.writeCount++;
+            // Load the list into stack memory for faster access
+            ObjectArrayList<ChunkPos> positions = this.positions;
+
+            // We don't want to reevaluate the size of the list
+            int size = positions.size();
+            for (int i = 0; i < size; i++) {
+                ChunkPos pos = positions.get(i);
+                pos.minions().clear();
+            }
+        } finally {
+            this.writeLock.unlock();
+        }
+    }
+
     public long readCount() {
         return this.readCount;
     }

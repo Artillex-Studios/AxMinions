@@ -142,7 +142,13 @@ public final class Minion {
         this.entity.spawn();
     }
 
+    // Remove removes the minion from the database,
+    // while destroy removes the minion from the world
     public void remove() {
+        this.destroy();
+    }
+
+    public void destroy() {
         this.entity.remove();
     }
 

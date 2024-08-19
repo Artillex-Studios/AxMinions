@@ -9,6 +9,7 @@ import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
 import com.artillexstudios.axminions.config.Minions;
 import com.artillexstudios.axminions.config.Skins;
+import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
@@ -18,6 +19,7 @@ import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.FileUtils;
 import com.artillexstudios.axminions.utils.LocationUtils;
+import com.artillexstudios.axminions.utils.LogUtils;
 import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
@@ -26,6 +28,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +37,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class AxMinionsCommand {
 
@@ -75,6 +80,10 @@ public final class AxMinionsCommand {
                             long start = System.nanoTime();
                             List<File> failed = new ArrayList<>();
 
+                            for (World world : Bukkit.getWorlds()) {
+                                MinionWorldCache.clear(world);
+                            }
+
                             if (!Config.reload()) {
                                 failed.add(FileUtils.PLUGIN_DIRECTORY.resolve("config.yml").toFile());
                             }
@@ -89,15 +98,31 @@ public final class AxMinionsCommand {
 
                             Minions.reload();
                             failed.addAll(Minions.failedToLoad());
-                            // TODO: refresh minions
-                            if (failed.isEmpty()) {
-                                MessageUtils.sendMessage(sender, Language.PREFIX, Language.RELOAD_SUCCESS, Placeholder.parsed("time", Long.toString((System.nanoTime() - start) / 1_000_000)));
-                            } else {
-                                MessageUtils.sendMessage(sender, Language.PREFIX, Language.RELOAD_FAIL, Placeholder.parsed("time", Long.toString((System.nanoTime() - start) / 1_000_000)), Placeholder.parsed("files", String.join(", ", failed.stream()
-                                        .map(File::getName)
-                                        .toList())
-                                ));
-                            }
+
+                            CompletableFuture<?>[] futures = Minions.loadingMinions().toArray(new CompletableFuture[0]);
+                            List<World> worlds = Bukkit.getWorlds();
+                            AtomicInteger counter = new AtomicInteger();
+                            CompletableFuture.allOf(futures).thenRun(() -> {
+                                Minions.loadingMinions().clear();
+
+                                for (World world : worlds) {
+                                    DataHandler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
+                                        LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+                                        if (counter.incrementAndGet() != futures.length * worlds.size()) {
+                                            return;
+                                        }
+
+                                        if (failed.isEmpty()) {
+                                            MessageUtils.sendMessage(sender, Language.PREFIX, Language.RELOAD_SUCCESS, Placeholder.parsed("time", Long.toString((System.nanoTime() - start) / 1_000_000)));
+                                        } else {
+                                            MessageUtils.sendMessage(sender, Language.PREFIX, Language.RELOAD_FAIL, Placeholder.parsed("time", Long.toString((System.nanoTime() - start) / 1_000_000)), Placeholder.parsed("files", String.join(", ", failed.stream()
+                                                    .map(File::getName)
+                                                    .toList())
+                                            ));
+                                        }
+                                    });
+                                }
+                            });
                         })
                 )
                 .then(new LiteralArgument("debug")

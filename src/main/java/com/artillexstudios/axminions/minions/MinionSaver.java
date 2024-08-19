@@ -33,7 +33,9 @@ public final class MinionSaver {
     }
 
     public void stop() {
-        this.future.cancel(false);
-        this.future = null;
+        if (this.future != null && !this.future.isCancelled()) {
+            this.future.cancel(false);
+            this.future = null;
+        }
     }
 }

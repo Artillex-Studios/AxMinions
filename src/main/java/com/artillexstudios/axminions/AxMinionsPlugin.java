@@ -76,7 +76,9 @@ public final class AxMinionsPlugin extends AxPlugin {
 
         DataHandler.setup().thenRun(() -> LogUtils.debug("Loaded database!"));
 
-        this.reload();
+        Language.reload();
+        Skins.reload();
+        Minions.reload();
 
         for (World world : Bukkit.getWorlds()) {
             MinionWorldCache.loadArea(world);
@@ -123,13 +125,5 @@ public final class AxMinionsPlugin extends AxPlugin {
         CommandAPI.onDisable();
         AsyncUtils.stop();
         DatabaseConnector.getInstance().close();
-    }
-
-    @Override
-    public void reload() {
-        Config.reload();
-        Language.reload();
-        Skins.reload();
-        Minions.reload();
     }
 }

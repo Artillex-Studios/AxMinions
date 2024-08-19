@@ -23,12 +23,22 @@ public final class MinionWorldCache {
     public static void add(Minion minion) {
         minions.add(minion);
         MinionArea area = worlds.get(minion.location().getWorld());
+        if (area == null) {
+            LogUtils.error("Tried to add minion to unknown world! {}", minion);
+            return;
+        }
+
         area.load(minion);
     }
 
     public static void remove(Minion minion) {
         minions.remove(minion);
         MinionArea area = worlds.get(minion.location().getWorld());
+        if (area == null) {
+            LogUtils.error("Tried to remove minion from unknown world! {}", minion);
+            return;
+        }
+
         area.remove(minion);
     }
 
@@ -38,6 +48,23 @@ public final class MinionWorldCache {
 
     public static MinionArea remove(World world) {
         return worlds.remove(world);
+    }
+
+    public static void clear(World world) {
+        LogUtils.debug("Worlds map pre clear: {}", worlds);
+        MinionArea area = getArea(world);
+        if (area == null) {
+            LogUtils.error("Tried to remove minion from unknown world {}! Map: {}", world.getName(), worlds);
+            return;
+        }
+
+        area.forEachPos(position -> {
+            for (Minion minion : position.minions()) {
+                minion.destroy();
+            }
+        });
+
+        area.clear();
     }
 
     public static ObjectArrayList<Minion> minions() {
