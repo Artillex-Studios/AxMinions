@@ -149,6 +149,7 @@ public final class Minion {
     }
 
     public void destroy() {
+        this.ticking = false;
         this.entity.remove();
     }
 

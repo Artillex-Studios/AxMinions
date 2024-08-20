@@ -20,6 +20,8 @@ public record ChunkPos(int x, int z, AtomicBoolean ticking, ObjectArrayList<Mini
     }
 
     public void addMinion(Minion minion) {
+        minion.ticking(this.ticking.get());
+
         this.minions.add(minion);
     }
 

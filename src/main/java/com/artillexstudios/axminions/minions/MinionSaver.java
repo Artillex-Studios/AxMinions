@@ -36,6 +36,11 @@ public final class MinionSaver {
         if (this.future != null && !this.future.isCancelled()) {
             this.future.cancel(false);
             this.future = null;
+
+            ObjectArrayList<Minion> copy = MinionWorldCache.copy();
+            DataHandler.saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
+                LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+            }).join();
         }
     }
 }

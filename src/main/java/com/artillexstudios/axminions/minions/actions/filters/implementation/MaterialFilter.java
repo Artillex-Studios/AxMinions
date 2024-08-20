@@ -9,14 +9,16 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class MaterialFilter extends Filter<Material> {
-    private final HashSet<Material> allowed = new HashSet<>();
+    private final Set<Material> allowed = Collections.newSetFromMap(new EnumMap<>(Material.class));
 
     public MaterialFilter(Map<Object, Object> configuration) {
         this.addTransformer(Location.class, new Transformer<Location, Material>() {

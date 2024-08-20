@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Users {
+public final class Users {
     private static final ConcurrentHashMap<UUID, User> USER_CACHE = new ConcurrentHashMap<>(100);
 
     public static void load(User user) {

@@ -1,14 +1,14 @@
 package com.artillexstudios.axminions.minions.actions.filters;
 
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 public abstract class Filter<T> {
-    private final IdentityHashMap<Class<?>, Transformer<?, ?>> transformers = new IdentityHashMap<>();
+    private final Object2ObjectArrayMap<Class<?>, Transformer<?, ?>> transformers = new Object2ObjectArrayMap<>();
     private final Collection<Transformer<?, ?>> unmodifiableTransformers = Collections.unmodifiableCollection(transformers.values());
 
     public abstract boolean isAllowed(Object object);

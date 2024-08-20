@@ -136,12 +136,29 @@ public final class DataHandler {
                     .select()
                     .from(Tables.USERS)
                     .where(Fields.UUID.eq(player.getUniqueId()))
+                    .limit(1)
                     .fetch();
 
             if (!select.isEmpty()) {
                 Record record = select.get(0);
                 LogUtils.debug("User data select record: {}", record);
-                return new User(record.get(Fields.ID), player.getUniqueId(), player.getName(), texture, record.get(Fields.EXTRA_SLOTS, int.class), record.get(Fields.ISLAND_SLOTS, int.class));
+                int ownerId = record.get(Fields.ID);
+
+                Result<Record1<Integer>> minionSelect = DatabaseConnector.getInstance().context()
+                        .selectCount()
+                        .from(Tables.MINIONS)
+                        .where(Fields.OWNER_ID.eq(ownerId))
+                        .limit(1)
+                        .fetch();
+
+                if (!minionSelect.isEmpty()) {
+                    Record minionRecord = minionSelect.get(0);
+                    int minionCount = minionRecord.get(0, int.class);
+
+                    return new User(ownerId, player.getUniqueId(), player.getName(), texture, minionCount, record.get(Fields.EXTRA_SLOTS, int.class), record.get(Fields.ISLAND_SLOTS, int.class), new ArrayList<>());
+                }
+
+                return new User(ownerId, player.getUniqueId(), player.getName(), texture, 0, record.get(Fields.EXTRA_SLOTS, int.class), record.get(Fields.ISLAND_SLOTS, int.class), new ArrayList<>());
             }
 
             Record1<Integer> insert = DatabaseConnector.getInstance().context()
@@ -157,12 +174,11 @@ public final class DataHandler {
                 return null;
             }
 
-            return new User(insert.get(Fields.ID), player.getUniqueId(), player.getName(), texture, 0, 0);
+            return new User(insert.get(Fields.ID), player.getUniqueId(), player.getName(), texture, 0, 0, 0, new ArrayList<>());
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
             log.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
             return null;
         }, AsyncUtils.executor());
-
     }
 
     public static int worldId(World world) {
@@ -170,6 +186,7 @@ public final class DataHandler {
                 .select()
                 .from(Tables.WORLDS)
                 .where(Fields.WORLD_UUID.eq(world.getUID()))
+                .limit(1)
                 .fetch();
 
         if (!select.isEmpty()) {
@@ -199,6 +216,7 @@ public final class DataHandler {
                         .and(Fields.LOCATION_X.eq(location.getBlockX()))
                         .and(Fields.LOCATION_Y.eq(location.getBlockY()))
                         .and(Fields.LOCATION_Z.eq(location.getBlockZ())))
+                .limit(1)
                 .fetch();
 
         if (!select.isEmpty()) {
@@ -228,6 +246,7 @@ public final class DataHandler {
                 .select()
                 .from(Tables.TYPES)
                 .where(Fields.ID.eq((int) id))
+                .limit(1)
                 .fetchSingle(Fields.NAME);
     }
 
@@ -277,6 +296,7 @@ public final class DataHandler {
                 return IntLongPair.of(0, 0);
             }
 
+            List<Minion> toLoad = new ArrayList<>();
             Result<Record> locations = DatabaseConnector.getInstance().context()
                     .select()
                     .from(Tables.LOCATIONS)
@@ -289,6 +309,7 @@ public final class DataHandler {
                         .select()
                         .from(Tables.MINIONS)
                         .where(Fields.LOCATION_ID.eq(id))
+                        .limit(1)
                         .fetch();
 
                 if (minions.isEmpty()) {
@@ -321,10 +342,12 @@ public final class DataHandler {
 
                 MinionData data = new MinionData(ownerId, type, Direction.entries[facing], null, minionLevel, charge, tool == null ? new ItemStack(Material.AIR) : WrappedItemStack.wrap(tool).toBukkit(), null, MinionData.deserialize(extraData));
                 Minion minion = new Minion(new Location(world, x + 0.5, y, z + 0.5), data);
-                MinionWorldCache.add(minion);
+                toLoad.add(minion);
                 minion.spawn();
                 loadedMinions++;
             }
+
+            MinionWorldCache.addAll(toLoad);
             long took = System.nanoTime() - start;
             return IntLongPair.of(loadedMinions, took);
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
@@ -340,6 +363,7 @@ public final class DataHandler {
                     .select()
                     .from(Tables.TYPES)
                     .where(Fields.NAME.eq(type.name()))
+                    .limit(1)
                     .fetch();
 
             if (!select.isEmpty()) {
@@ -395,7 +419,7 @@ public final class DataHandler {
                         .set(Fields.LEVEL, minion.level())
                         .set(Fields.CHARGE, minion.charge())
                         .set(Fields.FACING, minion.facing().ordinal())
-                        .set(Fields.TOOL, WrappedItemStack.wrap(minion.tool()).serialize())
+                        .set(Fields.TOOL, minion.tool().getType().isAir() ? new byte[0] : WrappedItemStack.wrap(minion.tool()).serialize())
                         .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                         .where(Fields.LOCATION_ID.eq(locationId));
 

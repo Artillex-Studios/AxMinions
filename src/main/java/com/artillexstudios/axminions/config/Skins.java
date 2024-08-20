@@ -42,7 +42,6 @@ public final class Skins {
             Skin skin = Skin.of(route, mapList);
             SkinRegistry.register(skin);
         }
-        // TODO: Refresh minion skins
 
         return true;
     }

@@ -6,18 +6,21 @@ import org.bukkit.World;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;
+import java.util.List;
 
 public final class MinionWorldCache {
     private static final IdentityHashMap<World, MinionArea> worlds = new IdentityHashMap<>();
     private static final ObjectArrayList<Minion> minions = new ObjectArrayList<>();
 
-    public static void loadArea(World world) {
+    public static MinionArea loadArea(World world) {
         if (worlds.containsKey(world)) {
             LogUtils.warn("An area is already present for world {}", world.getName());
-            return;
+            return null;
         }
 
-        worlds.put(world, new MinionArea());
+        MinionArea area = new MinionArea();
+        worlds.put(world, area);
+        return area;
     }
 
     public static void add(Minion minion) {
@@ -29,6 +32,17 @@ public final class MinionWorldCache {
         }
 
         area.load(minion);
+    }
+
+    public static void addAll(List<Minion> list) {
+        minions.addAll(list);
+        MinionArea area = worlds.get(list.get(0).location().getWorld());
+        if (area == null) {
+            LogUtils.error("Tried to add minions to unknown world! {}", list);
+            return;
+        }
+
+        area.loadAll(list);
     }
 
     public static void remove(Minion minion) {
@@ -60,6 +74,7 @@ public final class MinionWorldCache {
 
         area.forEachPos(position -> {
             for (Minion minion : position.minions()) {
+                minions.remove(minion);
                 minion.destroy();
             }
         });

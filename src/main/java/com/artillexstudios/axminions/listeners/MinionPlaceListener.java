@@ -82,7 +82,6 @@ public final class MinionPlaceListener implements Listener {
         }
 
         // TODO: level
-        itemStack.setAmount(itemStack.getAmount() - 1);
         Location location = LocationUtils.toBlockCenter(clickedBlock.getRelative(event.getBlockFace()).getLocation());
 
         MinionArea area = MinionWorldCache.getArea(location.getWorld());
@@ -97,15 +96,19 @@ public final class MinionPlaceListener implements Listener {
             return;
         }
 
+        itemStack.setAmount(itemStack.getAmount() - 1);
+        LogUtils.debug("Minion count for user: " + user.minionCount());
         // TODO: Database queries, etc..
         MinionData data = new MinionData(user.id(), minionType, Direction.NORTH, null, minionType.level(1), 0, null, null, new HashMap<>());
         data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
         Minion minion = new Minion(location, data);
         MinionWorldCache.add(minion);
+        user.minionCount(user.minionCount() + 1);
+
         DataHandler.insertMinion(minion).thenRun(() -> {
             LogUtils.debug("Inserted minion!");
+            minion.spawn();
+            area.startTicking(location.getChunk());
         });
-        minion.spawn();
-        area.startTicking(location.getChunk());
     }
 }

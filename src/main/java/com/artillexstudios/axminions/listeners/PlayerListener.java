@@ -1,10 +1,11 @@
 package com.artillexstudios.axminions.listeners;
 
 import com.artillexstudios.axminions.database.DataHandler;
-import com.artillexstudios.axminions.users.User;
+import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.users.Users;
 import com.artillexstudios.axminions.utils.LogUtils;
-import org.bukkit.entity.Player;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -14,9 +15,22 @@ public final class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         DataHandler.loadUser(event.getPlayer()).thenAccept(user -> {
-            LogUtils.debug("Loaded user");
+            if (user == null) {
+                LogUtils.warn("Failed to load user data for player {}!", event.getPlayer().getName());
+                return;
+            }
+
+            LogUtils.debug("Loaded user for player: {}", event.getPlayer().getName());
             Users.load(user);
-            // TODO: Update all minions placed by the user
+            
+            ObjectArrayList<Minion> copy = MinionWorldCache.copy();
+            for (Minion minion : copy) {
+                if (minion.ownerId() == user.id()) {
+                    user.minions().add(minion);
+                    minion.extraData().put("owner_texture", user.texture());
+                    minion.skin(minion.skin());
+                }
+            }
         });
     }
 }

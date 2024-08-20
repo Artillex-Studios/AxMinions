@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 
@@ -18,6 +19,7 @@ public enum CollectorShape {
             final int blockX = location.getBlockX();
             final int blockY = location.getBlockY();
             final int blockZ = location.getBlockZ();
+            final World world = location.getWorld();
 
             final double rangeSquared = range * range;
             final double smallRangeSquared = ((range - 1) * (range - 1));
@@ -39,7 +41,7 @@ public enum CollectorShape {
 
                         if (distance < rangeSquared && distance < smallRangeSquared) {
                             try {
-                                Location newLocation = new Location(location.getWorld(), x, y, z);
+                                Location newLocation = new Location(world, x, y, z);
                                 for (Filter<?> filter : filters) {
                                     if (!filter.isAllowed(newLocation)) {
                                         continue z;
@@ -70,6 +72,7 @@ public enum CollectorShape {
             final int blockX = location.getBlockX();
             final int blockY = location.getBlockY();
             final int blockZ = location.getBlockZ();
+            final World world = location.getWorld();
 
             final double rangeSquared = range * range;
             final double smallRangeSquared = ((range - 1) * (range - 1));
@@ -87,7 +90,7 @@ public enum CollectorShape {
 
                     if (distance < rangeSquared && distance < smallRangeSquared) {
                         try {
-                            Location newLocation = new Location(location.getWorld(), x, blockY, z);
+                            Location newLocation = new Location(world, x, blockY, z);
                             for (Filter<?> filter : filters) {
                                 if (!filter.isAllowed(newLocation)) {
                                     continue z;
@@ -117,6 +120,7 @@ public enum CollectorShape {
             final int blockX = location.getBlockX();
             final int blockY = location.getBlockY();
             final int blockZ = location.getBlockZ();
+            final World world = location.getWorld();
 
             final int xStart = (int) Math.round(blockX - range);
             final int xEnd = (int) Math.round(blockX + range);
@@ -127,7 +131,7 @@ public enum CollectorShape {
                 z:
                 for (int z = zStart; z <= zEnd; z++) {
                     try {
-                        Location newLocation = new Location(location.getWorld(), x, blockY, z);
+                        Location newLocation = new Location(world, x, blockY, z);
                         for (Filter<?> filter : filters) {
                             if (!filter.isAllowed(newLocation)) {
                                 continue z;
@@ -156,6 +160,7 @@ public enum CollectorShape {
             final int blockX = location.getBlockX();
             final int blockY = location.getBlockY();
             final int blockZ = location.getBlockZ();
+            final World world = location.getWorld();
 
             final int xStart = (int) Math.round(blockX - range);
             final int xEnd = (int) Math.round(blockX + range);
@@ -169,7 +174,7 @@ public enum CollectorShape {
                     z:
                     for (int z = zStart; z <= zEnd; z++) {
                         try {
-                            Location newLocation = new Location(location.getWorld(), x, y, z);
+                            Location newLocation = new Location(world, x, y, z);
                             for (Filter<?> filter : filters) {
                                 if (!filter.isAllowed(newLocation)) {
                                     continue z;
