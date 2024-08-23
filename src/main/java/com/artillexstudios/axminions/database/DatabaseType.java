@@ -13,7 +13,7 @@ public enum DatabaseType {
             hikariConfig.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
             hikariConfig.setPoolName("axminions-database-pool");
             hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
-            hikariConfig.addDataSourceProperty("url", "jdbc:h2:./" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data");
+            hikariConfig.addDataSourceProperty("url", "jdbc:h2:./" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;IGNORECASE=TRUE");
             return hikariConfig;
         }
     },

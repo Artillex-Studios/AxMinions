@@ -28,7 +28,6 @@ public final class MinionArea {
     }
 
     public void startTicking(Chunk chunk) {
-        // TODO: Create a queue of chunks that have started ticking. Since we load the minions async, the chunks might be loaded by the time the minions load in them
         LogUtils.debug("Chunk ticking x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
         ChunkPos pos = this.forChunk(chunk);
 

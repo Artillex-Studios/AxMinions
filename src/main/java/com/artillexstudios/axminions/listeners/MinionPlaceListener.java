@@ -13,7 +13,6 @@ import com.artillexstudios.axminions.minions.MinionTypes;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.users.User;
 import com.artillexstudios.axminions.users.Users;
-import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.LocationUtils;
 import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
@@ -24,8 +23,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
 
 public final class MinionPlaceListener implements Listener {
 
@@ -81,7 +78,6 @@ public final class MinionPlaceListener implements Listener {
             return;
         }
 
-        // TODO: level
         Location location = LocationUtils.toBlockCenter(clickedBlock.getRelative(event.getBlockFace()).getLocation());
 
         MinionArea area = MinionWorldCache.getArea(location.getWorld());
@@ -99,7 +95,7 @@ public final class MinionPlaceListener implements Listener {
         itemStack.setAmount(itemStack.getAmount() - 1);
         LogUtils.debug("Minion count for user: " + user.minionCount());
         // TODO: Database queries, etc..
-        MinionData data = new MinionData(user.id(), minionType, Direction.NORTH, null, minionType.level(1), 0, null, null, new HashMap<>());
+        MinionData data = MinionData.fromItem(user, wrappedItemStack);
         data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
         Minion minion = new Minion(location, data);
         MinionWorldCache.add(minion);

@@ -35,6 +35,10 @@ public final class MinionWorldCache {
     }
 
     public static void addAll(List<Minion> list) {
+        if (list.isEmpty()) {
+            return;
+        }
+
         minions.addAll(list);
         MinionArea area = worlds.get(list.get(0).location().getWorld());
         if (area == null) {

@@ -25,6 +25,7 @@ import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -102,7 +104,7 @@ public final class DataHandler {
                 .column(Fields.TYPE_ID, SQLDataType.SMALLINT)
                 .column(Fields.LEVEL, SQLDataType.SMALLINT)
                 .column(Fields.CHARGE, SQLDataType.BIGINT)
-                .column(Fields.FACING, SQLDataType.SMALLINT)
+                .column(Fields.FACING, SQLDataType.TINYINT)
                 .column(Fields.TOOL, SQLDataType.CLOB)
                 .column(Fields.EXTRA_DATA, SQLDataType.CLOB)
                 .primaryKey(Fields.ID)
@@ -181,7 +183,7 @@ public final class DataHandler {
         }, AsyncUtils.executor());
     }
 
-    public static int worldId(World world) {
+    public static short worldId(World world) {
         Result<Record> select = DatabaseConnector.getInstance().context()
                 .select()
                 .from(Tables.WORLDS)
@@ -192,7 +194,7 @@ public final class DataHandler {
         if (!select.isEmpty()) {
             Record record = select.get(0);
             LogUtils.debug("World select record: {}", record);
-            return record.get(Fields.ID);
+            return record.get(Fields.ID, short.class);
         }
 
         Record1<Integer> insert = DatabaseConnector.getInstance().context()
@@ -202,10 +204,10 @@ public final class DataHandler {
                 .fetchOne();
 
         if (insert == null) {
-            return FAILED_QUERY;
+            return (short) FAILED_QUERY;
         }
 
-        return insert.get(Fields.ID);
+        return insert.get(Fields.ID, short.class);
     }
 
     public static int locationId(int world, Location location) {
@@ -330,7 +332,7 @@ public final class DataHandler {
                 int ownerId = record.get(Fields.OWNER_ID, int.class);
                 short level = record.get(Fields.LEVEL, short.class);
                 long charge = record.get(Fields.CHARGE, long.class);
-                short facing = record.get(Fields.FACING, short.class);
+                byte facing = record.get(Fields.FACING, byte.class);
                 byte[] tool = record.get(Fields.TOOL, byte[].class);
                 String extraData = record.get(Fields.EXTRA_DATA, String.class);
                 Level minionLevel = type.level(level);
@@ -356,12 +358,12 @@ public final class DataHandler {
         }, AsyncUtils.executor());
     }
 
-    public static CompletionStage<Integer> insertType(MinionType type) {
+    public static CompletionStage<Short> insertType(MinionType type) {
         Preconditions.checkNotNull(type, "Tried to insert null miniontype");
         return CompletableFuture.supplyAsync(() -> {
             Result<Record> select = DatabaseConnector.getInstance().context()
                     .select()
-                    .from(Tables.TYPES)
+                    .from(Tables.TYPES.getName().toLowerCase(Locale.ENGLISH))
                     .where(Fields.NAME.eq(type.name()))
                     .limit(1)
                     .fetch();
@@ -369,7 +371,7 @@ public final class DataHandler {
             if (!select.isEmpty()) {
                 Record record = select.get(0);
                 LogUtils.debug("select record: {}", record);
-                return record.get(Fields.ID);
+                return record.get(Fields.ID, short.class);
             }
 
             Record1<Integer> insert = DatabaseConnector.getInstance().context()
@@ -379,13 +381,13 @@ public final class DataHandler {
                     .fetchOne();
 
             if (insert == null) {
-                return FAILED_QUERY;
+                return (short) FAILED_QUERY;
             }
 
-            return insert.get(Fields.ID);
+            return insert.get(Fields.ID, short.class);
         }).exceptionallyAsync(throwable -> {
             log.error("An unexpected error occurred while inserting minion type {}!", type.name(), throwable);
-            return FAILED_QUERY;
+            return (short) FAILED_QUERY;
         }, AsyncUtils.executor());
     }
 
@@ -416,13 +418,15 @@ public final class DataHandler {
 
                 Query query = DatabaseConnector.getInstance().context()
                         .update(Tables.MINIONS)
-                        .set(Fields.LEVEL, minion.level())
+                        .set(Fields.LEVEL, minion.level().id())
                         .set(Fields.CHARGE, minion.charge())
                         .set(Fields.FACING, minion.facing().ordinal())
                         .set(Fields.TOOL, minion.tool().getType().isAir() ? new byte[0] : WrappedItemStack.wrap(minion.tool()).serialize())
                         .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                         .where(Fields.LOCATION_ID.eq(locationId));
 
+
+                LogUtils.debug("Inserting batch query {}", query.getSQL(ParamType.INLINED));
                 minion.save();
                 queries.add(query);
             }
@@ -430,6 +434,10 @@ public final class DataHandler {
             DatabaseConnector.getInstance().context()
                     .batch(queries)
                     .execute();
+
+            if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
+                DatabaseConnector.getInstance().context().execute("PRAGMA wal_checkpoint(FULL);");
+            }
 
             long took = System.nanoTime() - start;
             return LongLongPair.of(queries.size(), took);
