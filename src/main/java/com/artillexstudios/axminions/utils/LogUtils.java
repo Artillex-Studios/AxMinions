@@ -24,13 +24,13 @@ public final class LogUtils {
     }
 
     public static void debug(String message, Object object, Object object2) {
-        if (Config.DEBUG) {
+//        if (Config.DEBUG) {
             LoggerFactory.getLogger(STACK_WALKER.getCallerClass()).info(message, object, object2);
 
             String formatted = StringUtils.replace(message, "{}", object == null ? "null" : object.toString(), 1);
             formatted = StringUtils.replace(formatted, "{}", object2 == null ? "null" : object2.toString(), 1);
             com.artillexstudios.axapi.utils.LogUtils.log(formatted);
-        }
+//        }
     }
 
     public static void debug(String message, Object object, Object object2, Object object3) {

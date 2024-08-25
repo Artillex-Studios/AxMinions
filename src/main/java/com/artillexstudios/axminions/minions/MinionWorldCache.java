@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axminions.utils.LogUtils;
+import com.artillexstudios.axminions.utils.ThreadUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.World;
 
@@ -13,6 +14,7 @@ public final class MinionWorldCache {
     private static final ObjectArrayList<Minion> minions = new ObjectArrayList<>();
 
     public static MinionArea loadArea(World world) {
+        ThreadUtils.ensureMain("Area can't be loaded from off main!");
         if (worlds.containsKey(world)) {
             LogUtils.warn("An area is already present for world {}", world.getName());
             return null;
@@ -24,6 +26,7 @@ public final class MinionWorldCache {
     }
 
     public static void add(Minion minion) {
+        ThreadUtils.ensureMain("Minion can't be added from off main!");
         minions.add(minion);
         MinionArea area = worlds.get(minion.location().getWorld());
         if (area == null) {
@@ -35,6 +38,7 @@ public final class MinionWorldCache {
     }
 
     public static void addAll(List<Minion> list) {
+        ThreadUtils.ensureMain("Minion can't be added from off main!");
         if (list.isEmpty()) {
             return;
         }
@@ -50,6 +54,7 @@ public final class MinionWorldCache {
     }
 
     public static void remove(Minion minion) {
+        ThreadUtils.ensureMain("Minion can't be removed from off main!");
         minions.remove(minion);
         MinionArea area = worlds.get(minion.location().getWorld());
         if (area == null) {
@@ -61,14 +66,17 @@ public final class MinionWorldCache {
     }
 
     public static MinionArea getArea(World world) {
+        ThreadUtils.ensureMain("Asynchronous area get!");
         return worlds.get(world);
     }
 
     public static MinionArea remove(World world) {
+        ThreadUtils.ensureMain("Asynchronous area remove!");
         return worlds.remove(world);
     }
 
     public static void clear(World world) {
+        ThreadUtils.ensureMain("Asynchronous area clear!");
         LogUtils.debug("Worlds map pre clear: {}", worlds);
         MinionArea area = getArea(world);
         if (area == null) {
@@ -95,6 +103,7 @@ public final class MinionWorldCache {
     }
 
     public static Collection<MinionArea> worlds() {
+        ThreadUtils.ensureMain("Asynchronous worlds get!");
         return worlds.values();
     }
 }

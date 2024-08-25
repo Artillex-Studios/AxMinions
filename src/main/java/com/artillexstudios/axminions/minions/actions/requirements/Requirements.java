@@ -1,10 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.requirements;
 
-import com.artillexstudios.axminions.minions.actions.filters.Filter;
-import com.artillexstudios.axminions.minions.actions.filters.implementation.EntityTypeFilter;
-import com.artillexstudios.axminions.minions.actions.filters.implementation.MaterialFilter;
-import com.artillexstudios.axminions.minions.actions.filters.implementation.StoneGeneratorFilter;
 import com.artillexstudios.axminions.minions.actions.requirements.implementation.RequirementLevel;
+import com.artillexstudios.axminions.minions.actions.requirements.implementation.RequirementTool;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,6 +13,7 @@ public final class Requirements {
 
     static {
         register("level", RequirementLevel::new);
+        register("tool", RequirementTool::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Requirement> supplier) {

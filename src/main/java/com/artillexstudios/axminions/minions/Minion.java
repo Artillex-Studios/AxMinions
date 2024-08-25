@@ -65,6 +65,7 @@ public final class Minion {
         }
 
         Integrations.STORAGE.flush(this.minionData.linkedChest());
+        Integrations.STORAGE.flushDrops(this.location);
     }
 
     public void refresh() {

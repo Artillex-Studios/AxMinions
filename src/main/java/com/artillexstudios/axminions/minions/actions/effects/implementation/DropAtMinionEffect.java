@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
 import com.artillexstudios.axminions.exception.MinionTickFailException;
+import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
@@ -26,10 +27,7 @@ public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollect
             throw new MinionTickFailException("World is null!");
         }
 
-        for (ItemStack itemStack : argument.items()) {
-            world.dropItem(minion.location(), itemStack);
-        }
-
+        Integrations.STORAGE.pushDrop(minion.location(), argument.elements());
         return null;
     }
 

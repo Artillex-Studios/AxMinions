@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.database;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
@@ -21,11 +22,11 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.SQLDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
 
 public final class DataHandler {
     private static final int FAILED_QUERY = -3042141;
@@ -349,7 +351,9 @@ public final class DataHandler {
                 loadedMinions++;
             }
 
-            MinionWorldCache.addAll(toLoad);
+            CompletableFuture.runAsync(() -> {
+                MinionWorldCache.addAll(toLoad);
+            }, command -> Scheduler.get().run(command)).join();
             long took = System.nanoTime() - start;
             return IntLongPair.of(loadedMinions, took);
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
@@ -421,12 +425,10 @@ public final class DataHandler {
                         .set(Fields.LEVEL, minion.level().id())
                         .set(Fields.CHARGE, minion.charge())
                         .set(Fields.FACING, minion.facing().ordinal())
-                        .set(Fields.TOOL, minion.tool().getType().isAir() ? new byte[0] : WrappedItemStack.wrap(minion.tool()).serialize())
+                        .set(Fields.TOOL, minion.tool().getType().isAir() ? null : WrappedItemStack.wrap(minion.tool()).serialize())
                         .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                         .where(Fields.LOCATION_ID.eq(locationId));
 
-
-                LogUtils.debug("Inserting batch query {}", query.getSQL(ParamType.INLINED));
                 minion.save();
                 queries.add(query);
             }

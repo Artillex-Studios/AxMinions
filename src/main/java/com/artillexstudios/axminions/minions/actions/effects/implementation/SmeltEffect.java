@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axminions.api.events.MinionSmeltEffectEvent;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
@@ -36,18 +37,30 @@ public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, ItemCollection argument) {
+        ItemCollection collection = new ItemCollection(argument.size());
         for (ItemStack itemStack : argument.items()) {
             Material material = itemStack.getType();
             Material to = recipes.get(material);
+            ItemStack newItem;
+
             if (to == null) {
+                newItem = null;
+            } else {
+                newItem = itemStack.clone();
+
+                WrappedItemStack.edit(newItem, item -> {
+                    item.set(DataComponents.material(), to);
+                    return null;
+                });
+            }
+
+            MinionSmeltEffectEvent event = new MinionSmeltEffectEvent(minion, itemStack, newItem);
+            event.call();
+            if (event.to() == null) {
                 continue;
             }
 
-            // TODO: Smelt event
-            WrappedItemStack.edit(itemStack, item -> {
-                item.set(DataComponents.material(), to);
-                return null;
-            });
+            collection.add(event.to());
         }
 
         return argument;

@@ -9,6 +9,7 @@ import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.utils.ChunkPos;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class FoliaMinionTicker implements MinionTicker {
