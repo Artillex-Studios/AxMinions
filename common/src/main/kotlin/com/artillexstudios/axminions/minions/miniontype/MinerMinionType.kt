@@ -110,7 +110,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                             if (possible) {
                                 minion.addToContainerOrDrop(
-                                    gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                    gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
                                 )
                                 gen.scheduleGeneratorRegeneration()
                                 return@fastFor
@@ -158,7 +158,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                                         if (possible) {
                                             minion.addToContainerOrDrop(
-                                                gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                                gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
                                             )
                                             gen.scheduleGeneratorRegeneration()
                                             return@fastFor
@@ -192,7 +192,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                             }
                     }
                 } else {
-                    LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
+                    val locCopy = minion.getLocation().clone()
+                    locCopy.setX(locCopy.getBlockX().toDouble())
+                    locCopy.setY(locCopy.getBlockY().toDouble())
+                    locCopy.setZ(locCopy.getBlockZ().toDouble())
+                    LocationUtils.getAllBlocksInRadius(locCopy, minion.getRange(), false)
                         .fastFor { location ->
                             if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
                                 val gen = Main.getPlacedGenerators().getLoaded(location)
@@ -201,7 +205,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                                     if (possible) {
                                         minion.addToContainerOrDrop(
-                                            gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                            gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
                                         )
                                         gen.scheduleGeneratorRegeneration()
                                         return@fastFor
@@ -236,7 +240,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
             "line" -> {
                 faces.fastFor {
-                    LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), it).fastFor { location ->
+                    val locCopy = minion.getLocation().clone()
+                    locCopy.setX(locCopy.getBlockX().toDouble())
+                    locCopy.setY(locCopy.getBlockY().toDouble())
+                    locCopy.setZ(locCopy.getBlockZ().toDouble())
+                    LocationUtils.getAllBlocksFacing(locCopy, minion.getRange(), it).fastFor { location ->
                         if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
                             if (Config.DEBUG()) {
                                 println("KGenerators integration!")
@@ -253,7 +261,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                         println("Not possible")
                                     }
                                     minion.addToContainerOrDrop(
-                                        gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                        gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
                                     )
                                     gen.scheduleGeneratorRegeneration()
                                     return@fastFor
@@ -291,7 +299,11 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
 
             "face" -> {
-                LocationUtils.getAllBlocksFacing(minion.getLocation(), minion.getRange(), minion.getDirection().facing)
+                val locCopy = minion.getLocation().clone()
+                locCopy.setX(locCopy.getBlockX().toDouble())
+                locCopy.setY(locCopy.getBlockY().toDouble())
+                locCopy.setZ(locCopy.getBlockZ().toDouble())
+                LocationUtils.getAllBlocksFacing(locCopy, minion.getRange(), minion.getDirection().facing)
                     .fastFor { location ->
                         if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
                             val gen = Main.getPlacedGenerators().getLoaded(location)
@@ -300,7 +312,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                                 if (possible) {
                                     minion.addToContainerOrDrop(
-                                        gen.generator.drawGeneratedObject().customDrops?.item ?: return@fastFor
+                                        gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
                                     )
                                     gen.scheduleGeneratorRegeneration()
                                     return@fastFor

@@ -133,12 +133,16 @@ class Minion(
                 )
 
                 if (event.isAttack) {
-                    if (ownerUUID == event.player.uniqueId) {
-                        breakMinion(event)
-                    } else if ((canBuildAt && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")) {
-                        breakMinion(event)
-                    } else {
+                    if (event.player.inventory.firstEmpty() == -1) {
                         broken.set(false)
+                    } else {
+                        if (ownerUUID == event.player.uniqueId) {
+                            breakMinion(event)
+                        } else if ((canBuildAt && !Config.ONLY_OWNER_BREAK()) || event.player.hasPermission("axminions.*")) {
+                            breakMinion(event)
+                        } else {
+                            broken.set(false)
+                        }
                     }
                 } else {
                     if (ownerUUID == event.player.uniqueId) {
@@ -263,6 +267,22 @@ class Minion(
                         this.level + 1
                     ).toString()
                 )
+                val chanceKillStackedAmount = Placeholder.parsed("chance_kill_stacked_amount", type.getDouble("chance-kill-stacked-amount", this.level).toString())
+                val nextChanceKillStackedAmount = Placeholder.parsed(
+                    "next_chance_kill_stacked_amount",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "chance-kill-stacked-amount",
+                        this.level + 1
+                    ).toString()
+                )
+                val stackedAmount = Placeholder.parsed("stacked_amount", type.getDouble("stacked-amount", this.level).toString())
+                val nextStackedAmount = Placeholder.parsed(
+                    "next_stacked_amount",
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
+                        "stacked-amount",
+                        this.level + 1
+                    ).toString()
+                )
                 val extra = Placeholder.parsed("extra", type.getDouble("extra", this.level).toString())
                 val nextExtra = Placeholder.parsed(
                     "next_extra",
@@ -321,7 +341,11 @@ class Minion(
                     actions,
                     multiplier,
                     nextMultiplier,
-                    nextStorage
+                    nextStorage,
+                    chanceKillStackedAmount,
+                    nextChanceKillStackedAmount,
+                    stackedAmount,
+                    nextStackedAmount
                 ).get()
 
                 val meta = item.itemMeta!!

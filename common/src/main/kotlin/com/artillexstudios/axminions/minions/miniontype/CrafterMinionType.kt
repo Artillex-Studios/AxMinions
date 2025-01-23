@@ -147,8 +147,10 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
                     val amt = next.value - recipeChoice.itemStack.amount
                     if (amt == 0) {
                         iterator.remove()
+                    } else if (amt > 0) {
+                        next.setValue(amt)
                     } else {
-                        next.setValue(amount)
+                        return false
                     }
                 }
             }
@@ -178,8 +180,10 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
                     val amt = next.value - recipeChoice.value.itemStack.amount
                     if (amt == 0) {
                         iterator.remove()
+                    } else if (amt > 0) {
+                        next.setValue(amt)
                     } else {
-                        next.setValue(amount)
+                        return false
                     }
                 }
             }

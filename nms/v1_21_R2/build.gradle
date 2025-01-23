@@ -6,7 +6,7 @@ group = 'com.artillexstudios.axminions.nms'
 version = '1.0-SNAPSHOT'
 
 dependencies {
-    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.3-R0.1-SNAPSHOT")
 }
 
 kotlin {

@@ -3,7 +3,7 @@ package com.artillexstudios.axminions
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.data.ThreadedQueue
 import com.artillexstudios.axapi.scheduler.Scheduler
-import com.artillexstudios.axapi.utils.FeatureFlags
+import com.artillexstudios.axapi.utils.featureflags.FeatureFlags
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -62,9 +62,9 @@ class AxMinionsPlugin : AxPlugin() {
         manager.loadLibrary(h2)
     }
 
-    override fun updateFlags() {
-        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
-        FeatureFlags.USE_LEGACY_HEX_FORMATTER.set(true)
+    override fun updateFlags(flags: FeatureFlags) {
+        flags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
+        flags.USE_LEGACY_HEX_FORMATTER.set(true)
     }
 
     override fun load() {
@@ -74,6 +74,7 @@ class AxMinionsPlugin : AxPlugin() {
 
     override fun enable() {
         Metrics(this, 19043)
+        com.artillexstudios.axapi.metrics.AxMetrics(5).start()
 
         AxMinionsPlugin.config = Config(File(dataFolder, "config.yml"), getResource("config.yml")!!)
         messages = Messages(File(dataFolder, "messages.yml"), getResource("messages.yml")!!)
