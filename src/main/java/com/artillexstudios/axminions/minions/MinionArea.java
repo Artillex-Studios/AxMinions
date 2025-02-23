@@ -1,26 +1,21 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.utils.ChunkPos;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
-// TODO: Lockless implementation
 public final class MinionArea {
-    private final ObjectArrayList<ChunkPos> positions = new ObjectArrayList<>(32);
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-    private final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-    private long readCount = 0;
-    private long writeCount = 0;
+    private final ConcurrentLinkedQueue<ChunkPos> positions = new ConcurrentLinkedQueue<>();
 
     private static boolean isSameBlock(int x, int y, int z, Location loc2) {
         return x == loc2.getBlockX() &&
@@ -29,21 +24,29 @@ public final class MinionArea {
     }
 
     public void startTicking(Chunk chunk) {
-        LogUtils.debug("Chunk ticking x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        if (Config.debug) {
+            LogUtils.debug("Chunk ticking x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        }
         ChunkPos pos = this.forChunk(chunk);
 
         if (pos != null && !pos.isTicking()) {
-            LogUtils.debug("Starting chunk ticking!");
+            if (Config.debug) {
+                LogUtils.debug("Starting chunk ticking!");
+            }
             pos.ticking(true);
         }
     }
 
     public void stopTicking(Chunk chunk) {
-        LogUtils.debug("Chunk ticking stop x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        if (Config.debug) {
+            LogUtils.debug("Chunk ticking stop x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        }
         ChunkPos pos = this.forChunk(chunk);
 
         if (pos != null && pos.isTicking()) {
-            LogUtils.debug("Stopping chunk ticking!");
+            if (Config.debug) {
+                LogUtils.debug("Stopping chunk ticking!");
+            }
             pos.ticking(false);
         }
     }
@@ -58,14 +61,7 @@ public final class MinionArea {
         ChunkPos chunkPos = this.forChunk(chunkX, chunkZ);
         if (chunkPos == null) {
             chunkPos = new ChunkPos(chunkX, chunkZ, new AtomicBoolean(), new ObjectArrayList<>());
-
-            this.writeLock.lock();
-            try {
-                this.writeCount++;
-                this.positions.add(chunkPos);
-            } finally {
-                this.writeLock.unlock();
-            }
+            this.positions.add(chunkPos);
         }
 
         chunkPos.addMinion(minion);
@@ -74,26 +70,20 @@ public final class MinionArea {
     // Utility method to avoid acquiring lock lots of times on initial load
     public void loadAll(List<Minion> minions) {
         Preconditions.checkNotNull(minions, "Minions are null!");
-        this.writeLock.lock();
-        try {
-            this.writeCount++;
-            for (Minion minion : minions) {
-                Location location = minion.location();
+        for (Minion minion : minions) {
+            Location location = minion.location();
 
-                int chunkX = (int) Math.floor(location.getX()) >> 4;
-                int chunkZ = (int) Math.floor(location.getZ()) >> 4;
+            int chunkX = (int) Math.floor(location.getX()) >> 4;
+            int chunkZ = (int) Math.floor(location.getZ()) >> 4;
 
-                ChunkPos chunkPos = this.forChunk(chunkX, chunkZ);
-                if (chunkPos == null) {
-                    chunkPos = new ChunkPos(chunkX, chunkZ, new AtomicBoolean(), new ObjectArrayList<>());
+            ChunkPos chunkPos = this.forChunk(chunkX, chunkZ);
+            if (chunkPos == null) {
+                chunkPos = new ChunkPos(chunkX, chunkZ, new AtomicBoolean(), new ObjectArrayList<>());
 
-                    this.positions.add(chunkPos);
-                }
-
-                chunkPos.addMinion(minion);
+                this.positions.add(chunkPos);
             }
-        } finally {
-            this.writeLock.unlock();
+
+            chunkPos.addMinion(minion);
         }
     }
 
@@ -103,43 +93,16 @@ public final class MinionArea {
         int chunkX = (int) Math.floor(location.getX()) >> 4;
         int chunkZ = (int) Math.floor(location.getZ()) >> 4;
 
-        // Load the list into stack memory for faster access
-        ObjectArrayList<ChunkPos> positions = this.positions;
 
-        boolean needsWrite = false;
-        this.readLock.lock();
-        try {
-            this.readCount++;
-            ObjectListIterator<ChunkPos> positionIterator = positions.iterator();
-            while (positionIterator.hasNext()) {
-                ChunkPos nextPos = positionIterator.next();
-                if (nextPos.x() == chunkX && nextPos.z() == chunkZ) {
-                    if (nextPos.removeMinion(minion)) {
-                        needsWrite = true;
-                        positionIterator.remove();
-                    }
-
-                    break;
+        Iterator<ChunkPos> positionIterator = this.positions.iterator();
+        while (positionIterator.hasNext()) {
+            ChunkPos nextPos = positionIterator.next();
+            if (nextPos.x() == chunkX && nextPos.z() == chunkZ) {
+                if (nextPos.removeMinion(minion)) {
+                    positionIterator.remove();
                 }
-            }
-        } finally {
-            this.readLock.unlock();
-        }
 
-        if (needsWrite) {
-            this.writeLock.lock();
-            try {
-                this.writeCount++;
-                ObjectListIterator<ChunkPos> positionIterator = positions.iterator();
-                while (positionIterator.hasNext()) {
-                    ChunkPos nextPos = positionIterator.next();
-                    if (nextPos.x() == chunkX && nextPos.z() == chunkZ) {
-                        positionIterator.remove();
-                        break;
-                    }
-                }
-            } finally {
-                this.writeLock.unlock();
+                break;
             }
         }
     }
@@ -153,18 +116,17 @@ public final class MinionArea {
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
 
-        this.readLock.lock();
-        try {
-            this.readCount++;
-            ObjectArrayList<ChunkPos> positions = this.positions;
-            int posSize = positions.size();
+        for (ChunkPos position : this.positions) {
+            if (!position.isTicking()) {
+                continue;
+            }
 
-            for (int i = 0; i < posSize; i++) {
-                ChunkPos pos = positions.get(i);
-                if (!pos.isTicking()) continue;
-                if (pos.x() != chunkX || pos.z() != chunkZ) continue;
+            if (position.x() != chunkX || position.z() != chunkZ) {
+                continue;
+            }
 
-                ObjectArrayList<Minion> minions = pos.minions();
+            synchronized (position.minions()) {
+                ObjectArrayList<Minion> minions = position.minions();
                 int minionsSize = minions.size();
                 for (int j = 0; j < minionsSize; j++) {
                     Minion minion = minions.get(j);
@@ -173,15 +135,16 @@ public final class MinionArea {
                     }
                 }
             }
-
-            return null;
-        } finally {
-            this.readLock.unlock();
         }
+
+        return null;
     }
 
     public List<Minion> getMinions(Chunk chunk) {
-        return List.copyOf(this.forChunk(chunk).minions());
+        List<Minion> minions = this.forChunk(chunk).minions();
+        synchronized (minions) {
+            return List.copyOf(minions);
+        }
     }
 
     public ChunkPos forChunk(Chunk chunk) {
@@ -189,67 +152,27 @@ public final class MinionArea {
     }
 
     public ChunkPos forChunk(int x, int z) {
-        this.readLock.lock();
-        try {
-            this.readCount++;
-            // Load the list into stack memory for faster access
-            ObjectArrayList<ChunkPos> positions = this.positions;
-
-            // We don't want to reevaluate the size of the list
-            int size = positions.size();
-            for (int i = 0; i < size; i++) {
-                ChunkPos pos = positions.get(i);
-                if (pos.x() == x && pos.z() == z) {
-                    return pos;
-                }
+        for (ChunkPos position : positions) {
+            if (position.x() == x && position.z() == z) {
+                return position;
             }
-
-            return null;
-        } finally {
-            this.readLock.unlock();
         }
+
+        return null;
     }
 
     public void forEachPos(Consumer<ChunkPos> consumer) {
-        this.readLock.lock();
-        try {
-            this.readCount++;
-            // Load the list into stack memory for faster access
-            ObjectArrayList<ChunkPos> positions = this.positions;
-
-            // We don't want to reevaluate the size of the list
-            int size = positions.size();
-            for (int i = 0; i < size; i++) {
-                consumer.accept(positions.get(i));
-            }
-        } finally {
-            this.readLock.unlock();
+        // We don't want to reevaluate the size of the list
+        for (ChunkPos position : this.positions) {
+            consumer.accept(position);
         }
     }
 
     public void clear() {
-        this.writeLock.lock();
-        try {
-            this.writeCount++;
-            // Load the list into stack memory for faster access
-            ObjectArrayList<ChunkPos> positions = this.positions;
-
-            // We don't want to reevaluate the size of the list
-            int size = positions.size();
-            for (int i = 0; i < size; i++) {
-                ChunkPos pos = positions.get(i);
-                pos.minions().clear();
+        for (ChunkPos position : this.positions) {
+            synchronized (position.minions()) {
+                position.minions().clear();
             }
-        } finally {
-            this.writeLock.unlock();
         }
-    }
-
-    public long readCount() {
-        return this.readCount;
-    }
-
-    public long writeCount() {
-        return this.writeCount;
     }
 }

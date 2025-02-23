@@ -93,10 +93,10 @@ public final class MinionPlaceListener implements Listener {
             return;
         }
 
+        MinionData data = MinionData.fromItem(user, wrappedItemStack);
         itemStack.setAmount(itemStack.getAmount() - 1);
         LogUtils.debug("Minion count for user: " + user.minionCount());
         // TODO: Database queries, etc..
-        MinionData data = MinionData.fromItem(user, wrappedItemStack);
 //        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
         Minion minion = new Minion(location, data);
         MinionWorldCache.add(minion);
