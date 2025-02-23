@@ -82,7 +82,11 @@ public final class AxMinionsPlugin extends AxPlugin {
 
         this.connector = new DatabaseConnector();
         this.handler = new DataHandler(this.connector);
-        this.handler.setup().thenRun(() -> LogUtils.debug("Loaded database!"));
+        this.handler.setup().thenRun(() -> {
+            if (Config.debug) {
+                LogUtils.debug("Loaded database!");
+            }
+        });
 
         Language.reload();
         Skins.reload();
@@ -97,7 +101,9 @@ public final class AxMinionsPlugin extends AxPlugin {
 
             for (World world : Bukkit.getWorlds()) {
                 this.handler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
-                    LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+                    if (Config.debug) {
+                        LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+                    }
                 });
             }
         });

@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.listeners;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
@@ -24,7 +25,9 @@ public final class BlockPlaceListener implements Listener {
             return;
         }
 
-        LogUtils.debug("Attempted to place block at minion!");
+        if (Config.debug) {
+            LogUtils.debug("Attempted to place block at minion!");
+        }
         event.setCancelled(true);
     }
 }

@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import org.bukkit.Location;
@@ -53,7 +54,9 @@ public enum CollectorShape {
 
                                 consumer.accept(newLocation);
                             } catch (MinionTickFailException exception) {
-                                LogUtils.debug("Tick failed, aborting!");
+                                if (Config.debug) {
+                                    LogUtils.debug("Tick failed, aborting!");
+                                }
                                 throw exception;
                             }
                         }
@@ -104,7 +107,9 @@ public enum CollectorShape {
 
                             consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
-                            LogUtils.debug("Tick failed, aborting!");
+                            if (Config.debug) {
+                                LogUtils.debug("Tick failed, aborting!");
+                            }
                             throw exception;
                         }
                     }
@@ -147,7 +152,9 @@ public enum CollectorShape {
 
                         consumer.accept(newLocation);
                     } catch (MinionTickFailException exception) {
-                        LogUtils.debug("Tick failed, aborting!");
+                        if (Config.debug) {
+                            LogUtils.debug("Tick failed, aborting!");
+                        }
                         throw exception;
                     }
                 }
@@ -193,7 +200,9 @@ public enum CollectorShape {
 
                             consumer.accept(newLocation);
                         } catch (MinionTickFailException exception) {
-                            LogUtils.debug("Tick failed, aborting!");
+                            if (Config.debug) {
+                                LogUtils.debug("Tick failed, aborting!");
+                            }
                             throw exception;
                         }
                     }

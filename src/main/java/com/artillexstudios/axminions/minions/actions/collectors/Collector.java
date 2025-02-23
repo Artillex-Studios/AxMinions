@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Filters;
@@ -16,7 +17,9 @@ import java.util.function.Consumer;
 public abstract class Collector<T> {
 
     public static Collector<?> of(Map<Object, Object> config) {
-        LogUtils.debug("Collector of {}", config);
+        if (Config.debug) {
+            LogUtils.debug("Collector of {}", config);
+        }
         if (config == null) {
             return null;
         }

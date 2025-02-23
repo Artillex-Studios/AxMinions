@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
@@ -24,7 +25,9 @@ public final class CompiledAction {
         this.effects = new ObjectArrayList<>();
         this.effects.addAll(this.compileEffects(null, (List<Map<Object, Object>>) map.get("effects")));
 
-        LogUtils.debug("Printing children of compiledaction!");
+        if (Config.debug) {
+            LogUtils.debug("Printing children of compiledaction!");
+        }
         for (Effect<Object, Object> effect : this.effects) {
             printChildren(effect);
         }
@@ -36,27 +39,37 @@ public final class CompiledAction {
 
     private void printChildren(Effect<?, ?> effect) {
         if (effect.children() == null || effect.children().isEmpty()) {
-            LogUtils.debug("Has no children");
+            if (Config.debug) {
+                LogUtils.debug("Has no children");
+            }
             return;
         }
 
         for (Effect<?, ?> child : effect.children()) {
-            LogUtils.debug("Parent: {} Children: {}", effect, child);
+            if (Config.debug) {
+                LogUtils.debug("Parent: {} Children: {}", effect, child);
+            }
             printChildren(child);
         }
     }
 
     private List<Effect<Object, Object>> compileEffects(Effect<Object, Object> parent, List<Map<Object, Object>> list) {
         ObjectArrayList<Effect<Object, Object>> effects = new ObjectArrayList<>(2);
-        LogUtils.debug("CompileEffects");
+        if (Config.debug) {
+            LogUtils.debug("CompileEffects");
+        }
         if (list == null) {
-            LogUtils.debug("List is null!");
+            if (Config.debug) {
+                LogUtils.debug("List is null!");
+            }
             return List.of();
         }
 
         for (Map<Object, Object> map : list) {
             String id = (String) map.get("id");
-            LogUtils.debug("id {}", id == null ? "null" : id);
+            if (Config.debug) {
+                LogUtils.debug("id {}", id == null ? "null" : id);
+            }
             if (id == null) {
                 continue;
             }
@@ -102,7 +115,9 @@ public final class CompiledAction {
                         continue;
                     }
 
-                    LogUtils.debug("Adding requirement {}", requirement);
+                    if (Config.debug) {
+                        LogUtils.debug("Adding requirement {}", requirement);
+                    }
                     effect.addRequirement(requirement);
                 }
             }
@@ -124,7 +139,9 @@ public final class CompiledAction {
             }
 
             List<Map<Object, Object>> childEffects = (List<Map<Object, Object>>) map.get("effects");
-            LogUtils.debug("Child {}", childEffects);
+            if (Config.debug) {
+                LogUtils.debug("Child {}", childEffects);
+            }
             if (childEffects == null) {
                 continue;
             }

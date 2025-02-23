@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.utils.ThreadUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.World;
@@ -77,7 +78,9 @@ public final class MinionWorldCache {
 
     public static void clear(World world) {
         ThreadUtils.ensureMain("Asynchronous area clear!");
-        LogUtils.debug("Worlds map pre clear: {}", worlds);
+        if (Config.debug) {
+            LogUtils.debug("Worlds map pre clear: {}", worlds);
+        }
         MinionArea area = getArea(world);
         if (area == null) {
             LogUtils.error("Tried to remove minion from unknown world {}! Map: {}", world.getName(), worlds);

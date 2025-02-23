@@ -86,7 +86,9 @@ public final class MinionType {
             try {
                 action.run(minion);
             } catch (MinionTickFailException exception) {
-                LogUtils.debug("Termination of tick due to exception!");
+                if (com.artillexstudios.axminions.config.Config.debug) {
+                    LogUtils.debug("Termination of tick due to exception!");
+                }
                 return false;
             }
         }

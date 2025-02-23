@@ -106,7 +106,9 @@ public final class AxMinionsCommand {
 
                                 for (World world : worlds) {
                                     AxMinionsPlugin.instance().handler().loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
-                                        LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+                                        if (Config.debug) {
+                                            LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
+                                        }
                                         if (counter.incrementAndGet() != futures.length * worlds.size()) {
                                             return;
                                         }
@@ -143,12 +145,6 @@ public final class AxMinionsCommand {
                                                 })
                                         )
                                 )
-                        )
-                        .then(new LiteralArgument("lockstats")
-                                .withPermission("axminions.command.debug.lockstats")
-                                .executes((sender, args) -> {
-                                    MessageUtils.sendMessage(sender, Language.PREFIX, "Total lock stats: <br> Writes: <writes> <br> Reads: <reads>", Placeholder.unparsed("writes", Long.toString(MinionWorldCache.worlds().stream().mapToLong(MinionArea::writeCount).sum())), Placeholder.unparsed("reads", Long.toString(MinionWorldCache.worlds().stream().mapToLong(MinionArea::readCount).sum())));
-                                })
                         )
                 )
                 .register();

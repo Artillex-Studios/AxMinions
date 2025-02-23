@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.listeners;
 
 import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
@@ -21,7 +22,9 @@ public final class PlayerListener implements Listener {
                 return;
             }
 
-            LogUtils.debug("Loaded user for player: {}", event.getPlayer().getName());
+            if (Config.debug) {
+                LogUtils.debug("Loaded user for player: {}", event.getPlayer().getName());
+            }
             Users.load(user);
             
             ObjectArrayList<Minion> copy = MinionWorldCache.copy();

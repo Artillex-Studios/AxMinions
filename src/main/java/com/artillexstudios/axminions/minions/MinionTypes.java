@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,9 @@ public final class MinionTypes {
 
         TYPES.put(lowercase, minionType);
         TYPE_IDS.put((short) minionType.id(), minionType);
-        LogUtils.debug("Put {} to {}", minionType.name(), (short) minionType.id());
+        if (Config.debug) {
+            LogUtils.debug("Put {} to {}", minionType.name(), (short) minionType.id());
+        }
     }
 
     public static MinionType parse(short id) {

@@ -6,6 +6,7 @@ import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
@@ -29,34 +30,46 @@ public final class MinionPlaceListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        LogUtils.debug("MinionPlaceListener - PlayerInteractEvent");
+        if (Config.debug) {
+            LogUtils.debug("MinionPlaceListener - PlayerInteractEvent");
+        }
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            LogUtils.debug("Not right click block, but {}.", event.getAction());
+            if (Config.debug) {
+                LogUtils.debug("Not right click block, but {}.", event.getAction());
+            }
             return;
         }
 
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) {
-            LogUtils.debug("Clicked block is null.");
+            if (Config.debug) {
+                LogUtils.debug("Clicked block is null.");
+            }
             return;
         }
 
         EquipmentSlot hand = event.getHand();
         if (hand == null) {
-            LogUtils.debug("Hand is null!");
+            if (Config.debug) {
+                LogUtils.debug("Hand is null!");
+            }
             return;
         }
 
         ItemStack itemStack = event.getPlayer().getInventory().getItem(hand);
         if (itemStack == null || itemStack.getType().isAir()) {
-            LogUtils.debug("Item is either null, or air!");
+            if (Config.debug) {
+                LogUtils.debug("Item is either null, or air!");
+            }
             return;
         }
 
         WrappedItemStack wrappedItemStack = WrappedItemStack.wrap(itemStack);
         CompoundTag compoundTag = wrappedItemStack.get(DataComponents.customData());
         if (!compoundTag.contains("axminions_minion_type")) {
-            LogUtils.debug("Does not contain miniontype");
+            if (Config.debug) {
+                LogUtils.debug("Does not contain miniontype");
+            }
             return;
         }
 
@@ -95,7 +108,9 @@ public final class MinionPlaceListener implements Listener {
 
         MinionData data = MinionData.fromItem(user, wrappedItemStack);
         itemStack.setAmount(itemStack.getAmount() - 1);
-        LogUtils.debug("Minion count for user: " + user.minionCount());
+        if (Config.debug) {
+            LogUtils.debug("Minion count for user: " + user.minionCount());
+        }
         // TODO: Database queries, etc..
 //        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
         Minion minion = new Minion(location, data);
@@ -103,7 +118,9 @@ public final class MinionPlaceListener implements Listener {
         user.minionCount(user.minionCount() + 1);
 
         AxMinionsPlugin.instance().handler().insertMinion(minion).thenRun(() -> {
-            LogUtils.debug("Inserted minion!");
+            if (Config.debug) {
+                LogUtils.debug("Inserted minion!");
+            }
             minion.spawn();
             area.startTicking(location.getChunk());
         });

@@ -30,18 +30,24 @@ public final class Language {
     private com.artillexstudios.axapi.config.Config config = null;
 
     public static boolean reload() {
-        LogUtils.debug("Reload called on language!");
+        if (Config.debug) {
+            LogUtils.debug("Reload called on language!");
+        }
         FileUtils.copyFromResource("language");
 
         return INSTANCE.refreshConfig();
     }
 
     private boolean refreshConfig() {
-        LogUtils.debug("Refreshing language");
+        if (Config.debug) {
+            LogUtils.debug("Refreshing language");
+        }
         File file = LANGUAGE_DIRECTORY.resolve(Config.language + ".yml").toFile();
         boolean shouldDefault = false;
         if (file.exists()) {
-            LogUtils.debug("File exists");
+            if (Config.debug) {
+                LogUtils.debug("File exists");
+            }
             if (!YamlUtils.suggest(file)) {
                 return false;
             }
@@ -53,18 +59,26 @@ public final class Language {
 
         // The user might have changed the config
         if (config != null && lastLanguage != null && lastLanguage.equalsIgnoreCase(Config.language)) {
-            LogUtils.debug("Config not null");
+            if (Config.debug) {
+                LogUtils.debug("Config not null");
+            }
             config.reload();
         } else {
             lastLanguage = shouldDefault ? "en_US" : Config.language;
-            LogUtils.debug("Set lastLanguage to {}", lastLanguage);
+            if (Config.debug) {
+                LogUtils.debug("Set lastLanguage to {}", lastLanguage);
+            }
             InputStream defaults = AxMinionsPlugin.instance().getResource("language/" + lastLanguage + ".yml");
             if (defaults == null) {
-                LogUtils.debug("Defaults are null, defaulting to en_US.yml");
+                if (Config.debug) {
+                    LogUtils.debug("Defaults are null, defaulting to en_US.yml");
+                }
                 defaults = AxMinionsPlugin.instance().getResource("language/en_US.yml");
             }
 
-            LogUtils.debug("Loading config from file {} with defaults {}", file, defaults);
+            if (Config.debug) {
+                LogUtils.debug("Loading config from file {} with defaults {}", file, defaults);
+            }
             config = new com.artillexstudios.axapi.config.Config(file, defaults, GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
         }
 

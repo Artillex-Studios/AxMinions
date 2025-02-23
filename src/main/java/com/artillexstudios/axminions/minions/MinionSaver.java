@@ -28,7 +28,9 @@ public final class MinionSaver {
         this.future = this.service.schedule(() -> {
             ObjectArrayList<Minion> copy = MinionWorldCache.copy();
             AxMinionsPlugin.instance().handler().saveMinions(copy).thenAccept(pair -> {
-                LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+                if (Config.debug) {
+                    LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+                }
             });
         }, Config.autosaveSeconds, TimeUnit.SECONDS);
     }
@@ -40,7 +42,9 @@ public final class MinionSaver {
 
             ObjectArrayList<Minion> copy = MinionWorldCache.copy();
             AxMinionsPlugin.instance().handler().saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
-                LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+                if (Config.debug) {
+                    LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+                }
             }).join();
         }
     }

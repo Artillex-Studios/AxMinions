@@ -32,7 +32,9 @@ public final class Minions {
         }
         this.loadingMinions.clear();
 
-        LogUtils.debug("Reloading minions!");
+        if (com.artillexstudios.axminions.config.Config.debug) {
+            LogUtils.debug("Reloading minions!");
+        }
         for (String minion : MinionTypes.types().toArray(new String[0])) {
             LogUtils.debug("Unregistering {}", minion);
             MinionTypes.unregister(minion);
@@ -44,7 +46,9 @@ public final class Minions {
         }
         Collection<File> files = FileUtils.listFiles(this.minionsDirectory, new String[]{"yaml", "yml"}, true);
 
-        LogUtils.debug("Parsing minion configs {}", String.join(", ", files.stream().map(File::getName).toList()));
+        if (com.artillexstudios.axminions.config.Config.debug) {
+            LogUtils.debug("Parsing minion configs {}", String.join(", ", files.stream().map(File::getName).toList()));
+        }
 
         for (File file : files) {
             if (!YamlUtils.suggest(file)) {
