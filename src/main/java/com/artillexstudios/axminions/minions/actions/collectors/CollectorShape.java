@@ -30,6 +30,7 @@ public enum CollectorShape {
             final int zStart = (int) Math.round(blockZ - range);
             final int zEnd = (int) Math.round(blockZ + range);
 
+            final Location newLocation = new Location(world, 0, 0, 0);
             for (int x = xStart; x <= xEnd; x++) {
                 final int xDistance = (blockX - x) * (blockX - x);
                 for (int y = yStart; y <= yEnd; y++) {
@@ -41,7 +42,9 @@ public enum CollectorShape {
 
                         if (distance < rangeSquared && distance < smallRangeSquared) {
                             try {
-                                Location newLocation = new Location(world, x, y, z);
+                                newLocation.setX(x);
+                                newLocation.setY(y);
+                                newLocation.setZ(z);
                                 for (Filter<?> filter : filters) {
                                     if (!filter.isAllowed(newLocation)) {
                                         continue z;
@@ -81,6 +84,7 @@ public enum CollectorShape {
             final int zStart = (int) Math.round(blockZ - range);
             final int zEnd = (int) Math.round(blockZ + range);
 
+            final Location newLocation = new Location(world, 0, blockY, 0);
             for (int x = xStart; x <= xEnd; x++) {
                 final int xDistance = (blockX - x) * (blockX - x);
                 z:
@@ -90,7 +94,8 @@ public enum CollectorShape {
 
                     if (distance < rangeSquared && distance < smallRangeSquared) {
                         try {
-                            Location newLocation = new Location(world, x, blockY, z);
+                            newLocation.setX(x);
+                            newLocation.setZ(z);
                             for (Filter<?> filter : filters) {
                                 if (!filter.isAllowed(newLocation)) {
                                     continue z;
@@ -127,11 +132,13 @@ public enum CollectorShape {
             final int zStart = (int) Math.round(blockZ - range);
             final int zEnd = (int) Math.round(blockZ + range);
 
+            final Location newLocation = new Location(world, 0, blockY, 0);
             for (int x = xStart; x <= xEnd; x++) {
                 z:
                 for (int z = zStart; z <= zEnd; z++) {
                     try {
-                        Location newLocation = new Location(world, x, blockY, z);
+                        newLocation.setX(x);
+                        newLocation.setZ(z);
                         for (Filter<?> filter : filters) {
                             if (!filter.isAllowed(newLocation)) {
                                 continue z;
@@ -169,12 +176,15 @@ public enum CollectorShape {
             final int zStart = (int) Math.round(blockZ - range);
             final int zEnd = (int) Math.round(blockZ + range);
 
+            final Location newLocation = new Location(world, 0, 0, 0);
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     z:
                     for (int z = zStart; z <= zEnd; z++) {
                         try {
-                            Location newLocation = new Location(world, x, y, z);
+                            newLocation.setX(x);
+                            newLocation.setY(y);
+                            newLocation.setZ(z);
                             for (Filter<?> filter : filters) {
                                 if (!filter.isAllowed(newLocation)) {
                                     continue z;
