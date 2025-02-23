@@ -1,9 +1,9 @@
 package com.artillexstudios.axminions.listeners;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

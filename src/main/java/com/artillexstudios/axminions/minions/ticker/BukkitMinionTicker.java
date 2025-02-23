@@ -29,7 +29,7 @@ public final class BukkitMinionTicker implements MinionTicker {
                 minion.tick();
             }
             event.commit();
-        }, 1, Config.TICK_FREQUENCY);
+        }, 1, Config.tickFrequency);
     }
 
 

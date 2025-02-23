@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.utils.ChunkPos;
-import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
+// TODO: Lockless implementation
 public final class MinionArea {
     private final ObjectArrayList<ChunkPos> positions = new ObjectArrayList<>(32);
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

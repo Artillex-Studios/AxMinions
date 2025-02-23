@@ -1,9 +1,11 @@
 package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
-import com.artillexstudios.axapi.libs.libby.BukkitLibraryManager;
-import com.artillexstudios.axapi.utils.FeatureFlags;
+import com.artillexstudios.axapi.metrics.AxMetrics;
+import com.artillexstudios.axapi.utils.AsyncUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.PaperUtils;
+import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axminions.command.AxMinionsCommand;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
@@ -21,37 +23,43 @@ import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
 import com.artillexstudios.axminions.minions.ticker.FoliaMinionTicker;
-import com.artillexstudios.axminions.utils.AsyncUtils;
-import com.artillexstudios.axminions.utils.LogUtils;
 import com.artillexstudios.axminions.utils.ReloadUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import revxrsal.zapper.DependencyManager;
+import revxrsal.zapper.relocation.Relocation;
+import revxrsal.zapper.repository.Repository;
 
 import java.util.concurrent.CompletableFuture;
 
 public final class AxMinionsPlugin extends AxPlugin {
     private static AxMinionsPlugin instance;
-    private Metrics metrics;
+    private DatabaseConnector connector;
+    private DataHandler handler;
+    private AxMetrics metrics;
     private MinionTicker ticker;
     private MinionSaver minionSaver;
 
-    public static AxMinionsPlugin getInstance() {
-        return instance;
+    @Override
+    public void updateFlags(FeatureFlags flags) {
+        flags.PACKET_ENTITY_TRACKER_ENABLED.set(true);
     }
 
     @Override
-    public void updateFlags() {
-        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true);
+    public void dependencies(DependencyManager manager) {
+        manager.repository(Repository.maven("https://redempt.dev/"));
+        manager.dependency("com{}github{}Redempt:Crunch:2.0.3".replace("{}", "."));
+        manager.dependency("org{}jooq:jooq:3.19.10".replace("{}", "."));
+        manager.dependency("com{}zaxxer:HikariCP:5.1.0".replace("{}", "."));
+        manager.relocate(new Relocation("org{}jooq".replace("{}", "."), "com.artillexstudios.axminions.jooq"));
+        manager.relocate(new Relocation("redempt{}crunch".replace("{}", "."), "com.artillexstudios.axminions.crunch"));
+        manager.relocate(new Relocation("com{}zaxxer".replace("{}", "."), "com.artillexstudios.axminions.hikaricp"));
     }
 
     @Override
     public void load() {
-        BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
-        libraryManager.configureFromJSON("libraries.json");
-
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
                 .setNamespace("axminions")
                 .skipReloadDatapacks(true)
@@ -61,20 +69,20 @@ public final class AxMinionsPlugin extends AxPlugin {
     @Override
     public void enable() {
         instance = this;
-        Config.reload();
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(ReloadUtils::isReload)) {
             LogUtils.error("AxMinions does not support reloading! Disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        AsyncUtils.setup();
+        Config.reload();
+        AsyncUtils.setup(Config.asyncProcessorPoolSize);
+        this.metrics = new AxMetrics(this, 5);
+        this.metrics.start();
 
-        if (Config.USE_BSTATS) {
-            this.metrics = new Metrics(this, 19043);
-        }
-
-        DataHandler.setup().thenRun(() -> LogUtils.debug("Loaded database!"));
+        this.connector = new DatabaseConnector();
+        this.handler = new DataHandler(this.connector);
+        this.handler.setup().thenRun(() -> LogUtils.debug("Loaded database!"));
 
         Language.reload();
         Skins.reload();
@@ -88,7 +96,7 @@ public final class AxMinionsPlugin extends AxPlugin {
             Minions.loadingMinions().clear();
 
             for (World world : Bukkit.getWorlds()) {
-                DataHandler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
+                this.handler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
                     LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
                 });
             }
@@ -117,13 +125,21 @@ public final class AxMinionsPlugin extends AxPlugin {
     @Override
     public void disable() {
         if (this.metrics != null) {
-            this.metrics.shutdown();
+            this.metrics.cancel();
         }
 
-        this.minionSaver.stop();
-        this.ticker.cancel();
         CommandAPI.onDisable();
+        this.ticker.cancel();
+        this.minionSaver.stop();
         AsyncUtils.stop();
-        DatabaseConnector.getInstance().close();
+        this.connector.close();
+    }
+
+    public DataHandler handler() {
+        return this.handler;
+    }
+
+    public static AxMinionsPlugin instance() {
+        return instance;
     }
 }

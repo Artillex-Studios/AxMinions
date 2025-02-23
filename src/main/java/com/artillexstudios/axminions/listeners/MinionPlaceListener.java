@@ -4,6 +4,8 @@ import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
@@ -14,7 +16,6 @@ import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.users.User;
 import com.artillexstudios.axminions.users.Users;
 import com.artillexstudios.axminions.utils.LocationUtils;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -96,12 +97,12 @@ public final class MinionPlaceListener implements Listener {
         LogUtils.debug("Minion count for user: " + user.minionCount());
         // TODO: Database queries, etc..
         MinionData data = MinionData.fromItem(user, wrappedItemStack);
-        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
+//        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
         Minion minion = new Minion(location, data);
         MinionWorldCache.add(minion);
         user.minionCount(user.minionCount() + 1);
 
-        DataHandler.insertMinion(minion).thenRun(() -> {
+        AxMinionsPlugin.instance().handler().insertMinion(minion).thenRun(() -> {
             LogUtils.debug("Inserted minion!");
             minion.spawn();
             area.startTicking(location.getChunk());

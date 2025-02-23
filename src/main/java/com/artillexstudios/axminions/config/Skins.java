@@ -33,7 +33,7 @@ public final class Skins {
         if (config != null) {
             config.reload();
         } else {
-            config = new com.artillexstudios.axapi.config.Config(file, AxMinionsPlugin.getInstance().getResource("skins.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+            config = new com.artillexstudios.axapi.config.Config(file, AxMinionsPlugin.instance().getResource("skins.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
         }
 
         SkinRegistry.clear();

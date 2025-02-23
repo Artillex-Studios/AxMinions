@@ -18,13 +18,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public final class DatabaseConnector {
-    private static final DatabaseConnector INSTANCE = new DatabaseConnector();
     private static final Logger log = LoggerFactory.getLogger(DatabaseConnector.class);
     private final DSLContext context;
     private final HikariDataSource dataSource;
 
-    private DatabaseConnector() {
-        this.dataSource = new HikariDataSource(Config.DATABASE_TYPE.getConfig());
+    public DatabaseConnector() {
+        this.dataSource = new HikariDataSource(Config.database.type.getConfig());
 
         Settings settings = new Settings()
                 .withRenderNameCase(RenderNameCase.LOWER)
@@ -46,7 +45,7 @@ public final class DatabaseConnector {
                     log.error("An exception occurred while releasing connection!", exception);
                 }
             }
-        }, Config.DATABASE_TYPE.getType(), settings);
+        }, Config.database.type.getType(), settings);
     }
 
     public DSLContext context() {
@@ -64,9 +63,5 @@ public final class DatabaseConnector {
 
     public void close() {
         this.dataSource.close();
-    }
-
-    public static DatabaseConnector getInstance() {
-        return INSTANCE;
     }
 }

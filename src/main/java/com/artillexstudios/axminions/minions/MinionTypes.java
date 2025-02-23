@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions;
 
-import com.artillexstudios.axminions.utils.LogUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

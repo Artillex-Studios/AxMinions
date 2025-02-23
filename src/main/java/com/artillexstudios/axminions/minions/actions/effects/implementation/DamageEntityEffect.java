@@ -24,7 +24,7 @@ public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Entity argument) {
-        if (Config.INSTANT_KILL) {
+        if (Config.instantKill) {
             // TODO: maybe we can get the loot of an entity with the stacker's api
             long stackSize = Integrations.STACKER.getStackSize(argument);
 

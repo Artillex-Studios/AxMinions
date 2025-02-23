@@ -1,9 +1,9 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

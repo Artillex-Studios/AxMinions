@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
@@ -9,7 +10,6 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.minions.actions.effects.Effects;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirements;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;

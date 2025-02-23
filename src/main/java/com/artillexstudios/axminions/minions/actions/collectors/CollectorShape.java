@@ -1,8 +1,8 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;

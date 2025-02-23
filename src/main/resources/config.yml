@@ -44,10 +44,6 @@ async-hand-animation: false
 # like database queries and asynchronous hand animations.
 async-processor-pool-size: 3
 
-# If the minions should require a tool to be provided by the player.
-# If this option is false, the minion's default tool will be used
-require-tool: true
-
 # If the minion should kill the entity instantly, and not
 # deal the amount of damage the item would deal.
 instant-kill: false

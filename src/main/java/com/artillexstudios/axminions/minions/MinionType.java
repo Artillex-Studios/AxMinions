@@ -5,13 +5,13 @@ import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.ItemBuilder;
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
-import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
 import com.artillexstudios.axminions.minions.actions.CompiledAction;
 import com.artillexstudios.axminions.utils.FieldAccessors;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,7 +39,7 @@ public final class MinionType {
     }
 
     public CompletionStage<Void> load() {
-        return DataHandler.insertType(this).thenAccept(result -> {
+        return AxMinionsPlugin.instance().handler().insertType(this).thenAccept(result -> {
             if (result == null) {
                 return;
             }
@@ -101,7 +100,7 @@ public final class MinionType {
         CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
         tag.putString("axminions_minion_type", this.name);
         tag.putInt("axminions_minion_level", data.level().id());
-        if (com.artillexstudios.axminions.config.Config.SAVE_STATISTICS) {
+        if (com.artillexstudios.axminions.config.Config.saveStatistics) {
             tag.putString("axminions_minion_statistics", MinionData.serialize(data.extraData()));
         }
         tag.putString("axminions_minion_skin", data.skin() == null ? "" : data.skin().id());

@@ -1,10 +1,10 @@
 package com.artillexstudios.axminions.config;
 
 import com.artillexstudios.axapi.config.Config;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.io.FileUtils;
 

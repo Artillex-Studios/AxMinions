@@ -28,7 +28,7 @@ public final class FoliaMinionTicker implements MinionTicker {
                 });
             }
             event.commit();
-        }, 1, Config.TICK_FREQUENCY);
+        }, 1, Config.tickFrequency);
     }
 
     private void tickChunk(ChunkPos position) {

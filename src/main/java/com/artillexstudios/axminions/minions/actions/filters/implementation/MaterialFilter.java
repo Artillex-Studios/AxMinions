@@ -1,16 +1,16 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
+import com.artillexstudios.axapi.collections.IdentityArrayMap;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class MaterialFilter extends Filter<Material> {
-    private final Set<Material> allowed = Collections.newSetFromMap(new EnumMap<>(Material.class));
+    private final Set<Material> allowed = Collections.newSetFromMap(new IdentityArrayMap<>());
 
     public MaterialFilter(Map<Object, Object> configuration) {
         this.addTransformer(Location.class, new Transformer<Location, Material>() {

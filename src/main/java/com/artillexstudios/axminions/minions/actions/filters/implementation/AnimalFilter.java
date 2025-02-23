@@ -5,7 +5,7 @@ import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -13,13 +13,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public final class EntityTypeFilter extends Filter<EntityType> {
+public final class AnimalFilter extends Filter<EntityType> {
     private final Set<EntityType> allowed = Collections.newSetFromMap(new IdentityArrayMap<>());
 
-    public EntityTypeFilter(Map<Object, Object> configuration) {
+    public AnimalFilter(Map<Object, Object> configuration) {
         this.addTransformer(Entity.class, new Transformer<Entity, EntityType>() {
             @Override
             public EntityType transform(Object object) {
@@ -54,59 +52,16 @@ public final class EntityTypeFilter extends Filter<EntityType> {
             }
         });
 
-        List<String> whitelist = (List<String>) configuration.get("whitelist");
-        if (whitelist != null) {
-            for (String s : whitelist) {
-                if (s.equals("*")) {
-                    this.allowed.addAll(List.of(EntityType.values()));
-                } else {
-                    List<EntityType> entityTypes = match(s);
-                    if (entityTypes == null) {
-                        LogUtils.warn("No entitytype matching {} was found!", s);
-                        continue;
-                    }
-
-                    this.allowed.addAll(entityTypes);
-                }
-            }
-        }
-
-        List<String> blacklist = (List<String>) configuration.get("blacklist");
-        if (blacklist != null) {
-            for (String s : blacklist) {
-                if (s.equals("*")) {
-                    List.of(EntityType.values()).forEach(this.allowed::remove);
-                } else {
-                    List<EntityType> entityTypes = match(s);
-                    if (entityTypes == null) {
-                        LogUtils.warn("No entitytype matching {} was found!", s);
-                        continue;
-                    }
-
-                    entityTypes.forEach(this.allowed::remove);
-                }
-            }
-        }
-    }
-
-    private static List<EntityType> match(String material) {
-        ObjectArrayList<EntityType> materials = null;
-        Pattern pattern = Pattern.compile(material, Pattern.CASE_INSENSITIVE);
-
-        for (EntityType m : EntityType.values()) {
-            Matcher matcher = pattern.matcher(m.name());
-            if (!matcher.find()) {
+        for (EntityType entityType : EntityType.values()) {
+            Class<?> entityClass = entityType.getEntityClass();
+            if (entityClass == null) {
                 continue;
             }
 
-            if (materials == null) {
-                materials = new ObjectArrayList<>();
+            if (Animals.class.isAssignableFrom(entityClass)) {
+                this.allowed.add(entityType);
             }
-
-            materials.add(m);
         }
-
-        return materials;
     }
 
     @Override

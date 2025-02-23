@@ -2,17 +2,17 @@ package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
-import com.artillexstudios.axapi.items.component.ProfileProperties;
+import com.artillexstudios.axapi.items.component.type.ProfileProperties;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axapi.packetentity.PacketEntity;
 import com.artillexstudios.axapi.packetentity.meta.entity.ArmorStandMeta;
 import com.artillexstudios.axapi.packetentity.meta.serializer.Accessors;
+import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
-import com.artillexstudios.axminions.utils.AsyncUtils;
 import com.artillexstudios.axminions.utils.Direction;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,30 +46,26 @@ public final class Minion {
     }
 
     public void tick() {
-        this.tick += Config.TICK_FREQUENCY;
-        if (this.tick < this.minionData.level().actionTicks() * Config.TICK_FREQUENCY) {
-            if (Config.SHOW_HAND_ANIMATION) {
+        this.tick += Config.tickFrequency;
+        if (this.tick < this.minionData.level().actionTicks() * Config.tickFrequency) {
+            if (Config.showHandAnimation) {
                 AsyncUtils.run(() -> {
-                    if (this.armTick >= 20 * Config.TICK_FREQUENCY) return;
+                    if (this.armTick >= (20 * Config.tickFrequency)) return;
                     ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
-                    meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) this.armTick / 10)), 0, 0));
-                    this.armTick += (2 * Config.TICK_FREQUENCY);
-                }, Config.ASYNC_HAND_ANIMATION);
+                    meta.metadata().set(Accessors.RIGHT_ARM_ROTATION, new EulerAngle((-2 + ((double) (this.armTick * Config.tickFrequency) / 10)), 0, 0));
+                    this.armTick += (2 * Config.tickFrequency);
+                }, Config.asyncHandAnimation);
             }
             return;
         }
 
         this.tick = 0;
-        if (Config.SHOW_HAND_ANIMATION & this.minionData.type().tick(this)) {
+        if (Config.showHandAnimation & this.minionData.type().tick(this)) {
             this.armTick = 0;
         }
 
         Integrations.STORAGE.flush(this.minionData.linkedChest());
         Integrations.STORAGE.flushDrops(this.location);
-    }
-
-    public void refresh() {
-
     }
 
     public void skin(Skin skin) {

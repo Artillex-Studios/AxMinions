@@ -1,8 +1,9 @@
 package com.artillexstudios.axminions.minions;
 
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.database.DataHandler;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.concurrent.Executors;
@@ -26,10 +27,10 @@ public final class MinionSaver {
 
         this.future = this.service.schedule(() -> {
             ObjectArrayList<Minion> copy = MinionWorldCache.copy();
-            DataHandler.saveMinions(copy).thenAccept(pair -> {
+            AxMinionsPlugin.instance().handler().saveMinions(copy).thenAccept(pair -> {
                 LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
             });
-        }, Config.AUTOSAVE_SECONDS, TimeUnit.SECONDS);
+        }, Config.autosaveSeconds, TimeUnit.SECONDS);
     }
 
     public void stop() {
@@ -38,7 +39,7 @@ public final class MinionSaver {
             this.future = null;
 
             ObjectArrayList<Minion> copy = MinionWorldCache.copy();
-            DataHandler.saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
+            AxMinionsPlugin.instance().handler().saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
                 LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
             }).join();
         }

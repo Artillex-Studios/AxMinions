@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.command;
 
 import com.artillexstudios.axapi.utils.ContainerUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.command.arguments.MinionLevelArgument;
@@ -9,7 +10,6 @@ import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
 import com.artillexstudios.axminions.config.Minions;
 import com.artillexstudios.axminions.config.Skins;
-import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;
@@ -19,7 +19,6 @@ import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.utils.Direction;
 import com.artillexstudios.axminions.utils.FileUtils;
 import com.artillexstudios.axminions.utils.LocationUtils;
-import com.artillexstudios.axminions.utils.LogUtils;
 import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
@@ -67,7 +66,7 @@ public final class AxMinionsCommand {
                         .withPermission("axminions.command.version")
                         .executes((sender, args) -> {
                             MessageUtils.sendMessage(sender, Language.PREFIX, "<green>You are running <white>AxMinions</white> version <white><version></white> on <white><implementation></white> version <white><implementation-version></white> (Implementing API version <white><api-version></white>)",
-                                    Placeholder.unparsed("version", AxMinionsPlugin.getInstance().getDescription().getVersion()),
+                                    Placeholder.unparsed("version", AxMinionsPlugin.instance().getDescription().getVersion()),
                                     Placeholder.unparsed("implementation", Bukkit.getName()),
                                     Placeholder.unparsed("implementation-version", Bukkit.getVersion()),
                                     Placeholder.unparsed("api-version", Bukkit.getBukkitVersion())
@@ -106,7 +105,7 @@ public final class AxMinionsCommand {
                                 Minions.loadingMinions().clear();
 
                                 for (World world : worlds) {
-                                    DataHandler.loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
+                                    AxMinionsPlugin.instance().handler().loadMinions(world).toCompletableFuture().thenAccept(loaded -> {
                                         LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), world.getName(), loaded.secondLong() / 1_000_000);
                                         if (counter.incrementAndGet() != futures.length * worlds.size()) {
                                             return;

@@ -12,7 +12,7 @@ public enum DatabaseType {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
             hikariConfig.setPoolName("axminions-database-pool");
-            hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
+            hikariConfig.setMaximumPoolSize(Config.database.pool.maximumPoolSize);
             hikariConfig.addDataSourceProperty("url", "jdbc:h2:./" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;IGNORECASE=TRUE");
             return hikariConfig;
         }
@@ -23,7 +23,7 @@ public enum DatabaseType {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setDriverClassName("org.sqlite.JDBC");
             hikariConfig.setPoolName("axminions-database-pool");
-            hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
+            hikariConfig.setMaximumPoolSize(Config.database.pool.maximumPoolSize);
             hikariConfig.setJdbcUrl("jdbc:sqlite:" + FileUtils.PLUGIN_DIRECTORY.toFile() + "/data");
             return hikariConfig;
         }
@@ -33,16 +33,16 @@ public enum DatabaseType {
         public HikariConfig getConfig() {
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setPoolName("axminions-database-pool");
-            hikariConfig.setMaximumPoolSize(Config.DATABASE_MAXIMUM_POOL_SIZE);
-            hikariConfig.setMinimumIdle(Config.DATABASE_MINIMUM_IDLE);
-            hikariConfig.setMaxLifetime(Config.DATABASE_MAXIMUM_LIFETIME);
-            hikariConfig.setKeepaliveTime(Config.DATABASE_KEEPALIVE_TIME);
-            hikariConfig.setConnectionTimeout(Config.DATABASE_CONNECTION_TIMEOUT);
+            hikariConfig.setMaximumPoolSize(Config.database.pool.maximumPoolSize);
+            hikariConfig.setMinimumIdle(Config.database.pool.minimumIdle);
+            hikariConfig.setMaxLifetime(Config.database.pool.maximumLifetime);
+            hikariConfig.setKeepaliveTime(Config.database.pool.keepaliveTime);
+            hikariConfig.setConnectionTimeout(Config.database.pool.connectionTimeout);
 
             hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
-            hikariConfig.setJdbcUrl("jdbc:mysql://" + Config.DATABASE_ADDRESS + ":" + Config.DATABASE_PORT + "/" + Config.DATABASE_DATABASE);
-            hikariConfig.addDataSourceProperty("user", Config.DATABASE_USERNAME);
-            hikariConfig.addDataSourceProperty("password", Config.DATABASE_PASSWORD);
+            hikariConfig.setJdbcUrl("jdbc:mysql://" + Config.database.address + ":" + Config.database.port + "/" + Config.database.database);
+            hikariConfig.addDataSourceProperty("user", Config.database.username);
+            hikariConfig.addDataSourceProperty("password", Config.database.password);
             return hikariConfig;
         }
     };

@@ -1,10 +1,11 @@
 package com.artillexstudios.axminions.listeners;
 
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.users.Users;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +15,7 @@ public final class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        DataHandler.loadUser(event.getPlayer()).thenAccept(user -> {
+        AxMinionsPlugin.instance().handler().loadUser(event.getPlayer()).thenAccept(user -> {
             if (user == null) {
                 LogUtils.warn("Failed to load user data for player {}!", event.getPlayer().getName());
                 return;

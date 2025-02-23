@@ -1,9 +1,9 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Filters;
-import com.artillexstudios.axminions.utils.LogUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import redempt.crunch.Crunch;
 

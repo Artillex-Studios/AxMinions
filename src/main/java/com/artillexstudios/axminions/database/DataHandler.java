@@ -1,8 +1,10 @@
 package com.artillexstudios.axminions.database;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.nms.NMSHandlers;
+import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.scheduler.Scheduler;
+import com.artillexstudios.axapi.utils.AsyncUtils;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
@@ -11,9 +13,7 @@ import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.users.User;
-import com.artillexstudios.axminions.utils.AsyncUtils;
 import com.artillexstudios.axminions.utils.Direction;
-import com.artillexstudios.axminions.utils.LogUtils;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntLongPair;
 import it.unimi.dsi.fastutil.longs.LongLongPair;
@@ -22,14 +22,11 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.impl.SQLDataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,27 +34,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 
 public final class DataHandler {
     private static final int FAILED_QUERY = -3042141;
-    private static final Logger log = LoggerFactory.getLogger(DataHandler.class);
+    private final DatabaseConnector connector;
 
-    public static CompletionStage<Void> setup() {
+    public DataHandler(DatabaseConnector connector) {
+        this.connector = connector;
+    }
+
+    public CompletionStage<Void> setup() {
         ArrayList<CompletableFuture<Integer>> futures = new ArrayList<>();
 
-        CompletionStage<Integer> types = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.TYPES)
+        CompletionStage<Integer> types = this.connector.context().createTableIfNotExists(Tables.TYPES)
                 .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
                 .column(Fields.NAME, SQLDataType.VARCHAR(64))
                 .primaryKey(Fields.ID)
                 .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
-                    log.error("An unexpected error occurred while running type table creation query!", throwable);
+                    LogUtils.error("An unexpected error occurred while running type table creation query!", throwable);
                     return FAILED_QUERY;
                 });
 
         futures.add(types.toCompletableFuture());
-        CompletionStage<Integer> users = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.USERS)
+        CompletionStage<Integer> users = this.connector.context().createTableIfNotExists(Tables.USERS)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
                 .column(Fields.UUID, SQLDataType.UUID)
                 .column(Fields.NAME, SQLDataType.VARCHAR(16))
@@ -66,25 +66,25 @@ public final class DataHandler {
                 .primaryKey(Fields.ID)
                 .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
-                    log.error("An unexpected error occurred while running user table creation query!", throwable);
+                    LogUtils.error("An unexpected error occurred while running user table creation query!", throwable);
                     return FAILED_QUERY;
                 });
 
         futures.add(users.toCompletableFuture());
 
-        CompletionStage<Integer> worlds = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.WORLDS)
+        CompletionStage<Integer> worlds = this.connector.context().createTableIfNotExists(Tables.WORLDS)
                 .column(Fields.ID, SQLDataType.SMALLINT.identity(true))
                 .column(Fields.WORLD_UUID, SQLDataType.UUID)
                 .primaryKey(Fields.ID)
                 .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
-                    log.error("An unexpected error occurred while running world table creation query!", throwable);
+                    LogUtils.error("An unexpected error occurred while running world table creation query!", throwable);
                     return FAILED_QUERY;
                 }, AsyncUtils.executor());
 
         futures.add(worlds.toCompletableFuture());
 
-        CompletionStage<Integer> locations = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.LOCATIONS)
+        CompletionStage<Integer> locations = this.connector.context().createTableIfNotExists(Tables.LOCATIONS)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
                 .column(Fields.WORLD_ID, SQLDataType.SMALLINT)
                 .column(Fields.LOCATION_X, SQLDataType.INTEGER)
@@ -93,13 +93,13 @@ public final class DataHandler {
                 .primaryKey(Fields.ID)
                 .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
-                    log.error("An unexpected error occurred while running locations table creation query!", throwable);
+                    LogUtils.error("An unexpected error occurred while running locations table creation query!", throwable);
                     return FAILED_QUERY;
                 }, AsyncUtils.executor());
 
         futures.add(locations.toCompletableFuture());
 
-        CompletionStage<Integer> minions = DatabaseConnector.getInstance().context().createTableIfNotExists(Tables.MINIONS)
+        CompletionStage<Integer> minions = this.connector.context().createTableIfNotExists(Tables.MINIONS)
                 .column(Fields.ID, SQLDataType.INTEGER.identity(true))
                 .column(Fields.LOCATION_ID, SQLDataType.INTEGER)
                 .column(Fields.OWNER_ID, SQLDataType.INTEGER)
@@ -112,18 +112,18 @@ public final class DataHandler {
                 .primaryKey(Fields.ID)
                 .executeAsync(AsyncUtils.executor())
                 .exceptionallyAsync(throwable -> {
-                    log.error("An unexpected error occurred while running minions table creation query!", throwable);
+                    LogUtils.error("An unexpected error occurred while running minions table creation query!", throwable);
                     return FAILED_QUERY;
                 }, AsyncUtils.executor());
 
         futures.add(minions.toCompletableFuture());
-        if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
+        if (Config.database.type == DatabaseType.SQLITE) {
             CompletableFuture<Integer> pragma = new CompletableFuture<>();
             AsyncUtils.executor().submit(() -> {
-                DatabaseConnector.getInstance().context().fetch("PRAGMA journal_mode=WAL;");
-                DatabaseConnector.getInstance().context().execute("PRAGMA synchronous = off;");
-                DatabaseConnector.getInstance().context().execute("PRAGMA page_size = 32768;");
-                DatabaseConnector.getInstance().context().fetch("PRAGMA mmap_size = 30000000000;");
+                this.connector.context().fetch("PRAGMA journal_mode=WAL;");
+                this.connector.context().execute("PRAGMA synchronous = off;");
+                this.connector.context().execute("PRAGMA page_size = 32768;");
+                this.connector.context().fetch("PRAGMA mmap_size = 30000000000;");
                 pragma.complete(1);
             });
             futures.add(pragma);
@@ -132,11 +132,13 @@ public final class DataHandler {
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
-    public static CompletionStage<User> loadUser(Player player) {
-        String texture = NMSHandlers.getNmsHandler().textures(player).getFirst();
-        LogUtils.debug("Updating user! Texture: {}", texture == null ? "null" : texture);
+    public CompletionStage<User> loadUser(Player player) {
+        String texture = ServerPlayerWrapper.wrap(player).textures(player).texture();
+        if (Config.debug) {
+            LogUtils.debug("Updating user! Texture: {}", texture == null ? "null" : texture);
+        }
         return CompletableFuture.supplyAsync(() -> {
-            Result<Record> select = DatabaseConnector.getInstance().context()
+            Result<Record> select = this.connector.context()
                     .select()
                     .from(Tables.USERS)
                     .where(Fields.UUID.eq(player.getUniqueId()))
@@ -145,10 +147,12 @@ public final class DataHandler {
 
             if (!select.isEmpty()) {
                 Record record = select.get(0);
-                LogUtils.debug("User data select record: {}", record);
+                if (Config.debug) {
+                    LogUtils.debug("User data select record: {}", record);
+                }
                 int ownerId = record.get(Fields.ID);
 
-                Result<Record1<Integer>> minionSelect = DatabaseConnector.getInstance().context()
+                Result<Record1<Integer>> minionSelect = this.connector.context()
                         .selectCount()
                         .from(Tables.MINIONS)
                         .where(Fields.OWNER_ID.eq(ownerId))
@@ -165,7 +169,7 @@ public final class DataHandler {
                 return new User(ownerId, player.getUniqueId(), player.getName(), texture, 0, record.get(Fields.EXTRA_SLOTS, int.class), record.get(Fields.ISLAND_SLOTS, int.class), new ArrayList<>());
             }
 
-            Record1<Integer> insert = DatabaseConnector.getInstance().context()
+            Record1<Integer> insert = this.connector.context()
                     .insertInto(Tables.USERS)
                     .set(Fields.UUID, player.getUniqueId())
                     .set(Fields.NAME, player.getName())
@@ -180,13 +184,13 @@ public final class DataHandler {
 
             return new User(insert.get(Fields.ID), player.getUniqueId(), player.getName(), texture, 0, 0, 0, new ArrayList<>());
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
-            log.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
+            LogUtils.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
             return null;
         }, AsyncUtils.executor());
     }
 
-    public static short worldId(World world) {
-        Result<Record> select = DatabaseConnector.getInstance().context()
+    public short worldId(World world) {
+        Result<Record> select = this.connector.context()
                 .select()
                 .from(Tables.WORLDS)
                 .where(Fields.WORLD_UUID.eq(world.getUID()))
@@ -195,11 +199,13 @@ public final class DataHandler {
 
         if (!select.isEmpty()) {
             Record record = select.get(0);
-            LogUtils.debug("World select record: {}", record);
+            if (Config.debug) {
+                LogUtils.debug("World select record: {}", record);
+            }
             return record.get(Fields.ID, short.class);
         }
 
-        Record1<Integer> insert = DatabaseConnector.getInstance().context()
+        Record1<Integer> insert = this.connector.context()
                 .insertInto(Tables.WORLDS)
                 .set(Fields.WORLD_UUID, world.getUID())
                 .returningResult(Fields.ID)
@@ -212,8 +218,8 @@ public final class DataHandler {
         return insert.get(Fields.ID, short.class);
     }
 
-    public static int locationId(int world, Location location) {
-        Result<Record> select = DatabaseConnector.getInstance().context()
+    public int locationId(int world, Location location) {
+        Result<Record> select = this.connector.context()
                 .select()
                 .from(Tables.LOCATIONS)
                 .where(Fields.WORLD_ID.eq(world)
@@ -225,11 +231,13 @@ public final class DataHandler {
 
         if (!select.isEmpty()) {
             Record record = select.get(0);
-            LogUtils.debug("Location select record: {}", record);
+            if (Config.debug) {
+                LogUtils.debug("Location select record: {}", record);
+            }
             return record.get(Fields.ID);
         }
 
-        Record1<Integer> insert = DatabaseConnector.getInstance().context()
+        Record1<Integer> insert = this.connector.context()
                 .insertInto(Tables.LOCATIONS)
                 .set(Fields.WORLD_ID, world)
                 .set(Fields.LOCATION_X, location.getBlockX())
@@ -245,8 +253,8 @@ public final class DataHandler {
         return insert.get(Fields.ID);
     }
 
-    public static String minionType(short id) {
-        return DatabaseConnector.getInstance().context()
+    public String minionType(short id) {
+        return this.connector.context()
                 .select()
                 .from(Tables.TYPES)
                 .where(Fields.ID.eq((int) id))
@@ -254,26 +262,26 @@ public final class DataHandler {
                 .fetchSingle(Fields.NAME);
     }
 
-    public static CompletionStage<Void> insertMinion(Minion minion) {
+    public CompletionStage<Void> insertMinion(Minion minion) {
         return CompletableFuture.runAsync(() -> {
             World world = minion.location().getWorld();
             if (world == null) {
                 return;
             }
 
-            int worldId = worldId(world);
+            int worldId = this.worldId(world);
             if (worldId == FAILED_QUERY) {
-                log.error("Failed worldId fetching!");
+                LogUtils.error("Failed worldId fetching!");
                 return;
             }
 
-            int locationId = locationId(worldId, minion.location());
+            int locationId = this.locationId(worldId, minion.location());
             if (locationId == FAILED_QUERY) {
-                log.error("Failed locationId fetching!");
+                LogUtils.error("Failed locationId fetching!");
                 return;
             }
 
-            DatabaseConnector.getInstance().context()
+            this.connector.context()
                     .insertInto(Tables.MINIONS)
                     .set(Fields.LOCATION_ID, locationId)
                     .set(Fields.OWNER_ID, minion.ownerId())
@@ -285,23 +293,23 @@ public final class DataHandler {
                     .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                     .execute();
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
-            log.error("An unexpected error occurred while inserting minion!", throwable);
+            LogUtils.error("An unexpected error occurred while inserting minion!", throwable);
             return null;
         }, AsyncUtils.executor());
     }
 
-    public static CompletionStage<IntLongPair> loadMinions(World world) {
+    public CompletionStage<IntLongPair> loadMinions(World world) {
         return CompletableFuture.supplyAsync(() -> {
             int loadedMinions = 0;
             long start = System.nanoTime();
-            int worldId = worldId(world);
+            int worldId = this.worldId(world);
             if (worldId == FAILED_QUERY) {
-                log.error("Failed worldId fetching when loading minions!");
+                LogUtils.error("Failed worldId fetching when loading minions!");
                 return IntLongPair.of(0, 0);
             }
 
             List<Minion> toLoad = new ArrayList<>();
-            Result<Record> locations = DatabaseConnector.getInstance().context()
+            Result<Record> locations = this.connector.context()
                     .select()
                     .from(Tables.LOCATIONS)
                     .where(Fields.WORLD_ID.eq(worldId))
@@ -309,7 +317,7 @@ public final class DataHandler {
 
             for (Record location : locations) {
                 int id = location.get(Fields.ID);
-                Result<Record> minions = DatabaseConnector.getInstance().context()
+                Result<Record> minions = this.connector.context()
                         .select()
                         .from(Tables.MINIONS)
                         .where(Fields.LOCATION_ID.eq(id))
@@ -357,15 +365,15 @@ public final class DataHandler {
             long took = System.nanoTime() - start;
             return IntLongPair.of(loadedMinions, took);
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
-            log.error("An unexpected error occurred while loading minions in world {}!", world.getName(), throwable);
+            LogUtils.error("An unexpected error occurred while loading minions in world {}!", world.getName(), throwable);
             return IntLongPair.of(0, 0);
         }, AsyncUtils.executor());
     }
 
-    public static CompletionStage<Short> insertType(MinionType type) {
+    public CompletionStage<Short> insertType(MinionType type) {
         Preconditions.checkNotNull(type, "Tried to insert null miniontype");
         return CompletableFuture.supplyAsync(() -> {
-            Result<Record> select = DatabaseConnector.getInstance().context()
+            Result<Record> select = this.connector.context()
                     .select()
                     .from(Tables.TYPES.getName().toLowerCase(Locale.ENGLISH))
                     .where(Fields.NAME.eq(type.name()))
@@ -374,11 +382,13 @@ public final class DataHandler {
 
             if (!select.isEmpty()) {
                 Record record = select.get(0);
-                LogUtils.debug("select record: {}", record);
+                if (Config.debug) {
+                    LogUtils.debug("select record: {}", record);
+                }
                 return record.get(Fields.ID, short.class);
             }
 
-            Record1<Integer> insert = DatabaseConnector.getInstance().context()
+            Record1<Integer> insert = this.connector.context()
                     .insertInto(Tables.TYPES)
                     .set(Fields.NAME, type.name())
                     .returningResult(Fields.ID)
@@ -390,12 +400,12 @@ public final class DataHandler {
 
             return insert.get(Fields.ID, short.class);
         }).exceptionallyAsync(throwable -> {
-            log.error("An unexpected error occurred while inserting minion type {}!", type.name(), throwable);
+            LogUtils.error("An unexpected error occurred while inserting minion type {}!", type.name(), throwable);
             return (short) FAILED_QUERY;
         }, AsyncUtils.executor());
     }
 
-    public static CompletionStage<LongLongPair> saveMinions(Collection<Minion> minions) {
+    public CompletionStage<LongLongPair> saveMinions(Collection<Minion> minions) {
         Preconditions.checkNotNull(minions, "Tried to save null minions");
         return CompletableFuture.supplyAsync(() -> {
             long start = System.nanoTime();
@@ -420,7 +430,7 @@ public final class DataHandler {
                     continue;
                 }
 
-                Query query = DatabaseConnector.getInstance().context()
+                Query query = this.connector.context()
                         .update(Tables.MINIONS)
                         .set(Fields.LEVEL, minion.level().id())
                         .set(Fields.CHARGE, minion.charge())
@@ -433,18 +443,18 @@ public final class DataHandler {
                 queries.add(query);
             }
 
-            DatabaseConnector.getInstance().context()
+            this.connector.context()
                     .batch(queries)
                     .execute();
 
-            if (Config.DATABASE_TYPE == DatabaseType.SQLITE) {
-                DatabaseConnector.getInstance().context().execute("PRAGMA wal_checkpoint(FULL);");
+            if (Config.database.type == DatabaseType.SQLITE) {
+                this.connector.context().execute("PRAGMA wal_checkpoint(FULL);");
             }
 
             long took = System.nanoTime() - start;
             return LongLongPair.of(queries.size(), took);
         }).exceptionallyAsync(throwable -> {
-            log.error("An unexpected error occurred while saving minions!", throwable);
+            LogUtils.error("An unexpected error occurred while saving minions!", throwable);
             return LongLongPair.of(FAILED_QUERY, FAILED_QUERY);
         }, AsyncUtils.executor());
     }

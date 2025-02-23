@@ -5,10 +5,10 @@ import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.Du
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings;
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings;
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.utils.FileUtils;
-import com.artillexstudios.axminions.utils.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,8 @@ public final class Language {
     public static String ERROR_TYPE_NOT_FOUND = "<#FF0000>No minion type could be found with name <name>!";
     public static String ERROR_INVALID_NUMBER = "<#FF0000>The number you have provided is invalid! (<number>)";
     public static String ERROR_INVALID_LEVEL = "<#FF0000>The level provided does not exist for this minion! (<level>)";
-    private com.artillexstudios.axapi.config.Config config = null;
     public static String lastLanguage;
+    private com.artillexstudios.axapi.config.Config config = null;
 
     public static boolean reload() {
         LogUtils.debug("Reload called on language!");
@@ -38,7 +38,7 @@ public final class Language {
 
     private boolean refreshConfig() {
         LogUtils.debug("Refreshing language");
-        File file = LANGUAGE_DIRECTORY.resolve(Config.LANGUAGE + ".yml").toFile();
+        File file = LANGUAGE_DIRECTORY.resolve(Config.language + ".yml").toFile();
         boolean shouldDefault = false;
         if (file.exists()) {
             LogUtils.debug("File exists");
@@ -48,20 +48,20 @@ public final class Language {
         } else {
             shouldDefault = true;
             file = LANGUAGE_DIRECTORY.resolve("en_US.yml").toFile();
-            log.error("No language configuration was found with the name {}! Defaulting to en_US...", Config.LANGUAGE);
+            log.error("No language configuration was found with the name {}! Defaulting to en_US...", Config.language);
         }
 
         // The user might have changed the config
-        if (config != null && lastLanguage != null && lastLanguage.equalsIgnoreCase(Config.LANGUAGE)) {
+        if (config != null && lastLanguage != null && lastLanguage.equalsIgnoreCase(Config.language)) {
             LogUtils.debug("Config not null");
             config.reload();
         } else {
-            lastLanguage = shouldDefault ? "en_US" : Config.LANGUAGE;
+            lastLanguage = shouldDefault ? "en_US" : Config.language;
             LogUtils.debug("Set lastLanguage to {}", lastLanguage);
-            InputStream defaults = AxMinionsPlugin.getInstance().getResource("language/" + lastLanguage + ".yml");
+            InputStream defaults = AxMinionsPlugin.instance().getResource("language/" + lastLanguage + ".yml");
             if (defaults == null) {
                 LogUtils.debug("Defaults are null, defaulting to en_US.yml");
-                defaults = AxMinionsPlugin.getInstance().getResource("language/en_US.yml");
+                defaults = AxMinionsPlugin.instance().getResource("language/en_US.yml");
             }
 
             LogUtils.debug("Loading config from file {} with defaults {}", file, defaults);

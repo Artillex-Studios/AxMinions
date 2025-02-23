@@ -1,6 +1,8 @@
 package com.artillexstudios.axminions.utils;
 
 import com.artillexstudios.axapi.reflection.FastFieldAccessor;
+import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +57,9 @@ public class ItemCollection {
     }
 
     public ItemCollection(Collection<ItemStack> collection) {
-        LogUtils.debug("ItemCollection with class: {}", collection.getClass());
+        if (Config.debug) {
+            LogUtils.debug("ItemCollection with class: {}", collection.getClass());
+        }
         this.items = collection instanceof List<ItemStack> list ? list : new ArrayList<>(collection);
     }
 
