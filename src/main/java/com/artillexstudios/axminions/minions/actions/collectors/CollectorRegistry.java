@@ -5,6 +5,7 @@ import com.artillexstudios.axapi.utils.Pair;
 import com.artillexstudios.axminions.minions.actions.collectors.implementation.BlockCollector;
 import com.artillexstudios.axminions.minions.actions.collectors.implementation.EntityCollector;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
+import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import redempt.crunch.CompiledExpression;
@@ -36,7 +37,7 @@ public final class CollectorRegistry {
         return registry.get(id.toLowerCase(Locale.ENGLISH)).getKey();
     }
 
-    public static Collector<?> get(String id, CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters) {
+    public static Collector<?> get(String id, CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters, List<Requirement> requirements) {
         return registry.get(id.toLowerCase(Locale.ENGLISH)).getValue().apply(shape, expression, filters);
     }
 

@@ -20,7 +20,7 @@ public final class AddToContainerEffect extends Effect<ItemCollection, ItemColle
             return argument;
         }
 
-        Integrations.STORAGE.push(minion.linkedChest(), argument.elements());
+        Integrations.STORAGE.push(minion.linkedChest(), argument.items());
         return null;
     }
 

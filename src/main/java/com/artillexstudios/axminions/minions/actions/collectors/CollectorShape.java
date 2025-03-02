@@ -68,6 +68,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }
@@ -120,6 +126,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }
@@ -164,6 +176,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }
@@ -213,6 +231,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }
@@ -226,6 +250,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }
@@ -241,6 +271,12 @@ public enum CollectorShape {
         @Override
         public void getEntities(Location location, double range, List<Filter<?>> filters, Consumer<Entity> consumer) {
             for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(nearbyEntity)) {
+                        break;
+                    }
+                }
+
                 consumer.accept(nearbyEntity);
             }
         }

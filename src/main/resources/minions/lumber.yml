@@ -1,0 +1,62 @@
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmNjMGE5MTk5MGU3NmM2ZDY1ODA1MGI3YWM3ZTQ4MmJjNTgyYjI0NTg5YmI3ZjE0NmJkMWMwM2I5Yzg0Y2RkOSJ9fX0="
+  name: "<#00AAFF>Lumberjack <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>It chops down trees."
+    - ""
+    - "<#00AAFF>Statistics"
+    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00AAFF>❙ <white>Blocks broken: <#FFEEAA><actions>"
+    - ""
+    - "<#00AAFF><b>(!)</b> Place the minion and give it an axe!"
+
+tool:
+  # This only applies if require-tool is disabled in the config.yml
+  default:
+    material: "diamond_axe"
+  allowed-items:
+    - material: netherite_axe
+    - material: diamond_axe
+    - material: golden_axe
+    - material: iron_axe
+    - material: stone_axe
+    - material: wooden_axe
+
+click-actions:
+  - "[menu] minion"
+
+upgrades:
+  - type: "smelt"
+    price:
+      - currency: item
+        amount: 10
+
+max-level: 10
+
+levels:
+  - level: 1
+    action-ticks: "300 - <level> * 20"
+    price:
+      - type: "money"
+        amount: "<level> * 10000"
+      - type: "actions"
+        amount: "<level> * 15"
+    skin: "lumber"
+
+actions:
+  - collector:
+      id: "block"
+      shape: "sphere"
+      radius: "<level> * 2"
+      filters:
+        - id: "material"
+          whitelist:
+            - "*_log"
+            - "*_wood"
+        - id: "!player_placed"
+    effects:
+      - id: "break"
+        effects:
+          - id: "add_to_container"

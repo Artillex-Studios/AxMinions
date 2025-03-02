@@ -67,11 +67,11 @@ public final class AnimalFilter extends Filter<EntityType> {
     @Override
     public boolean isAllowed(Object object) {
         try {
-            Transformer<?, EntityType> transformer = transformer(object.getClass());
+            Transformer<?, EntityType> transformer = this.transformer(object.getClass());
             EntityType transformed = transformer.transform(object);
             return this.allowed.contains(transformed);
         } catch (TransformerNotPresentException exception) {
-            LogUtils.error("No transformer found for input class {}!");
+            LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
     }

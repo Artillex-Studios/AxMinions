@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.collectors.Collector;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorShape;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
+import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import redempt.crunch.CompiledExpression;
@@ -12,14 +13,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class EntityCollector extends Collector<Entity> {
-    private final CollectorShape shape;
-    private final CompiledExpression expression;
-    private final List<Filter<?>> filters;
 
-    public EntityCollector(CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters) {
-        this.shape = shape;
-        this.expression = expression;
-        this.filters = filters;
+    public EntityCollector(CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters, List<Requirement> requirements) {
+        super(shape, expression, filters, requirements);
     }
 
     @Override

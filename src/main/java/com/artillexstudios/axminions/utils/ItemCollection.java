@@ -50,17 +50,23 @@ public class ItemCollection {
         }
     };
 
-    private final List<ItemStack> items;
+    private final ArrayList<ItemStack> items;
 
     public ItemCollection(int size) {
         this.items = new ArrayList<>(size);
+    }
+
+    public static ItemCollection of(ItemStack itemStack) {
+        ItemCollection collection = new ItemCollection(1);
+        collection.add(itemStack);
+        return collection;
     }
 
     public ItemCollection(Collection<ItemStack> collection) {
         if (Config.debug) {
             LogUtils.debug("ItemCollection with class: {}", collection.getClass());
         }
-        this.items = collection instanceof List<ItemStack> list ? list : new ArrayList<>(collection);
+        this.items = collection instanceof ArrayList<ItemStack> list ? list : new ArrayList<>(collection);
     }
 
     public boolean add(ItemStack itemStack) {
@@ -101,10 +107,6 @@ public class ItemCollection {
 
     public List<ItemStack> items() {
         return this.items;
-    }
-
-    public ItemStack[] elements() {
-        return this.items instanceof ArrayList ? ELEMENT_DATA.get(this.items) : EMPTY_ARRAY;
     }
 
     @NotNull

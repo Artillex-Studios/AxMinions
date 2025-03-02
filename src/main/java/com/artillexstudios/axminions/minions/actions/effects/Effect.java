@@ -53,7 +53,7 @@ public abstract class Effect<T, Z> {
             return;
         }
 
-        Z out = run(minion, argument);
+        Z out = this.run(minion, argument);
 
         if (out == null) {
             return;

@@ -10,6 +10,6 @@ public class RequirementOptionNotPresentException extends IllegalStateException 
     }
 
     public String option() {
-        return option;
+        return this.option;
     }
 }

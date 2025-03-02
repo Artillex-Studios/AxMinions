@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.requirements;
 
+import com.artillexstudios.axminions.minions.actions.requirements.implementation.RequirementContainer;
 import com.artillexstudios.axminions.minions.actions.requirements.implementation.RequirementLevel;
 import com.artillexstudios.axminions.minions.actions.requirements.implementation.RequirementTool;
 
@@ -14,6 +15,7 @@ public final class Requirements {
     static {
         register("level", RequirementLevel::new);
         register("tool", RequirementTool::new);
+        register("container", RequirementContainer::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Requirement> supplier) {

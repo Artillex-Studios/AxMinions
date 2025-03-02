@@ -36,7 +36,9 @@ public final class Minions {
             LogUtils.debug("Reloading minions!");
         }
         for (String minion : MinionTypes.types().toArray(new String[0])) {
-            LogUtils.debug("Unregistering {}", minion);
+            if (com.artillexstudios.axminions.config.Config.debug) {
+                LogUtils.debug("Unregistering {}", minion);
+            }
             MinionTypes.unregister(minion);
         }
 

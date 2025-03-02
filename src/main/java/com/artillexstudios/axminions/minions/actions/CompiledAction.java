@@ -80,8 +80,8 @@ public final class CompiledAction {
             }
 
             if (parent == null) {
-                if (collector.getCollectedClass() != effect.inputClass() && collector.getCollectedClass().isAssignableFrom(effect.inputClass())) {
-                    LogUtils.warn("Collector {} is incompatible with effect {}. Expected collector to collect: {} but found: {}", collector.getClass().getName(), effect.getClass().getName(), effect.inputClass().getName(), collector.getCollectedClass().getName());
+                if (this.collector.getCollectedClass() != effect.inputClass() && this.collector.getCollectedClass().isAssignableFrom(effect.inputClass())) {
+                    LogUtils.warn("Collector {} is incompatible with effect {}. Expected collector to collect: {} but found: {}", this.collector.getClass().getName(), effect.getClass().getName(), effect.inputClass().getName(), this.collector.getCollectedClass().getName());
                     continue;
                 }
             } else {

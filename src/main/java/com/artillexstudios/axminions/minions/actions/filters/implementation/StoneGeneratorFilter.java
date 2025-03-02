@@ -56,7 +56,7 @@ public final class StoneGeneratorFilter extends Filter<Block> {
     @Override
     public boolean isAllowed(Object object) {
         try {
-            Transformer<?, Block> transformer = transformer(object.getClass());
+            Transformer<?, Block> transformer = this.transformer(object.getClass());
             Block transformed = transformer.transform(object);
             if (transformed.getType() == Material.AIR) {
                 return false;
@@ -97,7 +97,7 @@ public final class StoneGeneratorFilter extends Filter<Block> {
 
             return false;
         } catch (TransformerNotPresentException exception) {
-            LogUtils.error("No transformer found for input class {}!");
+            LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
     }

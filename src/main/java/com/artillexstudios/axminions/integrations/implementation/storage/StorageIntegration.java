@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class StorageIntegration extends Integration<StorageIntegrable> {
     private final Object2ObjectLinkedOpenHashMap<Location, ObjectArrayList<ItemStack>> items = new Object2ObjectLinkedOpenHashMap<>();
     private final Object2ObjectLinkedOpenHashMap<Location, ObjectArrayList<ItemStack>> drops = new Object2ObjectLinkedOpenHashMap<>();
@@ -26,17 +28,17 @@ public final class StorageIntegration extends Integration<StorageIntegrable> {
         return false;
     }
 
-    public void push(Location location, ItemStack... itemStacks) {
+    public void push(Location location, List<ItemStack> itemStacks) {
         ObjectArrayList<ItemStack> items = this.items.get(location);
         if (items != null) {
-            items.addElements(items.size() - 1, itemStacks);
+            items.addAll(itemStacks);
         } else {
             items = new ObjectArrayList<>(itemStacks);
             this.items.put(location, items);
         }
     }
 
-    public void pushDrop(Location location, ItemStack... itemStacks) {
+    public void pushDrop(Location location, List<ItemStack> itemStacks) {
         ObjectArrayList<ItemStack> items = this.drops.computeIfAbsent(location, k -> new ObjectArrayList<>());
 
         for (ItemStack itemStack : itemStacks) {

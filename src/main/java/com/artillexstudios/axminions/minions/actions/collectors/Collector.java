@@ -2,12 +2,21 @@ package com.artillexstudios.axminions.minions.actions.collectors;
 
 import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
 import com.artillexstudios.axminions.minions.Minion;
+import com.artillexstudios.axminions.minions.actions.effects.implementation.CollectEffect;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Filters;
+import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
+import com.artillexstudios.axminions.minions.actions.requirements.Requirements;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +24,10 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class Collector<T> {
+    protected final CollectorShape shape;
+    protected final CompiledExpression expression;
+    protected final List<Filter<?>> filters;
+    protected final List<Requirement> requirements;
 
     public static Collector<?> of(Map<Object, Object> config) {
         if (Config.debug) {
@@ -53,6 +66,37 @@ public abstract class Collector<T> {
             return null;
         }
 
+        List<Requirement> parsedRequirements = new ArrayList<>();
+        List<Map<Object, Object>> requirements = (List<Map<Object, Object>>) config.get("requirements");
+        if (requirements != null) {
+            for (Map<Object, Object> requirementConfig : requirements) {
+                String requirementId = (String) requirementConfig.get("id");
+                if (requirementId == null) {
+                    LogUtils.warn("Requirement id is not present for collector id {}!", collectorID);
+                    continue;
+                }
+
+                Requirement requirement;
+                try {
+                    requirement = Requirements.parse(requirementId, requirementConfig);
+                } catch (RequirementOptionNotPresentException exception) {
+                    LogUtils.warn("The requirement provided is missing an option with key {}!", exception.option());
+                    continue;
+                }
+
+                if (requirement == null) {
+                    LogUtils.warn("Could not find requirement with id {} for collector {}!", requirementId, collectorID);
+                    continue;
+                }
+
+                if (Config.debug) {
+                    LogUtils.debug("Adding requirement {}", requirement);
+                }
+
+                parsedRequirements.add(requirement);
+            }
+        }
+
         List<Map<Object, Object>> filterMap = (List<Map<Object, Object>>) config.get("filters");
         List<Filter<?>> filters = new ObjectArrayList<>(1);
         if (filterMap != null) {
@@ -81,7 +125,24 @@ public abstract class Collector<T> {
             }
         }
 
-        return CollectorRegistry.get(collectorID, collectorShape.get(), Crunch.compileExpression(radius.replace("<level>", "$1")), filters);
+        return CollectorRegistry.get(collectorID, collectorShape.get(), Crunch.compileExpression(radius.replace("<level>", "$1")), filters, parsedRequirements);
+    }
+
+    public Collector(CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters, List<Requirement> requirements) {
+        this.shape = shape;
+        this.expression = expression;
+        this.filters = filters;
+        this.requirements = requirements;
+    }
+
+    public boolean areRequirementsMet(Minion minion) {
+        for (Requirement requirement : this.requirements) {
+            if (!requirement.check(minion)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public abstract Class<?> getCollectedClass();

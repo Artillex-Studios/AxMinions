@@ -34,11 +34,11 @@ public final class TamedFilter extends Filter<Entity> {
     @Override
     public boolean isAllowed(Object object) {
         try {
-            Transformer<?, Entity> transformer = transformer(object.getClass());
+            Transformer<?, Entity> transformer = this.transformer(object.getClass());
             Entity transformed = transformer.transform(object);
             return transformed instanceof Tameable tameable && tameable.isTamed();
         } catch (TransformerNotPresentException exception) {
-            LogUtils.error("No transformer found for input class {}!");
+            LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
     }

@@ -27,7 +27,7 @@ public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollect
             throw new MinionTickFailException("World is null!");
         }
 
-        Integrations.STORAGE.pushDrop(minion.location(), argument.elements());
+        Integrations.STORAGE.pushDrop(minion.location(), argument.items());
         return null;
     }
 

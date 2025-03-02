@@ -130,11 +130,11 @@ public final class MaterialFilter extends Filter<Material> {
     @Override
     public boolean isAllowed(Object object) {
         try {
-            Transformer<?, Material> transformer = transformer(object.getClass());
+            Transformer<?, Material> transformer = this.transformer(object.getClass());
             Material transformed = transformer.transform(object);
             return this.allowed.contains(transformed);
         } catch (TransformerNotPresentException exception) {
-            LogUtils.error("No transformer found for input class {}!");
+            LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
     }

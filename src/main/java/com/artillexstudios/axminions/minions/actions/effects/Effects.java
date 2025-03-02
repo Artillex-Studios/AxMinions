@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.actions.effects;
 
 import com.artillexstudios.axminions.minions.actions.effects.implementation.AddToContainerEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.BreakEffect;
+import com.artillexstudios.axminions.minions.actions.effects.implementation.CollectEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DamageEntityEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DropAtMinionEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.SmeltEffect;
@@ -22,6 +23,7 @@ public final class Effects {
         register("drop_at_minion", DropAtMinionEffect::new);
         register("smelt", SmeltEffect::new);
         register("terminate", TerminateEffect::new);
+        register("collect", CollectEffect::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Effect<?, ?>> supplier) {
