@@ -48,6 +48,12 @@ public final class Config implements ConfigurationPart {
         }
     }
 
+
+    @Comment("""
+            How many blocks higher should the hologram be from the location
+            of the minion?
+            """)
+    public static float warningHologramYOffset = 1.35f;
     @Comment("""
             How often should we tick minions?
             Increasing this might improve performance a bit.

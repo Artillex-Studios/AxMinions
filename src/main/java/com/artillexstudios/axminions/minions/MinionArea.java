@@ -162,7 +162,6 @@ public final class MinionArea {
     }
 
     public void forEachPos(Consumer<ChunkPos> consumer) {
-        // We don't want to reevaluate the size of the list
         for (ChunkPos position : this.positions) {
             consumer.accept(position);
         }

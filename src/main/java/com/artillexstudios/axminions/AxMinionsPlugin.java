@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
+import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.LogUtils;
@@ -28,9 +29,6 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import revxrsal.zapper.DependencyManager;
-import revxrsal.zapper.relocation.Relocation;
-import revxrsal.zapper.repository.Repository;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -48,14 +46,14 @@ public final class AxMinionsPlugin extends AxPlugin {
     }
 
     @Override
-    public void dependencies(DependencyManager manager) {
-        manager.repository(Repository.maven("https://redempt.dev/"));
-        manager.dependency("com{}github{}Redempt:Crunch:2.0.3".replace("{}", "."));
-        manager.dependency("org{}jooq:jooq:3.19.10".replace("{}", "."));
-        manager.dependency("com{}zaxxer:HikariCP:5.1.0".replace("{}", "."));
-        manager.relocate(new Relocation("org{}jooq".replace("{}", "."), "com.artillexstudios.axminions.jooq"));
-        manager.relocate(new Relocation("redempt{}crunch".replace("{}", "."), "com.artillexstudios.axminions.crunch"));
-        manager.relocate(new Relocation("com{}zaxxer".replace("{}", "."), "com.artillexstudios.axminions.hikaricp"));
+    public void dependencies(DependencyManagerWrapper manager) {
+        manager.repository("https://redempt.dev/");
+        manager.dependency("com{}github{}Redempt:Crunch:2.0.3");
+        manager.dependency("org{}jooq:jooq:3.19.10");
+        manager.dependency("com{}zaxxer:HikariCP:5.1.0");
+        manager.relocate("org{}jooq", "com.artillexstudios.axminions.jooq");
+        manager.relocate("redempt{}crunch", "com.artillexstudios.axminions.crunch");
+        manager.relocate("com{}zaxxer", "com.artillexstudios.axminions.hikaricp");
     }
 
     @Override

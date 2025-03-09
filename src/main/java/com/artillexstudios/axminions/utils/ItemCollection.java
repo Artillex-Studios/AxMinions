@@ -1,6 +1,5 @@
 package com.artillexstudios.axminions.utils;
 
-import com.artillexstudios.axapi.reflection.FastFieldAccessor;
 import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import org.bukkit.inventory.ItemStack;
@@ -16,8 +15,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ItemCollection {
-    private static final FastFieldAccessor ELEMENT_DATA = FastFieldAccessor.forClassField(ArrayList.class, "elementData");
-    private static final ItemStack[] EMPTY_ARRAY = new ItemStack[0];
     public static final ItemCollection EMPTY = new ItemCollection(0) {
         @Override
         public ItemStack remove(int index) {

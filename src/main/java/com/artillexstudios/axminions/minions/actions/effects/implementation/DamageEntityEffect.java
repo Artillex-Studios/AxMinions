@@ -10,6 +10,7 @@ import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -44,6 +45,11 @@ public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
         }
 
         return ItemCollection.EMPTY;
+    }
+
+    @Override
+    public boolean validate(Entity input) {
+        return input != null;
     }
 
     @Override

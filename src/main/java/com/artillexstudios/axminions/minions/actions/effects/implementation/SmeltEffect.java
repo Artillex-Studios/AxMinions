@@ -8,6 +8,7 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -64,6 +65,11 @@ public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
         }
 
         return argument;
+    }
+
+    @Override
+    public boolean validate(ItemCollection input) {
+        return input != null;
     }
 
     @Override

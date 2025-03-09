@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 
@@ -24,6 +25,11 @@ public final class CollectEffect extends Effect<Entity, ItemCollection> {
         ItemCollection collection = ItemCollection.of(item.getItemStack());
         item.remove();
         return collection;
+    }
+
+    @Override
+    public boolean validate(Entity input) {
+        return input != null;
     }
 
     @Override

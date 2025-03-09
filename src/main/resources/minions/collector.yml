@@ -50,6 +50,8 @@ actions:
             - "item"
       requirements:
         - id: "container"
+          else:
+            - id: "warning"
     effects:
       - id: "collect"
         effects:

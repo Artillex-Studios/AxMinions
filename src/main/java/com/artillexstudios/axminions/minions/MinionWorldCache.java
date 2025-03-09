@@ -45,7 +45,7 @@ public final class MinionWorldCache {
         }
 
         minions.addAll(list);
-        MinionArea area = worlds.get(list.get(0).location().getWorld());
+        MinionArea area = worlds.get(list.getFirst().location().getWorld());
         if (area == null) {
             LogUtils.error("Tried to add minions to unknown world! {}", list);
             return;

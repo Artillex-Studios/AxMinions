@@ -27,6 +27,11 @@ public final class BreakEffect extends Effect<Location, ItemCollection> {
     }
 
     @Override
+    public boolean validate(Location input) {
+        return input != null;
+    }
+
+    @Override
     public Class<?> inputClass() {
         return Location.class;
     }

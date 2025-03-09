@@ -5,6 +5,7 @@ import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,6 +30,11 @@ public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollect
 
         Integrations.STORAGE.pushDrop(minion.location(), argument.items());
         return null;
+    }
+
+    @Override
+    public boolean validate(ItemCollection input) {
+        return input != null;
     }
 
     @Override

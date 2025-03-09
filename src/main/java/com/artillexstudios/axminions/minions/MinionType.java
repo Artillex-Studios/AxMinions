@@ -16,8 +16,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MinionType {
     private static final int UNINITIALIZED = -412341210;
-    private static final Logger log = LoggerFactory.getLogger(MinionType.class);
     private final ObjectArrayList<CompiledAction> actions = new ObjectArrayList<>();
     private final Int2ObjectArrayMap<Level> levels = new Int2ObjectArrayMap<>();
     private final String name;
@@ -45,7 +42,7 @@ public final class MinionType {
             }
 
             if (!this.id.compareAndSet(UNINITIALIZED, result)) {
-                log.error("Abandon ship! Something went really sideways, and this miniontype ({}) has already been initialized!", this.name);
+                LogUtils.error("Abandon ship! Something went really sideways, and this miniontype ({}) has already been initialized!", this.name);
                 return;
             }
 

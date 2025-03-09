@@ -5,11 +5,10 @@ import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.ItemBuilder;
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.utils.FieldAccessors;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -22,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
     private static final WrappedItemStack AIR = WrappedItemStack.wrap(new ItemStack(Material.AIR));
     private static final EquipmentSlot[] equipmentSlots = EquipmentSlot.values();
-    private static final Logger log = LoggerFactory.getLogger(Skin.class);
 
     public Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
         this.id = id;
@@ -35,25 +33,25 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
         for (Map<?, ?> map : mapList) {
             String slot = (String) map.get("slot");
             if (slot == null || slot.isBlank()) {
-                log.warn("Found invalid skin configuration in skin configuration {}: Missing/invalid slot!", id);
+                LogUtils.warn("Found invalid skin configuration in skin configuration {}: Missing/invalid slot!", id);
                 continue;
             }
 
             LinkedHashMap<Object, Object> section = (LinkedHashMap<Object, Object>) map.get("item");
             if (section == null) {
-                log.warn("Found invalid skin configuration in skin configuration {}: Missing item configuration!", id);
+                LogUtils.warn("Found invalid skin configuration in skin configuration {}: Missing item configuration!", id);
                 continue;
             }
 
             Optional<EquipmentSlot> parsed = parse(slot);
             if (parsed.isEmpty()) {
-                log.warn("Found invalid skin configuration in skin configuration {}: Invalid slot name {}! Valid slot names: {}", id, slot, Arrays.toString(equipmentSlots));
+                LogUtils.warn("Found invalid skin configuration in skin configuration {}: Invalid slot name {}! Valid slot names: {}", id, slot, Arrays.toString(equipmentSlots));
                 continue;
             }
 
             EquipmentSlot equipmentSlot = parsed.get();
             if (equipment.containsKey(equipmentSlot)) {
-                log.warn("Found invalid skin configuration in skin configuration {}: Duplicate slot!", id);
+                LogUtils.warn("Found invalid skin configuration in skin configuration {}: Duplicate slot!", id);
                 continue;
             }
 

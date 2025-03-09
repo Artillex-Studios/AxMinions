@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects;
 
+import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.api.events.EffectDispatchEvent;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
@@ -53,6 +54,11 @@ public abstract class Effect<T, Z> {
             return;
         }
 
+        if (!this.validate(argument)) {
+            LogUtils.warn("Failed to dispatch effect for minion {} due to an invalid argument: {}!", minion, argument == null ? "absolutely nothing, none, null, nothing, 0" : argument);
+            return;
+        }
+
         Z out = this.run(minion, argument);
 
         if (out == null) {
@@ -86,10 +92,15 @@ public abstract class Effect<T, Z> {
         for (int i = 0; i < requirementsSize; i++) {
             Requirement requirement = requirements.get(i);
             if (!requirement.check(minion)) {
+                requirement.dispatchElse(minion);
                 return false;
             }
         }
 
+        return true;
+    }
+
+    public boolean validate(T input) {
         return true;
     }
 

@@ -4,7 +4,8 @@ import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
 import com.artillexstudios.axminions.minions.Minion;
-import com.artillexstudios.axminions.minions.actions.effects.implementation.CollectEffect;
+import com.artillexstudios.axminions.minions.actions.EffectCompiler;
+import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Filters;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
@@ -13,9 +14,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +27,7 @@ public abstract class Collector<T> {
     protected final List<Filter<?>> filters;
     protected final List<Requirement> requirements;
 
-    public static Collector<?> of(Map<Object, Object> config) {
+    public static Collector<?> of(Map<Object, Object> config, EffectCompiler compiler) {
         if (Config.debug) {
             LogUtils.debug("Collector of {}", config);
         }
@@ -76,9 +74,15 @@ public abstract class Collector<T> {
                     continue;
                 }
 
+                List<Effect<Object, Object>> elseEffects = null;
+                List<Map<Object, Object>> elseBranch = (List<Map<Object, Object>>) requirementConfig.get("else");
+                if (elseBranch != null) {
+                    elseEffects = compiler.compile(null, null, elseBranch);
+                }
+
                 Requirement requirement;
                 try {
-                    requirement = Requirements.parse(requirementId, requirementConfig);
+                    requirement = Requirements.parse(requirementId, requirementConfig, elseEffects);
                 } catch (RequirementOptionNotPresentException exception) {
                     LogUtils.warn("The requirement provided is missing an option with key {}!", exception.option());
                     continue;
@@ -138,6 +142,7 @@ public abstract class Collector<T> {
     public boolean areRequirementsMet(Minion minion) {
         for (Requirement requirement : this.requirements) {
             if (!requirement.check(minion)) {
+                requirement.dispatchElse(minion);
                 return false;
             }
         }
