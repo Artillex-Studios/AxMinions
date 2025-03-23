@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
@@ -51,11 +51,13 @@ public final class CompiledAction {
         // TODO: Optimize: can we somehow batch actions/lazily evaluate instead of eager evaluation
         // We want this collector to avoid the initialization of a list. I'd think that
         // this is cheaper than a whole array/list initialization.
+        LogUtils.debug("Are requirements met check {}", minion.type().name());
         if (!this.collector.areRequirementsMet(minion)) {
-            LogUtils.warn("Requirements not met!");
+            LogUtils.debug("Not met");
             return;
         }
 
+        LogUtils.debug("Met");
         this.collector.collect(minion, collected -> {
             for (Effect<Object, Object> effect : this.effects) {
                 try {

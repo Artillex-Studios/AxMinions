@@ -1,30 +1,24 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.EffectCompiler;
+import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
+import com.artillexstudios.axminions.minions.actions.collectors.options.parser.CollectorOptionRegistry;
+import com.artillexstudios.axminions.minions.actions.collectors.options.parser.exception.InvalidCollectorOptionException;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
-import com.artillexstudios.axminions.minions.actions.filters.Filter;
-import com.artillexstudios.axminions.minions.actions.filters.Filters;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirements;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import redempt.crunch.CompiledExpression;
-import redempt.crunch.Crunch;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public abstract class Collector<T> {
-    protected final CollectorShape shape;
-    protected final CompiledExpression expression;
-    protected final List<Filter<?>> filters;
+    protected final CollectorContext context;
     protected final List<Requirement> requirements;
 
     public static Collector<?> of(Map<Object, Object> config, EffectCompiler compiler) {
@@ -43,24 +37,6 @@ public abstract class Collector<T> {
 
         if (!CollectorRegistry.exists(collectorID)) {
             LogUtils.warn("Collector id {} not present! Collector ids: {}", collectorID, CollectorRegistry.keys());
-            return null;
-        }
-
-        String shape = (String) config.get("shape");
-        if (shape == null) {
-            LogUtils.warn("Shape was not defined!");
-            return null;
-        }
-
-        Optional<CollectorShape> collectorShape = CollectorShape.parse(shape);
-        if (collectorShape.isEmpty()) {
-            LogUtils.warn("Invalid shape! Shapes: {}", Arrays.toString(CollectorShape.entries));
-            return null;
-        }
-
-        String radius = (String) config.get("radius");
-        if (radius == null) {
-            LogUtils.warn("Radius was not defined!");
             return null;
         }
 
@@ -101,41 +77,20 @@ public abstract class Collector<T> {
             }
         }
 
-        List<Map<Object, Object>> filterMap = (List<Map<Object, Object>>) config.get("filters");
-        List<Filter<?>> filters = new ObjectArrayList<>(1);
-        if (filterMap != null) {
-            for (Map<Object, Object> map : filterMap) {
-                String filterId = (String) map.get("id");
+        CollectorContext.Builder contextBuilder = CollectorContext.builder()
+                .withOption(CollectorOptions.COLLECTOR_ID, collectorID);
 
-                if (filterId == null) {
-                    LogUtils.warn("Could not find id in filter config!");
-                    continue;
-                }
-
-                Filter<?> filter = Filters.parse(filterId, map);
-                if (filter == null) {
-                    LogUtils.warn("Could not find filter with id {}!", filterId);
-                    continue;
-                }
-
-                List<Class<?>> inputClasses = filter.inputClasses();
-                Class<?> collectedClass = CollectorRegistry.getCollectedClass(collectorID);
-                if (!inputClasses.contains(collectedClass)) {
-                    LogUtils.error("Could not apply filter with id {} to collector {} due to mismatching input! Filter input: {}, Collector output: {}.", filterId, collectorID, String.join(", ", inputClasses.stream().map(Class::getName).toList()), collectedClass.getName());
-                    continue;
-                }
-
-                filters.add(filter);
-            }
+        try {
+            CollectorOptionRegistry.parseAll(config, contextBuilder);
+        } catch (InvalidCollectorOptionException exception) {
+            return null;
         }
 
-        return CollectorRegistry.get(collectorID, collectorShape.get(), Crunch.compileExpression(radius.replace("<level>", "$1")), filters, parsedRequirements);
+        return CollectorRegistry.get(collectorID, contextBuilder, parsedRequirements);
     }
 
-    public Collector(CollectorShape shape, CompiledExpression expression, List<Filter<?>> filters, List<Requirement> requirements) {
-        this.shape = shape;
-        this.expression = expression;
-        this.filters = filters;
+    public Collector(CollectorContext context, List<Requirement> requirements) {
+        this.context = context;
         this.requirements = requirements;
     }
 

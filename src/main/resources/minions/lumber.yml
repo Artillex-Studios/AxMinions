@@ -47,7 +47,7 @@ levels:
 
 actions:
   - collector:
-      id: "block"
+      id: "tree"
       shape: "sphere"
       radius: "<level> * 2"
       filters:
@@ -56,6 +56,11 @@ actions:
             - "*_log"
             - "*_wood"
         - id: "!player_placed"
+      requirements:
+        - id: "container"
+          else:
+            - id: "warning"
+              message: "Oreo!"
     effects:
       - id: "break"
         effects:

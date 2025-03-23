@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
 import com.artillexstudios.axminions.minions.actions.collectors.Collector;

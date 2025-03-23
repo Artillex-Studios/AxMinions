@@ -4,7 +4,7 @@ import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.AsyncUtils;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Level;
 import com.artillexstudios.axminions.minions.Minion;
@@ -133,7 +133,7 @@ public final class DataHandler {
     }
 
     public CompletionStage<User> loadUser(Player player) {
-        String texture = ServerPlayerWrapper.wrap(player).textures(player).texture();
+        String texture = ServerPlayerWrapper.wrap(player).textures().texture();
         if (Config.debug) {
             LogUtils.debug("Updating user! Texture: {}", texture == null ? "null" : texture);
         }
@@ -302,8 +302,8 @@ public final class DataHandler {
         return CompletableFuture.supplyAsync(() -> {
             int loadedMinions = 0;
             long start = System.nanoTime();
-            int worldId = this.worldId(world);
-            if (worldId == FAILED_QUERY) {
+            short worldId = this.worldId(world);
+            if (worldId == (short) FAILED_QUERY) {
                 LogUtils.error("Failed worldId fetching when loading minions!");
                 return IntLongPair.of(0, 0);
             }

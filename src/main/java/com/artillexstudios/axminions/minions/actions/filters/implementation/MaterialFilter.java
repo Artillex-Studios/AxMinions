@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
 import com.artillexstudios.axapi.collections.IdentityArrayMap;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.filters.Transformer;

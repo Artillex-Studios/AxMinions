@@ -15,6 +15,6 @@ public final class RequirementContainer extends Requirement {
 
     @Override
     public boolean check(Minion minion) {
-        return minion.linkedChest() == null;
+        return minion.linkedChest() != null;
     }
 }

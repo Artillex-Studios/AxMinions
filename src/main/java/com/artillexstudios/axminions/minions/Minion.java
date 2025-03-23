@@ -10,6 +10,7 @@ import com.artillexstudios.axapi.packetentity.meta.entity.ArmorStandMeta;
 import com.artillexstudios.axapi.packetentity.meta.serializer.Accessors;
 import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
@@ -167,6 +168,9 @@ public final class Minion {
     }
 
     public void ticking(boolean ticking) {
+        if (Config.debug) {
+            LogUtils.debug("Set ticking to: {}", ticking);
+        }
         this.ticking = ticking;
     }
 

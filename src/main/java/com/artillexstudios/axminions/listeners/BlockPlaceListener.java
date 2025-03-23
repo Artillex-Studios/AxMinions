@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.listeners;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.MinionArea;

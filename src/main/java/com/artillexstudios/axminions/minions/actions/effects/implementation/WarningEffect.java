@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;

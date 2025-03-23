@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.utils;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public class ItemCollection {
         }
     };
 
-    private final ArrayList<ItemStack> items;
+    private final List<ItemStack> items;
 
     public ItemCollection(int size) {
         this.items = new ArrayList<>(size);
@@ -63,7 +63,7 @@ public class ItemCollection {
         if (Config.debug) {
             LogUtils.debug("ItemCollection with class: {}", collection.getClass());
         }
-        this.items = collection instanceof ArrayList<ItemStack> list ? list : new ArrayList<>(collection);
+        this.items = collection instanceof List<ItemStack> list ? list : new ArrayList<>(collection);
     }
 
     public boolean add(ItemStack itemStack) {

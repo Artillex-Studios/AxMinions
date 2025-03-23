@@ -3,7 +3,7 @@ package com.artillexstudios.axminions.listeners;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;

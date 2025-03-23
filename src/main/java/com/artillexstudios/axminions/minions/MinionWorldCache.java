@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.utils.ThreadUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

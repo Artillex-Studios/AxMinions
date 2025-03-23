@@ -5,6 +5,7 @@ import com.artillexstudios.axminions.minions.actions.effects.implementation.Brea
 import com.artillexstudios.axminions.minions.actions.effects.implementation.CollectEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DamageEntityEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.DropAtMinionEffect;
+import com.artillexstudios.axminions.minions.actions.effects.implementation.FishEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.SmeltEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.TerminateEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.WarningEffect;
@@ -26,6 +27,7 @@ public final class Effects {
         register("terminate", TerminateEffect::new);
         register("collect", CollectEffect::new);
         register("warning", WarningEffect::new);
+        register("fish", FishEffect::new);
     }
 
     public static void register(String id, Function<Map<Object, Object>, Effect<?, ?>> supplier) {

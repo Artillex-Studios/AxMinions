@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.api.events.EffectDispatchEvent;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;

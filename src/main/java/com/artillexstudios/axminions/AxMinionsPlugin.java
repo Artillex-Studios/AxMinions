@@ -4,9 +4,9 @@ import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.AsyncUtils;
-import com.artillexstudios.axapi.utils.LogUtils;
 import com.artillexstudios.axapi.utils.PaperUtils;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.command.AxMinionsCommand;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
@@ -19,6 +19,7 @@ import com.artillexstudios.axminions.listeners.ChunkListener;
 import com.artillexstudios.axminions.listeners.MinionPlaceListener;
 import com.artillexstudios.axminions.listeners.PlayerListener;
 import com.artillexstudios.axminions.listeners.WorldListener;
+import com.artillexstudios.axminions.minions.MinionArea;
 import com.artillexstudios.axminions.minions.MinionSaver;
 import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
@@ -28,6 +29,7 @@ import com.artillexstudios.axminions.utils.ReloadUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import java.util.concurrent.CompletableFuture;
@@ -92,6 +94,10 @@ public final class AxMinionsPlugin extends AxPlugin {
 
         for (World world : Bukkit.getWorlds()) {
             MinionWorldCache.loadArea(world);
+            MinionArea area = MinionWorldCache.getArea(world);
+            for (Chunk chunk : world.getLoadedChunks()) {
+                area.startTicking(chunk);
+            }
         }
 
         CompletableFuture.allOf(Minions.loadingMinions().toArray(new CompletableFuture[0])).thenRun(() -> {

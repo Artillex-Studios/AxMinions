@@ -6,7 +6,7 @@ import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
 import com.artillexstudios.axapi.config.annotation.PostProcess;
 import com.artillexstudios.axapi.config.annotation.Serializable;
 import com.artillexstudios.axapi.libs.snakeyaml.DumperOptions;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.database.DatabaseType;
@@ -48,7 +48,10 @@ public final class Config implements ConfigurationPart {
         }
     }
 
-
+    @Comment("""
+            How many blocks can the tree collector collect at once?
+            """)
+    public static int treeCollectorMaxCollected = 100;
     @Comment("""
             How many blocks higher should the hologram be from the location
             of the minion?
@@ -86,8 +89,8 @@ public final class Config implements ConfigurationPart {
     public static boolean saveStatistics = true;
 
     @Comment("""
-            How often should changes to teams get saved?
-            This setting controls how often teams get saved
+            How often should changes to minions get saved?
+            This setting controls how often minions get saved
             into the database if they have changed.
             """)
     public static int autosaveSeconds = 300;

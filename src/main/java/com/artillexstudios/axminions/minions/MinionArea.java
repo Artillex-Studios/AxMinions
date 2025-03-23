@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.DebugMode;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.utils.ChunkPos;
 import com.google.common.base.Preconditions;
@@ -25,13 +26,13 @@ public final class MinionArea {
 
     public void startTicking(Chunk chunk) {
         if (Config.debug) {
-            LogUtils.debug("Chunk ticking x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+            LogUtils.debug("Chunk ticking x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), DebugMode.FILE);
         }
         ChunkPos pos = this.forChunk(chunk);
 
         if (pos != null && !pos.isTicking()) {
             if (Config.debug) {
-                LogUtils.debug("Starting chunk ticking!");
+                LogUtils.debug("Starting chunk ticking!", DebugMode.CONSOLE);
             }
             pos.ticking(true);
         }
@@ -39,13 +40,13 @@ public final class MinionArea {
 
     public void stopTicking(Chunk chunk) {
         if (Config.debug) {
-            LogUtils.debug("Chunk ticking stop x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+            LogUtils.debug("Chunk ticking stop x: {} z: {} world: {}", chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), DebugMode.FILE);
         }
         ChunkPos pos = this.forChunk(chunk);
 
         if (pos != null && pos.isTicking()) {
             if (Config.debug) {
-                LogUtils.debug("Stopping chunk ticking!");
+                LogUtils.debug("Stopping chunk ticking!", DebugMode.CONSOLE);
             }
             pos.ticking(false);
         }

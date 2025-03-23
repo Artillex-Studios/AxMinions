@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.minions.skins.SkinRegistry;
 import redempt.crunch.CompiledExpression;

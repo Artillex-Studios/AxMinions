@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.config;
 
 import com.artillexstudios.axapi.config.Config;
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;

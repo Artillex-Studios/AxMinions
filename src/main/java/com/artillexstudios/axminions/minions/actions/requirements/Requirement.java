@@ -1,6 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.requirements;
 
-import com.artillexstudios.axapi.utils.LogUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
@@ -33,10 +33,6 @@ public abstract class Requirement {
 
     public <T> T getOrDefault(String key, T def) {
         return (T) this.parameters.getOrDefault(key, def);
-    }
-
-    public List<Effect<Object, Object>> elseEffects() {
-        return this.elseEffects;
     }
 
     public void dispatchElse(Minion minion) {
