@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class FiltersOptionParser implements CollectorOptionParser {
 
@@ -30,14 +31,18 @@ public final class FiltersOptionParser implements CollectorOptionParser {
                 continue;
             }
 
-            Filter<?> filter = Filters.parse(filterId, map);
+            Filter<?> filter = Filters.parse(map);
             if (filter == null) {
+                continue;
+            }
+
+            if (filter == Filters.EMPTY) {
                 LogUtils.warn("Could not find filter with id {}!", filterId);
                 continue;
             }
 
             String collectorID = builder.option(CollectorOptions.COLLECTOR_ID);
-            List<Class<?>> inputClasses = filter.inputClasses();
+            Set<Class<?>> inputClasses = filter.inputClasses();
             Class<?> collectedClass = CollectorRegistry.getCollectedClass(collectorID);
             if (!inputClasses.contains(collectedClass)) {
                 LogUtils.error("Could not apply filter with id {} to collector {} due to mismatching input! Filter input: {}, Collector output: {}.", filterId, collectorID, String.join(", ", inputClasses.stream().map(Class::getName).toList()), collectedClass.getName());

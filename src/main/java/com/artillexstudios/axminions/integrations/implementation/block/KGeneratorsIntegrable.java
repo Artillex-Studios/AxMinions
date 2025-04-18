@@ -1,16 +1,18 @@
 package com.artillexstudios.axminions.integrations.implementation.block;
 
-import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
-public final class KGeneratorsIntegrable implements BlockIntegrable {
+public final class KGeneratorsIntegrable implements BlockIntegrable<Material> {
 
     @Override
-    public Collection<ItemStack> lootAndBreak(Location location, ItemStack itemStack) {
-//        if (!Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
+    public Collection<ItemStack> lootAndBreak(Block block, ItemStack itemStack, Function<Material, Material> typeTransformer) {
+        //        if (!Main.getPlacedGenerators().isChunkFullyLoaded(location)) {
 //            LogUtils.warn("Chunk is not fully loaded");
 //            return null;
 //        }

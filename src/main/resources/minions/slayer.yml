@@ -1,0 +1,61 @@
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTc1MzJlOTBjNTczYTM5NGM3ODAyYWE0MTU4MzA1ODAyYjU5ZTY3ZjJhMmI3ZTNmZDAzNjNhYTZlYTQyYjg0MSJ9fX0="
+  name: "<#00AAFF>Slayer <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>It kills mobs."
+    - ""
+    - "<#00AAFF>Statistics"
+    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00AAFF>❙ <white>Mobs killed: <#FFEEAA><actions>"
+    - ""
+    - "<#00AAFF><b>(!)</b> Place the minion and give it a weapon!"
+
+tool:
+  # This only applies if require-tool is disabled in the config.yml
+  default:
+    material: "netherite_sword"
+  allowed-items:
+    - material: "netherite_sword"
+
+click-actions:
+  - "[menu] minion"
+
+max-level: 10
+
+levels:
+  - level: 1
+    action-ticks: "300 - <level> * 20"
+    price:
+      - type: "money"
+        amount: "<level> * 10000"
+      - type: "actions"
+        amount: "<level> * 15"
+    skin: "slayer"
+  - level: 10
+    action-ticks: "300 - <level> * 20"
+    skin: "slayer_10"
+
+actions:
+  - collector:
+      id: "entity"
+      shape: "sphere"
+      radius: "<level> * 2"
+      filters:
+        - id: "!tamed"
+      requirements:
+        - id: "tool"
+          else:
+            - id: "warning"
+              message: "No tool!"
+        - id: "container"
+          else:
+            - id: "warning"
+              message: "No container!"
+    effects:
+      - id: "damage"
+        effects:
+          - id: "add_to_container"
+            effects:
+              id: "drop_at_minion"

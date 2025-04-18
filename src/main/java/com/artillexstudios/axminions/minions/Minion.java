@@ -44,6 +44,10 @@ public final class Minion {
         meta.small(true);
         meta.showArms(true);
         this.applySkin();
+
+        if (!Config.requireTool) {
+            this.minionData.withTool(this.minionData.type().tool());
+        }
     }
 
     public void tick() {

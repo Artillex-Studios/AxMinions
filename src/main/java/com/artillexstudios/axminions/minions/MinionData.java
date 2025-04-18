@@ -72,4 +72,8 @@ public record MinionData(int ownerId, MinionType type, Direction direction, Loca
     public MinionData withSkin(Skin skin) {
         return new MinionData(this.ownerId, this.type, this.direction, this.linkedChest, this.level, this.charge, this.tool, skin, this.extraData);
     }
+
+    public MinionData withTool(ItemStack tool) {
+        return new MinionData(this.ownerId, this.type, this.direction, this.linkedChest, this.level, this.charge, tool, this.skin, this.extraData);
+    }
 }

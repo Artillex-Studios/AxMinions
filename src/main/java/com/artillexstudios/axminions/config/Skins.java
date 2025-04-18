@@ -1,9 +1,9 @@
 package com.artillexstudios.axminions.config;
 
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.DumperSettings;
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings;
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings;
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings;
+import com.artillexstudios.axapi.libs.boostedyaml.settings.dumper.DumperSettings;
+import com.artillexstudios.axapi.libs.boostedyaml.settings.general.GeneralSettings;
+import com.artillexstudios.axapi.libs.boostedyaml.settings.loader.LoaderSettings;
+import com.artillexstudios.axapi.libs.boostedyaml.settings.updater.UpdaterSettings;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.minions.skins.Skin;
@@ -30,15 +30,15 @@ public final class Skins {
             }
         }
 
-        if (config != null) {
-            config.reload();
+        if (this.config != null) {
+            this.config.reload();
         } else {
-            config = new com.artillexstudios.axapi.config.Config(file, AxMinionsPlugin.instance().getResource("skins.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+            this.config = new com.artillexstudios.axapi.config.Config(file, AxMinionsPlugin.instance().getResource("skins.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
         }
 
         SkinRegistry.clear();
-        for (String route : config.getBackingDocument().getRoutesAsStrings(false)) {
-            List<Map<Object, Object>> mapList = config.getMapList(route);
+        for (String route : this.config.getBackingDocument().getRoutesAsStrings(false)) {
+            List<Map<Object, Object>> mapList = this.config.getMapList(route);
             Skin skin = Skin.of(route, mapList);
             SkinRegistry.register(skin);
         }

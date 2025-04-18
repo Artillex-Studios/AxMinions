@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 
-import java.util.List;
 import java.util.Map;
 
 public final class StoneGeneratorFilter extends Filter<Block> {
@@ -100,10 +99,5 @@ public final class StoneGeneratorFilter extends Filter<Block> {
             LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
-    }
-
-    @Override
-    public List<Class<?>> inputClasses() {
-        return List.of(Location.class, Block.class);
     }
 }

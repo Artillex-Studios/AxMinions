@@ -146,7 +146,7 @@ public final class DataHandler {
                     .fetch();
 
             if (!select.isEmpty()) {
-                Record record = select.get(0);
+                Record record = select.getFirst();
                 if (Config.debug) {
                     LogUtils.debug("User data select record: {}", record);
                 }
@@ -160,7 +160,7 @@ public final class DataHandler {
                         .fetch();
 
                 if (!minionSelect.isEmpty()) {
-                    Record minionRecord = minionSelect.get(0);
+                    Record minionRecord = minionSelect.getFirst();
                     int minionCount = minionRecord.get(0, int.class);
 
                     return new User(ownerId, player.getUniqueId(), player.getName(), texture, minionCount, record.get(Fields.EXTRA_SLOTS, int.class), record.get(Fields.ISLAND_SLOTS, int.class), new ArrayList<>());
@@ -198,7 +198,7 @@ public final class DataHandler {
                 .fetch();
 
         if (!select.isEmpty()) {
-            Record record = select.get(0);
+            Record record = select.getFirst();
             if (Config.debug) {
                 LogUtils.debug("World select record: {}", record);
             }
@@ -230,7 +230,7 @@ public final class DataHandler {
                 .fetch();
 
         if (!select.isEmpty()) {
-            Record record = select.get(0);
+            Record record = select.getFirst();
             if (Config.debug) {
                 LogUtils.debug("Location select record: {}", record);
             }
@@ -269,8 +269,8 @@ public final class DataHandler {
                 return;
             }
 
-            int worldId = this.worldId(world);
-            if (worldId == FAILED_QUERY) {
+            short worldId = this.worldId(world);
+            if (worldId == (short) FAILED_QUERY) {
                 LogUtils.error("Failed worldId fetching!");
                 return;
             }
@@ -289,7 +289,7 @@ public final class DataHandler {
                     .set(Fields.LEVEL, minion.level().id())
                     .set(Fields.CHARGE, minion.charge())
                     .set(Fields.FACING, minion.facing().ordinal())
-                    .set(Fields.TOOL, minion.tool() == null || minion.tool().getType().isAir() ? null : WrappedItemStack.wrap(minion.tool()).serialize())
+                    .set(Fields.TOOL, minion.tool() == null || minion.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(minion.tool()).serialize())
                     .set(Fields.EXTRA_DATA, MinionData.serialize(minion.extraData()))
                     .execute();
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
@@ -328,7 +328,7 @@ public final class DataHandler {
                     continue;
                 }
 
-                Record record = minions.get(0);
+                Record record = minions.getFirst();
                 short typeId = record.get(Fields.TYPE_ID, short.class);
                 int x = location.get(Fields.LOCATION_X, int.class);
                 int y = location.get(Fields.LOCATION_Y, int.class);
@@ -359,9 +359,7 @@ public final class DataHandler {
                 loadedMinions++;
             }
 
-            CompletableFuture.runAsync(() -> {
-                MinionWorldCache.addAll(toLoad);
-            }, command -> Scheduler.get().run(command)).join();
+            CompletableFuture.runAsync(() -> MinionWorldCache.addAll(toLoad), command -> Scheduler.get().run(command)).join();
             long took = System.nanoTime() - start;
             return IntLongPair.of(loadedMinions, took);
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
@@ -381,7 +379,7 @@ public final class DataHandler {
                     .fetch();
 
             if (!select.isEmpty()) {
-                Record record = select.get(0);
+                Record record = select.getFirst();
                 if (Config.debug) {
                     LogUtils.debug("select record: {}", record);
                 }

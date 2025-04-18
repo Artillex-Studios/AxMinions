@@ -2,7 +2,7 @@ package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 
-import java.util.List;
+import java.util.Set;
 
 public final class InvertedFilter extends Filter<Object> {
     private final Filter<Object> filter;
@@ -17,7 +17,7 @@ public final class InvertedFilter extends Filter<Object> {
     }
 
     @Override
-    public List<Class<?>> inputClasses() {
+    public Set<Class<?>> inputClasses() {
         return this.filter.inputClasses();
     }
 }

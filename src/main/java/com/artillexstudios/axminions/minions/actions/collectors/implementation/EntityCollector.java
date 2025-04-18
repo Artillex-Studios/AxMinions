@@ -6,7 +6,6 @@ import com.artillexstudios.axminions.minions.actions.collectors.Collector;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorOptionNotPresentException;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
-import com.artillexstudios.axminions.minions.actions.collectors.shapes.CollectorShape;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -28,7 +27,7 @@ public final class EntityCollector extends Collector<Entity> {
 
     @Override
     public void collect(Minion minion, Consumer<Entity> consumer) {
-        CompiledExpression limitExpression = this.context.option(CollectorOptions.LIMIT_RAW);
+        CompiledExpression limitExpression = this.context.optionOrDefault(CollectorOptions.LIMIT_RAW, Collector.ZERO_EXPRESSION);
         CompiledExpression rangeExpression = this.context.option(CollectorOptions.RANGE_RAW);
 
         try {

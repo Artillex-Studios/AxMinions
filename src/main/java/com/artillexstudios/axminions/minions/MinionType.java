@@ -11,7 +11,6 @@ import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
 import com.artillexstudios.axminions.minions.actions.CompiledAction;
-import com.artillexstudios.axminions.utils.FieldAccessors;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.bukkit.Bukkit;
@@ -26,6 +25,7 @@ public final class MinionType {
     private static final int UNINITIALIZED = -412341210;
     private final ObjectArrayList<CompiledAction> actions = new ObjectArrayList<>();
     private final Int2ObjectArrayMap<Level> levels = new Int2ObjectArrayMap<>();
+    private ItemStack tool;
     private final String name;
     private final AtomicInteger id = new AtomicInteger(UNINITIALIZED);
     private final Config config;
@@ -70,6 +70,15 @@ public final class MinionType {
                 }
             }
 
+            if (!com.artillexstudios.axminions.config.Config.requireTool) {
+                if (!this.config.getBackingDocument().contains("tool.default")) {
+                    LogUtils.warn("Failed to load minion {}, due to default tool missing, but not requiring a tool from the user!", this.name);
+                    return;
+                }
+
+                this.tool = new ItemBuilder(this.config.getSection("tool.default")).get();
+            }
+
             MinionTypes.register(this);
             Bukkit.getPluginManager().callEvent(new MinionTypeLoadEvent(this));
         }).exceptionallyAsync(throwable -> {
@@ -94,8 +103,7 @@ public final class MinionType {
     }
 
     public ItemStack item(MinionData data) {
-        ItemBuilder builder = new ItemBuilder(this.config.getSection("item"));
-        WrappedItemStack wrappedItemStack = FieldAccessors.STACK_ACCESSOR.get(builder);
+        WrappedItemStack wrappedItemStack = new ItemBuilder(this.config.getSection("item")).wrapped();
         CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
         tag.putString("axminions_minion_type", this.name);
         tag.putInt("axminions_minion_level", data.level().id());
@@ -108,6 +116,10 @@ public final class MinionType {
         wrappedItemStack.set(DataComponents.customData(), tag);
         wrappedItemStack.finishEdit();
         return wrappedItemStack.toBukkit();
+    }
+
+    public ItemStack tool() {
+        return this.tool;
     }
 
     public Level level(int level) {

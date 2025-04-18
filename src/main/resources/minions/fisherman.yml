@@ -1,0 +1,61 @@
+item:
+  type: "player_head"
+  texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
+  name: "<#00AAFF>Fisherman <white>Minion"
+  lore:
+    - ""
+    - " <gray>- <white>It fishes."
+    - ""
+    - "<#00AAFF>Statistics"
+    - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
+    - " <#00AAFF>❙ <white>Fished: <#FFEEAA><actions>"
+    - ""
+    - "<#00AAFF><b>(!)</b> Place the minion and give it a fishing rod!"
+
+tool:
+  # This only applies if require-tool is disabled in the config.yml
+  default:
+    material: "fishing_rod"
+  allowed-items:
+    - material: fishing_rod
+
+click-actions:
+  - "[menu] minion"
+
+max-level: 10
+
+levels:
+  - level: 1
+    action-ticks: "300 - <level> * 20"
+    price:
+      - type: "money"
+        amount: "<level> * 10000"
+      - type: "actions"
+        amount: "<level> * 15"
+    skin: "miner"
+
+actions:
+  - collector:
+      id: "block"
+      shape: "sphere"
+      radius: "<level> * 2"
+      limit: 1
+      filters:
+        - id: "material"
+          whitelist:
+            - "water"
+      requirements:
+        - id: "tool"
+          else:
+            - id: "warning"
+              message: "No tool!"
+        - id: "container"
+          else:
+            - id: "warning"
+              message: "No container!"
+    effects:
+      - id: "fish"
+        effects:
+          - id: "add_to_container"
+            effects:
+              id: "drop_at_minion"

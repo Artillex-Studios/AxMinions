@@ -11,6 +11,8 @@ import com.artillexstudios.axminions.minions.actions.collectors.options.parser.e
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirements;
+import redempt.crunch.CompiledExpression;
+import redempt.crunch.Crunch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class Collector<T> {
+    protected static final CompiledExpression ZERO_EXPRESSION = Crunch.compileExpression("0");
     protected final CollectorContext context;
     protected final List<Requirement> requirements;
 
@@ -80,6 +83,7 @@ public abstract class Collector<T> {
         CollectorContext.Builder contextBuilder = CollectorContext.builder()
                 .withOption(CollectorOptions.COLLECTOR_ID, collectorID);
 
+        LogUtils.info("Collector: {}", contextBuilder.option(CollectorOptions.COLLECTOR_ID));
         try {
             CollectorOptionRegistry.parseAll(config, contextBuilder);
         } catch (InvalidCollectorOptionException exception) {

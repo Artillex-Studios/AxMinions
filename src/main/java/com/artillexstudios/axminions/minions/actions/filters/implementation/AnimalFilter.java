@@ -10,7 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,10 +73,5 @@ public final class AnimalFilter extends Filter<EntityType> {
             LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
-    }
-
-    @Override
-    public List<Class<?>> inputClasses() {
-        return List.of(Entity.class, EntityType.class);
     }
 }

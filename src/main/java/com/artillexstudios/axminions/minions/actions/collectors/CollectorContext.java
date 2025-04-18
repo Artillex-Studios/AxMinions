@@ -1,12 +1,14 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
-import com.artillexstudios.axapi.collections.IdentityArrayMap;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOption;
 
-public final class CollectorContext {
-    private final IdentityArrayMap<CollectorOption<?>, Object> options;
+import java.util.HashMap;
+import java.util.Objects;
 
-    private CollectorContext(IdentityArrayMap<CollectorOption<?>, Object> options) {
+public final class CollectorContext {
+    private final HashMap<CollectorOption<?>, Object> options;
+
+    private CollectorContext(HashMap<CollectorOption<?>, Object> options) {
         this.options = options;
     }
 
@@ -33,9 +35,7 @@ public final class CollectorContext {
     }
 
     public CollectorContext copy() {
-        IdentityArrayMap<CollectorOption<?>, Object> options = new IdentityArrayMap<>();
-        this.options.forEach(options::put);
-        return new CollectorContext(options);
+        return new CollectorContext(new HashMap<>(this.options));
     }
 
     public CollectorContext.Builder toBuilder() {
@@ -48,8 +48,29 @@ public final class CollectorContext {
         return this.options.containsKey(option);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CollectorContext that)) {
+            return false;
+        }
+
+        return Objects.equals(this.options, that.options);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.options);
+    }
+
+    @Override
+    public String toString() {
+        return "CollectorContext{" +
+                "options=" + this.options +
+                '}';
+    }
+
     public static final class Builder {
-        private final IdentityArrayMap<CollectorOption<?>, Object> options = new IdentityArrayMap<>();
+        private final HashMap<CollectorOption<?>, Object> options = new HashMap<>();
 
         public <T> Builder withOption(CollectorOption<T> option, T value) {
             this.options.put(option, value);
@@ -62,6 +83,13 @@ public final class CollectorContext {
 
         public CollectorContext build() {
             return new CollectorContext(this.options);
+        }
+
+        @Override
+        public String toString() {
+            return "Builder{" +
+                    "options=" + this.options +
+                    '}';
         }
     }
 }

@@ -6,7 +6,6 @@ import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
-import com.artillexstudios.axminions.utils.FieldAccessors;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
     private static final WrappedItemStack AIR = WrappedItemStack.wrap(new ItemStack(Material.AIR));
-    private static final EquipmentSlot[] equipmentSlots = EquipmentSlot.values();
+    private static final EquipmentSlot[] equipmentSlots = new EquipmentSlot[]{EquipmentSlot.MAIN_HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.BOOTS, EquipmentSlot.LEGGINGS, EquipmentSlot.CHEST_PLATE, EquipmentSlot.HELMET};
 
     public Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
         this.id = id;
@@ -60,7 +59,7 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
                 ownerSkin.set(texture.equals("<owner>"));
             });
 
-            WrappedItemStack wrapped = FieldAccessors.STACK_ACCESSOR.get(new ItemBuilder(section));
+            WrappedItemStack wrapped = new ItemBuilder(section).wrapped();
             CompoundTag tag = wrapped.get(DataComponents.customData());
             tag.putBoolean("axminions_ownerskin", ownerSkin.get());
             wrapped.set(DataComponents.customData(), tag);

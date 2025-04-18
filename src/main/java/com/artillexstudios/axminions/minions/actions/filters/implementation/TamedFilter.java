@@ -7,7 +7,6 @@ import com.artillexstudios.axminions.minions.actions.filters.Transformer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Tameable;
 
-import java.util.List;
 import java.util.Map;
 
 public final class TamedFilter extends Filter<Entity> {
@@ -41,10 +40,5 @@ public final class TamedFilter extends Filter<Entity> {
             LogUtils.error("No transformer found for input class {}!", object.getClass());
             return false;
         }
-    }
-
-    @Override
-    public List<Class<?>> inputClasses() {
-        return List.of(Entity.class);
     }
 }

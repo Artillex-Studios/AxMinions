@@ -120,9 +120,4 @@ public final class EntityTypeFilter extends Filter<EntityType> {
             return false;
         }
     }
-
-    @Override
-    public List<Class<?>> inputClasses() {
-        return List.of(Entity.class, EntityType.class);
-    }
 }

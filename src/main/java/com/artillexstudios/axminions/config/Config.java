@@ -49,6 +49,10 @@ public final class Config implements ConfigurationPart {
     }
 
     @Comment("""
+            Should minions require tools to work?
+            """)
+    public static boolean requireTool = true;
+    @Comment("""
             How many blocks can the tree collector collect at once?
             """)
     public static int treeCollectorMaxCollected = 100;

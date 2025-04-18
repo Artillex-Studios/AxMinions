@@ -1,6 +1,8 @@
 package com.artillexstudios.axminions.minions.actions.collectors.options.parser;
 
 import com.artillexstudios.axapi.utils.Pair;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
 import com.artillexstudios.axminions.minions.actions.collectors.options.parser.exception.InvalidCollectorOptionException;
@@ -32,8 +34,15 @@ public final class CollectorOptionRegistry {
     }
 
     public static void parseAll(Map<Object, Object> config, CollectorContext.Builder builder) throws InvalidCollectorOptionException {
-        for (CollectorOptionParser value : registry.values()) {
-            value.parse(config, builder);
+        for (Map.Entry<String, CollectorOptionParser> entry : registry.entrySet()) {
+            if (Config.debug) {
+                LogUtils.debug("Parsing {}!", entry.getKey());
+            }
+
+            entry.getValue().parse(config, builder);
+            if (Config.debug) {
+                LogUtils.debug("After parse {}!", builder);
+            }
         }
     }
 

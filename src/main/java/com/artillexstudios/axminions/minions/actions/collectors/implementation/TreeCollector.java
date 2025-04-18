@@ -7,7 +7,6 @@ import com.artillexstudios.axminions.minions.actions.collectors.Collector;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorOptionNotPresentException;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
-import com.artillexstudios.axminions.minions.actions.collectors.shapes.CollectorShape;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import org.bukkit.Location;
@@ -36,7 +35,7 @@ public final class TreeCollector extends Collector<Location> {
 
     @Override
     public void collect(Minion minion, Consumer<Location> consumer) {
-        CompiledExpression limitExpression = this.context.option(CollectorOptions.LIMIT_RAW);
+        CompiledExpression limitExpression = this.context.optionOrDefault(CollectorOptions.LIMIT_RAW, Collector.ZERO_EXPRESSION);
         CompiledExpression rangeExpression = this.context.option(CollectorOptions.RANGE_RAW);
 
         final Queue<Location> queue = new ArrayDeque<>();

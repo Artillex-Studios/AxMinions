@@ -27,7 +27,7 @@ public final class BlockCollector extends Collector<Location> {
 
     @Override
     public void collect(Minion minion, Consumer<Location> consumer) {
-        CompiledExpression limitExpression = this.context.option(CollectorOptions.LIMIT_RAW);
+        CompiledExpression limitExpression = this.context.optionOrDefault(CollectorOptions.LIMIT_RAW, Collector.ZERO_EXPRESSION);
         CompiledExpression rangeExpression = this.context.option(CollectorOptions.RANGE_RAW);
 
         try {

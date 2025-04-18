@@ -26,3 +26,40 @@ lumber:
   - slot: boots
     item:
       material: gold_boots
+slayer:
+  - slot: helmet
+    item:
+      material: player_head
+      texture: <owner>
+  - slot: chestplate
+    item:
+      material: leather_chestplate
+      color: "255, 0, 0"
+  - slot: leggings
+    item:
+      material: leather_chestplate
+      color: "255, 0, 0"
+  - slot: boots
+    item:
+      material: leather_boots
+      color: "255, 0, 0"
+slayer_10:
+  - slot: helmet
+    item:
+      material: player_head
+      texture: <owner>
+  - slot: chestplate
+    item:
+      material: leather_chestplate
+      color: "200, 0, 0"
+      glow: true
+  - slot: leggings
+    item:
+      material: leather_chestplate
+      color: "200, 0, 0"
+      glow: true
+  - slot: boots
+    item:
+      material: leather_boots
+      color: "200, 0, 0"
+      glow: true

@@ -53,15 +53,24 @@ actions:
       filters:
         - id: "material"
           whitelist:
-            - "*_log"
-            - "*_wood"
-        - id: "!player_placed"
-      requirements:
-        - id: "container"
-          else:
-            - id: "warning"
-              message: "Oreo!"
+            - "^(.*)_log$"
+            - "^(.*)_wood$"
     effects:
       - id: "break"
+        options:
+          - filters:
+              - id: "material"
+                whitelist:
+                  - "oak_log"
+                  - "oak_wood"
+            replacements:
+              - "oak_sapling"
+          - filters:
+              - id: "material"
+                whitelist:
+                  - "spruce_log"
+                  - "spruce_wood"
+            replacements:
+              - "spruce_sapling"
         effects:
           - id: "add_to_container"
