@@ -2,9 +2,9 @@ package com.artillexstudios.axminions.command;
 
 import com.artillexstudios.axapi.gui.SignInput;
 import com.artillexstudios.axapi.utils.ContainerUtils;
+import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
-import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.command.arguments.MinionLevelArgument;
 import com.artillexstudios.axminions.command.arguments.MinionTypeArgument;
@@ -131,37 +131,37 @@ public final class AxMinionsCommand {
                         })
                 )
                 .then(new LiteralArgument("debug")
-                        .withPermission("axminions.command.debug")
-                        .then(new LiteralArgument("spawn")
-                                .withPermission("axminions.command.debug.spawn")
-                                .then(MinionTypeArgument.minionType("miniontype")
-                                        .then(MinionLevelArgument.level("level")
-                                                .executesPlayer((sender, args) -> {
-                                                    MinionType type = args.getByClass("miniontype", MinionType.class);
-                                                    Level level = args.getByClass("level", Level.class);
-                                                    Location location = LocationUtils.toBlockCenter(sender.getLocation());
-                                                    MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
-                                                    Minion minion = new Minion(location, data);
-                                                    minion.spawn();
-                                                    MinionArea area = MinionWorldCache.getArea(location.getWorld());
-                                                    MinionWorldCache.add(minion);
-                                                    area.startTicking(location.getChunk());
-                                                })
+                                .withPermission("axminions.command.debug")
+                                .then(new LiteralArgument("spawn")
+                                        .withPermission("axminions.command.debug.spawn")
+                                        .then(MinionTypeArgument.minionType("miniontype")
+                                                .then(MinionLevelArgument.level("level")
+                                                        .executesPlayer((sender, args) -> {
+                                                            MinionType type = args.getByClass("miniontype", MinionType.class);
+                                                            Level level = args.getByClass("level", Level.class);
+                                                            Location location = LocationUtils.toBlockCenter(sender.getLocation());
+                                                            MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
+                                                            Minion minion = new Minion(location, data);
+                                                            minion.spawn();
+                                                            MinionArea area = MinionWorldCache.getArea(location.getWorld());
+                                                            MinionWorldCache.add(minion);
+                                                            area.startTicking(location.getChunk());
+                                                        })
+                                                )
                                         )
                                 )
-                        )
-                        .then(new LiteralArgument("signinput")
-                                .executesPlayer((sender, args) -> {
-                                    SignInput signInput = new SignInput.Builder()
-                                            .setHandler((player, response) -> {
-                                                for (Component component : response) {
-                                                    player.sendMessage(StringUtils.formatToString(MiniMessage.miniMessage().serialize(component)));
-                                                }
-                                            })
-                                            .build(sender);
-                                    signInput.open();
-                                })
-                        )
+                                .then(new LiteralArgument("signinput")
+                                        .executesPlayer((sender, args) -> {
+                                            SignInput signInput = new SignInput.Builder()
+                                                    .setHandler((player, response) -> {
+                                                        for (Component component : response) {
+                                                            player.sendMessage(StringUtils.formatToString(MiniMessage.miniMessage().serialize(component)));
+                                                        }
+                                                    })
+                                                    .build(sender);
+                                            signInput.open();
+                                        })
+                                )
 //                        .then(new LiteralArgument("incomingpackets")
 //                                .executes((sender, args) -> {
 //                                    AxMinionsPlugin.instance().flags().DEBUG_INCOMING_PACKETS.set(!AxMinionsPlugin.instance().flags().DEBUG_INCOMING_PACKETS.get());

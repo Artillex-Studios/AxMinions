@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:1.4.612")
+    implementation("com.artillexstudios.axapi:axapi:1.4.634")
     implementation("dev.jorel:commandapi-bukkit-shade:9.7.0")
     implementation("com.h2database:h2:2.3.232")
 //    compileOnly("me.kryniowesegryderiusz:kgenerators-core:7.3") {
@@ -31,7 +31,6 @@ dependencies {
     compileOnly("commons-io:commons-io:2.16.1")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")
     compileOnly("org.slf4j:slf4j-api:2.0.9")
-    compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("org.jooq:jooq:3.19.10")
 }
 
@@ -50,7 +49,6 @@ tasks {
         relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.axapi")
         relocate("dev.jorel.commandapi", "com.artillexstudios.axminions.commandapi")
         relocate("redempt.crunch", "com.artillexstudios.axminions.crunch")
-        relocate("com.zaxxer", "com.artillexstudios.axminions.hikaricp")
         relocate("org.jooq", "com.artillexstudios.axminions.jooq")
         relocate("org.h2", "com.artillexstudios.axminions.h2")
     }
