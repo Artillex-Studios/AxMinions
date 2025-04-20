@@ -1,0 +1,1 @@
+SELECT axminions_worlds.id FROM axminions_worlds WHERE axminions_worlds.uuid = ? LIMIT 1;

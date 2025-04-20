@@ -1,0 +1,1 @@
+INSERT INTO axminions_types (name) VALUES(?);

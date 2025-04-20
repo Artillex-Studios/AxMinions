@@ -1,0 +1,1 @@
+INSERT INTO axminions_worlds (world_uuid) VALUES(?);

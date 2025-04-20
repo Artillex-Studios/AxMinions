@@ -141,7 +141,7 @@ public final class AxMinionsCommand {
                                                             Level level = args.getByClass("level", Level.class);
                                                             Location location = LocationUtils.toBlockCenter(sender.getLocation());
                                                             MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
-                                                            Minion minion = new Minion(location, data);
+                                                            Minion minion = new Minion(0, location, data);
                                                             minion.spawn();
                                                             MinionArea area = MinionWorldCache.getArea(location.getWorld());
                                                             MinionWorldCache.add(minion);
@@ -149,18 +149,6 @@ public final class AxMinionsCommand {
                                                         })
                                                 )
                                         )
-                                )
-                                .then(new LiteralArgument("signinput")
-                                        .executesPlayer((sender, args) -> {
-                                            SignInput signInput = new SignInput.Builder()
-                                                    .setHandler((player, response) -> {
-                                                        for (Component component : response) {
-                                                            player.sendMessage(StringUtils.formatToString(MiniMessage.miniMessage().serialize(component)));
-                                                        }
-                                                    })
-                                                    .build(sender);
-                                            signInput.open();
-                                        })
                                 )
 //                        .then(new LiteralArgument("incomingpackets")
 //                                .executes((sender, args) -> {

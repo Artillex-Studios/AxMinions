@@ -1,0 +1,1 @@
+INSERT INTO axminions_locations (world_id, x, y, z) VALUES(?,?,?,?);

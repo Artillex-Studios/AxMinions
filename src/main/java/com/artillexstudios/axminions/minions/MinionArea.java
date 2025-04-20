@@ -153,7 +153,7 @@ public final class MinionArea {
     }
 
     public ChunkPos forChunk(int x, int z) {
-        for (ChunkPos position : positions) {
+        for (ChunkPos position : this.positions) {
             if (position.x() == x && position.z() == z) {
                 return position;
             }

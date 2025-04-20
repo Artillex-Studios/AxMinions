@@ -1,0 +1,1 @@
+SELECT axminions_locations.id FROM axminions_locations WHERE axminions_locations.world_id = ? AND axminions_locations.x = ? AND axminions_locations.y = ? AND axminions_locations.z = ? LIMIT 1;

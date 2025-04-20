@@ -4,12 +4,11 @@ import com.artillexstudios.axapi.config.YamlConfiguration;
 import com.artillexstudios.axapi.config.annotation.Comment;
 import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
 import com.artillexstudios.axapi.config.annotation.PostProcess;
-import com.artillexstudios.axapi.config.annotation.Serializable;
+import com.artillexstudios.axapi.database.DatabaseConfig;
 import com.artillexstudios.axapi.libs.snakeyaml.DumperOptions;
-import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axapi.utils.YamlUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
-import com.artillexstudios.axminions.database.DatabaseType;
 import com.artillexstudios.axminions.utils.FileUtils;
 
 import java.nio.file.Files;
@@ -17,36 +16,7 @@ import java.nio.file.Path;
 
 public final class Config implements ConfigurationPart {
     private static final Config INSTANCE = new Config();
-    public static Database database = new Database();
-
-    @Serializable
-    public static class Database {
-        @Comment("h2, sqlite or mysql")
-        public DatabaseType type = DatabaseType.H2;
-        public String address = "127.0.0.1";
-        public int port = 3306;
-        public String database = "admin";
-        public String username = "admin";
-        public String password = "admin";
-        public Pool pool = new Pool();
-
-        @Serializable
-        public static class Pool {
-            public int maximumPoolSize = 10;
-            public int minimumIdle = 10;
-            public int maximumLifetime = 1800000;
-            public int keepaliveTime = 0;
-            public int connectionTimeout = 5000;
-
-            @PostProcess
-            public void postProcess() {
-                if (maximumPoolSize < 1) {
-                    LogUtils.warn("Maximum database pool size is lower than 1! This is not supported! Defaulting to 1.");
-                    maximumPoolSize = 1;
-                }
-            }
-        }
-    }
+    public static DatabaseConfig database = new DatabaseConfig();
 
     @Comment("""
             Should minions require tools to work?

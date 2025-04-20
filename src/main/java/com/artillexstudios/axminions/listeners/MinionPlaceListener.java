@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.listeners;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.config.Config;
@@ -111,16 +112,15 @@ public final class MinionPlaceListener implements Listener {
         }
         // TODO: Database queries, etc..
 //        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
-        Minion minion = new Minion(location, data);
-        MinionWorldCache.add(minion);
         user.minionCount(user.minionCount() + 1);
 
-        AxMinionsPlugin.instance().handler().insertMinion(minion).thenRun(() -> {
+        AxMinionsPlugin.instance().handler().insertMinion(location, data).thenAcceptAsync(minion -> {
+            MinionWorldCache.add(minion);
             if (Config.debug) {
                 LogUtils.debug("Inserted minion!");
             }
             minion.spawn();
             area.startTicking(location.getChunk());
-        });
+        }, Scheduler.get()::run);
     }
 }

@@ -22,12 +22,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Minion {
     private static final ItemStack AIR = new ItemStack(Material.AIR);
+    private final int id;
     private final Location location;
     private final PacketEntity entity;
     private final AtomicBoolean needsSaving = new AtomicBoolean(false);
@@ -36,7 +36,8 @@ public final class Minion {
     private boolean ticking = false;
     private MinionData minionData;
 
-    public Minion(Location location, MinionData data) {
+    public Minion(int id, Location location, MinionData data) {
+        this.id = id;
         this.location = location;
         this.minionData = data;
         this.entity = NMSHandlers.getNmsHandler().createEntity(EntityType.ARMOR_STAND, location);
@@ -178,18 +179,21 @@ public final class Minion {
         this.ticking = ticking;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Minion minion)) return false;
+    public int id() {
+        return this.id;
+    }
 
-        return this.tick == minion.tick && Objects.equals(this.location, minion.location);
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Minion minion)) {
+            return false;
+        }
+
+        return this.id == minion.id;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(this.location);
-        result = 31 * result + this.tick;
-        return result;
+        return this.id;
     }
 }

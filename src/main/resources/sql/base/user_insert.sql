@@ -1,0 +1,1 @@
+INSERT INTO axminions_users(uuid, name, extra_slots, island_slots) VALUES (?,?,?,?);

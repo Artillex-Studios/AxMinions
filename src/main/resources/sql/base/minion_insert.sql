@@ -1,0 +1,1 @@
+INSERT INTO axminions_minions (location_id, owner_id, type_id, `level`, charge, facing, extra_data) VALUES(?,?,?,?,?,?,?);

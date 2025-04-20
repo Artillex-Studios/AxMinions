@@ -1,0 +1,1 @@
+SELECT axminions_types.id FROM axminions_types WHERE axminions_types.name = ? LIMIT 1;

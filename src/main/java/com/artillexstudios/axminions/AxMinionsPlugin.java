@@ -1,6 +1,11 @@
 package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
+import com.artillexstudios.axapi.config.reader.ClassConfigurationReader;
+import com.artillexstudios.axapi.database.DatabaseConfig;
+import com.artillexstudios.axapi.database.DatabaseHandler;
+import com.artillexstudios.axapi.database.DatabaseTypes;
+import com.artillexstudios.axapi.database.impl.H2DatabaseType;
 import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.AsyncUtils;
@@ -13,7 +18,6 @@ import com.artillexstudios.axminions.config.Language;
 import com.artillexstudios.axminions.config.Minions;
 import com.artillexstudios.axminions.config.Skins;
 import com.artillexstudios.axminions.database.DataHandler;
-import com.artillexstudios.axminions.database.DatabaseConnector;
 import com.artillexstudios.axminions.listeners.BlockPlaceListener;
 import com.artillexstudios.axminions.listeners.ChunkListener;
 import com.artillexstudios.axminions.listeners.MinionPlaceListener;
@@ -36,7 +40,6 @@ import java.util.concurrent.CompletableFuture;
 
 public final class AxMinionsPlugin extends AxPlugin {
     private static AxMinionsPlugin instance;
-    private DatabaseConnector connector;
     private DataHandler handler;
     private AxMetrics metrics;
     private MinionTicker ticker;
@@ -75,13 +78,13 @@ public final class AxMinionsPlugin extends AxPlugin {
             return;
         }
 
+        DatabaseTypes.register(new H2DatabaseType("com.artillexstudios.axminions.h2"), true);
         Config.reload();
         AsyncUtils.setup(Config.asyncProcessorPoolSize);
         this.metrics = new AxMetrics(this, 5);
         this.metrics.start();
 
-        this.connector = new DatabaseConnector();
-        this.handler = new DataHandler(this.connector);
+        this.handler = new DataHandler(new DatabaseHandler(this, Config.database));
         this.handler.setup().thenRun(() -> {
             if (Config.debug) {
                 LogUtils.debug("Loaded database!");
@@ -142,7 +145,6 @@ public final class AxMinionsPlugin extends AxPlugin {
         this.ticker.cancel();
         this.minionSaver.stop();
         AsyncUtils.stop();
-        this.connector.close();
     }
 
     public DataHandler handler() {

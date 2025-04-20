@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:1.4.634")
+    implementation("com.artillexstudios.axapi:axapi:1.4.639")
     implementation("dev.jorel:commandapi-bukkit-shade:9.7.0")
     implementation("com.h2database:h2:2.3.232")
 //    compileOnly("me.kryniowesegryderiusz:kgenerators-core:7.3") {
