@@ -1,8 +1,6 @@
 package com.artillexstudios.axminions;
 
 import com.artillexstudios.axapi.AxPlugin;
-import com.artillexstudios.axapi.config.reader.ClassConfigurationReader;
-import com.artillexstudios.axapi.database.DatabaseConfig;
 import com.artillexstudios.axapi.database.DatabaseHandler;
 import com.artillexstudios.axapi.database.DatabaseTypes;
 import com.artillexstudios.axapi.database.impl.H2DatabaseType;
@@ -54,9 +52,7 @@ public final class AxMinionsPlugin extends AxPlugin {
     public void dependencies(DependencyManagerWrapper manager) {
         manager.repository("https://redempt.dev/");
         manager.dependency("com{}github{}Redempt:Crunch:2.0.3");
-        manager.dependency("org{}jooq:jooq:3.19.10");
         manager.dependency("com{}zaxxer:HikariCP:5.1.0");
-        manager.relocate("org{}jooq", "com.artillexstudios.axminions.jooq");
         manager.relocate("redempt{}crunch", "com.artillexstudios.axminions.crunch");
         manager.relocate("com{}zaxxer", "com.artillexstudios.axminions.hikaricp");
     }
