@@ -4,11 +4,12 @@ import com.artillexstudios.axapi.database.DatabaseHandler;
 import com.artillexstudios.axapi.database.DatabaseQuery;
 import com.artillexstudios.axapi.database.handler.ListHandler;
 import com.artillexstudios.axapi.database.handler.TransformerHandler;
+import com.artillexstudios.axapi.database.impl.SQLiteDatabaseType;
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.libs.snakeyaml.external.biz.base64Coder.Base64Coder;
 import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axapi.utils.AsyncUtils;
+import com.artillexstudios.axapi.utils.PlayerTextures;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
@@ -24,14 +25,17 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public final class DataHandler {
     private static final int FAILED_QUERY = -3042141;
+    private final DatabaseHandler handler;
     private final DatabaseQuery<?> setupQuery;
     private final DatabaseQuery<List<PlacedMinionData>> loadQuery;
     private final DatabaseQuery<User> userSelectQuery;
@@ -46,9 +50,10 @@ public final class DataHandler {
     private final DatabaseQuery<Integer> saveMinionsQuery;
 
     public DataHandler(DatabaseHandler handler) {
+        this.handler = handler;
         this.setupQuery = handler.query("setup");
         this.loadQuery = handler.query("load", new ListHandler<>(new TransformerHandler<>(PlacedMinionData.class)));
-        this.userSelectQuery = handler.query("user_select");
+        this.userSelectQuery = handler.query("user_select", new TransformerHandler<>(User.class));
         this.userInsertQuery = handler.query("user_insert");
         this.typeSelectQuery = handler.query("type_select");
         this.typeInsertQuery = handler.query("type_insert");
@@ -60,36 +65,42 @@ public final class DataHandler {
         this.saveMinionsQuery = handler.query("save_minions");
     }
 
-    public CompletableFuture<Integer> setup() {
+    public CompletableFuture<Void> setup() {
         return this.setupQuery.createAsync(AsyncUtils.executor())
                 .update()
                 .exceptionallyAsync(throwable -> {
                     LogUtils.error("An unexpected error occurred while running setup query!", throwable);
                     return FAILED_QUERY;
+                }).thenRun(() -> {
+                    if (Config.database.type instanceof SQLiteDatabaseType) {
+                        this.handler.rawQuery("PRAGMA journal_mode=WAL;").create()
+                                .update();
+                        this.handler.rawQuery("PRAGMA synchronous = off;").create()
+                                .update();
+                        this.handler.rawQuery("PRAGMA page_size = 32768;").create()
+                                .update();
+                        this.handler.rawQuery("PRAGMA mmap_size = 30000000000;").create()
+                                .update();
+                    }
                 });
     }
 
-    // TODO:
-    //            AsyncUtils.executor().submit(() -> {
-    //                this.connector.context().fetch("PRAGMA journal_mode=WAL;");
-    //                this.connector.context().execute("PRAGMA synchronous = off;");
-    //                this.connector.context().execute("PRAGMA page_size = 32768;");
-    //                this.connector.context().fetch("PRAGMA mmap_size = 30000000000;");
-    //                pragma.complete(1);
-    //            });
-
-    //
     public CompletionStage<User> loadUser(Player player) {
-        String texture = ServerPlayerWrapper.wrap(player).textures().texture();
+        PlayerTextures textures = ServerPlayerWrapper.wrap(player).textures();
         if (Config.debug) {
-            LogUtils.debug("Updating user! Texture: {}", texture == null ? "null" : texture);
+            LogUtils.debug("Updating user! Texture: {}", textures.texture() == null ? "null" : textures.texture());
         }
         return CompletableFuture.supplyAsync(() -> {
             User foundUser = this.userSelectQuery.create()
                     .query(player.getUniqueId());
 
             if (foundUser != null) {
-                User user = foundUser.texture(texture);
+                User user = foundUser;
+                String previousTexture = foundUser.texture();
+                if (Objects.equals(textures.texture(), previousTexture)) {
+                    user = foundUser.texture(textures.texture(), textures.signature());
+                }
+
                 // TODO: Figure out a better way than copying
                 for (Minion minion : MinionWorldCache.copy()) {
                     if (minion.ownerId() == user.id()) {
@@ -108,7 +119,7 @@ public final class DataHandler {
                 return null;
             }
 
-            return new User(userId, player.getUniqueId(), player.getName(), texture, 0, 0, 0, new ArrayList<>());
+            return new User(userId, player.getUniqueId(), player.getName(), textures.texture(), textures.signature(), 0, 0, 0, new ArrayList<>());
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
             LogUtils.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
             return null;
@@ -178,7 +189,7 @@ public final class DataHandler {
                             data.charge(),
                             data.direction().ordinal(),
                             data.tool() == null || data.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(data.tool()).serialize(),
-                            MinionData.serialize(data.extraData())
+                            MinionData.serialize(data.extraData()).getBytes(StandardCharsets.UTF_8)
                     );
 
             return new Minion(id, location, data);
@@ -194,7 +205,7 @@ public final class DataHandler {
             long start = System.nanoTime();
             List<Minion> toLoad = new ArrayList<>();
             List<PlacedMinionData> query = this.loadQuery.create()
-                    .query(world.getName());
+                    .query(world.getUID());
 
             for (PlacedMinionData data : query) {
                 Minion minion = data.create();
@@ -248,15 +259,16 @@ public final class DataHandler {
                 }
 
                 minion.save();
-                queries.add(new Object[]{minion.level().id(), minion.charge(), minion.facing().ordinal(), minion.tool() == null || minion.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(minion.tool()).serialize(), Base64Coder.decodeLines(MinionData.serialize(minion.extraData())), minion.id()});
+                queries.add(new Object[]{minion.level().id(), minion.charge(), minion.facing().ordinal(), minion.tool() == null || minion.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(minion.tool()).serialize(), MinionData.serialize(minion.extraData()).getBytes(StandardCharsets.UTF_8), minion.id()});
             }
 
             this.saveMinionsQuery.create()
                     .batch(queries);
 
-//            if (Config.database.type == DatabaseType.SQLITE) {
-//                this.connector.context().execute("PRAGMA wal_checkpoint(FULL);");
-//            }
+            if (Config.database.type instanceof SQLiteDatabaseType) {
+                this.handler.rawQuery("PRAGMA wal_checkpoint(FULL);").create()
+                        .update();
+            }
 
             long took = System.nanoTime() - start;
             return LongLongPair.of(queries.size(), took);

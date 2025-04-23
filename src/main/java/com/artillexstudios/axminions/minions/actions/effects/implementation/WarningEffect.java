@@ -1,6 +1,5 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
-import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
@@ -18,7 +17,6 @@ public final class WarningEffect extends Effect<Object, Object> {
     @Override
     public Object run(Minion minion, Object argument) {
         // TODO: Implement
-        LogUtils.warn("Warning: {}", this.message);
         throw ForcedMinionTickFailException.INSTANCE;
     }
 

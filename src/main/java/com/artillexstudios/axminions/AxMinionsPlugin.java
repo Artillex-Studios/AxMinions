@@ -4,6 +4,7 @@ import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.database.DatabaseHandler;
 import com.artillexstudios.axapi.database.DatabaseTypes;
 import com.artillexstudios.axapi.database.impl.H2DatabaseType;
+import com.artillexstudios.axapi.database.impl.SQLiteDatabaseType;
 import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper;
 import com.artillexstudios.axapi.metrics.AxMetrics;
 import com.artillexstudios.axapi.utils.AsyncUtils;
@@ -75,6 +76,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         }
 
         DatabaseTypes.register(new H2DatabaseType("com.artillexstudios.axminions.h2"), true);
+        DatabaseTypes.register(new SQLiteDatabaseType());
         Config.reload();
         AsyncUtils.setup(Config.asyncProcessorPoolSize);
         this.metrics = new AxMetrics(this, 5);

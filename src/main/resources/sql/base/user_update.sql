@@ -1,0 +1,1 @@
+UPDATE axminions_users SET texture = ?, signature = ?, name = ?, extra_slots = ?, island_slots = ? WHERE axminions_users.uuid = ?;
