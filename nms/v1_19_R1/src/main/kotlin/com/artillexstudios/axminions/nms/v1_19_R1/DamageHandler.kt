@@ -189,7 +189,7 @@ object DamageHandler {
                     }
 
 
-                    val baneOfArthropods = source.getTool()?.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS) ?: 0
+                    val baneOfArthropods = source.getTool()?.getEnchantmentLevel(Enchantment.BANE_OF_ARTHROPODS) ?: 0
                     if (nmsEntity is LivingEntity) {
                         if (baneOfArthropods > 0 && (nmsEntity.mobType === MobType.ARTHROPOD)) {
                             val p: Int = 20 + nmsEntity.random.nextInt(10 * baneOfArthropods)
