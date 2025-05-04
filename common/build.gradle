@@ -14,3 +14,7 @@ dependencies {
     compileOnly files('../libs/KingdomsX-1.16.12.jar')
     compileOnly files('../libs/KGenerators-7.3-b161.jar')
 }
+
+shadowJar {
+    dependsOn(project(':api').tasks.named('shadowJar'))
+}
