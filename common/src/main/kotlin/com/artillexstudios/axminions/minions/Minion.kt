@@ -717,7 +717,7 @@ class Minion(
         val damage = toolMeta.damage
         val remaining = maxDurability - damage
 
-        if (Math.random() > 1f / (toolMeta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
+        if (Math.random() > 1f / (toolMeta.getEnchantLevel(Enchantment.UNBREAKING) + 1)) return
 
         if (remaining > amount) {
             // We can damage the tool
