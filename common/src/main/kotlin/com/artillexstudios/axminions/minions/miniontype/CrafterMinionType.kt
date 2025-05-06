@@ -199,7 +199,6 @@ class CrafterMinionType : MinionType("crafter", AxMinionsPlugin.INSTANCE.getReso
     private fun doCraftShapeless(inventory: Inventory, recipe: ShapelessRecipe, contents: HashMap<ItemStack, Int>) {
         for (recipeChoice in recipe.choiceList) {
             if (recipeChoice == null) continue
-            if (recipeChoice.itemStack == null) continue
 
             for (content in inventory.contents) {
                 if (content == null) continue
