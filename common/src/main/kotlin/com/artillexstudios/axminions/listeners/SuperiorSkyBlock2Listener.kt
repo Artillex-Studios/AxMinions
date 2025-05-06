@@ -28,6 +28,7 @@ class SuperiorSkyBlock2Listener : Listener {
                 }
             } catch (_: NullPointerException) {
                 // SuperiorSkyBlock api does it this way aswell
+                // ah ok if superior skyblock api does it this way then its fine 💀
             }
         }
     }
