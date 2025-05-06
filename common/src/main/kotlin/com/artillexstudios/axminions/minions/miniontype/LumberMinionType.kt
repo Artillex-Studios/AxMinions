@@ -17,6 +17,12 @@ import org.bukkit.inventory.ItemStack
 
 class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResource("minions/lumber.yml")!!) {
 
+    private val SPECIAL_CASES = mapOf(
+        Material.MANGROVE_LOG to Material.MANGROVE_PROPAGULE,
+        Material.CRIMSON_STEM to Material.CRIMSON_FUNGUS,
+        Material.WARPED_STEM to Material.WARPED_FUNGUS
+    )
+
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
     }
@@ -86,40 +92,17 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
     }
 
     private fun getSaplingType(material: Material): Material {
-        return when (material.name) {
-            "DARK_OAK_LOG" -> {
-                Material.DARK_OAK_SAPLING
-            }
+        SPECIAL_CASES[material]?.let { return it }
 
-            "BIRCH_LOG" -> {
-                Material.BIRCH_SAPLING
-            }
+        val woodType = material.name.replace("_LOG", "")
 
-            "ACACIA_LOG" -> {
-                Material.ACACIA_SAPLING
-            }
+        val saplingName = "${woodType}_SAPLING"
 
-            "JUNGLE_LOG" -> {
-                Material.JUNGLE_SAPLING
-            }
-
-            "SPRUCE_LOG" -> {
-                Material.SPRUCE_SAPLING
-            }
-
-            "MANGROVE_LOG" -> {
-                Material.MANGROVE_PROPAGULE
-            }
-
-            "CHERRY_LOG" -> {
-                Material.CHERRY_SAPLING
-            }
-
-            "PALE_OAK_LOG" -> {
-                Material.PALE_OAK_SAPLING
-            }
-
-            else -> Material.OAK_SAPLING
+        return try {
+            Material.valueOf(saplingName)
+        } catch (e: IllegalArgumentException) {
+            Material.OAK_SAPLING
         }
     }
+
 }
