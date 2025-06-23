@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 interface NMSHandler {
     companion object {
         private val handler: NMSHandler =
-            Class.forName("com.artillexstudios.axminions.nms.${Version.getServerVersion().nmsVersion}.NMSHandler").getConstructor().newInstance() as NMSHandler
+            Class.forName("com.artillexstudios.axminions.nms.${Version.getServerVersion().nmsVersion()}.NMSHandler").getConstructor().newInstance() as NMSHandler
 
         fun get(): NMSHandler {
             return handler

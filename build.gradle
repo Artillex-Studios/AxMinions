@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.13'
+version = '1.0.15'
 
 repositories {
     mavenCentral()
@@ -20,17 +20,14 @@ repositories {
 dependencies {
     implementation project(path: ":api")
     implementation project(path: ":common")
-    implementation project(path: ":nms:v1_18_R2", configuration: "reobf")
-    implementation project(path: ":nms:v1_19_R1", configuration: "reobf")
-    implementation project(path: ":nms:v1_19_R2", configuration: "reobf")
-    implementation project(path: ":nms:v1_19_R3", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R1", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R2", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R3", configuration: "reobf")
     implementation project(path: ":nms:v1_20_R4", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R1", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R2", configuration: "reobf")
-//    implementation project(path: ":nms:v1_21_R3", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R3", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R4", configuration: "reobf")
 }
 
 allprojects {
@@ -40,7 +37,7 @@ allprojects {
     apply plugin: 'io.github.goooler.shadow'
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 
     compileKotlin {
@@ -125,38 +122,8 @@ allprojects {
     }
 
     dependencies {
-        compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
-        compileOnly 'dev.rosewood:rosestacker:1.5.11'
-        compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
-        compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-        compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
-        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.0'
-        compileOnly 'com.h2database:h2:2.2.220'
-        compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
-        compileOnly 'net.essentialsx:EssentialsX:2.19.0'
-        compileOnly 'com.github.Gypopo:EconomyShopGUI-API:1.7.0'
-        compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0' 
-        compileOnly('com.sk89q.worldguard:worldguard-bukkit:7.0.1') {
-            exclude module: "org.spigotmc"
-            exclude module: "org.bukkit"
-        }
-        compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2023.2'
-        compileOnly 'world.bentobox:bentobox:1.24.0-SNAPSHOT'
-        compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
-        compileOnly 'com.github.angeschossen:LandsAPI:6.29.12'
-        compileOnly 'com.intellectualsites.plotsquared:plotsquared-core:7.0.0-rc.4'
-        compileOnly 'com.intellectualsites.plotsquared:plotsquared-bukkit:7.0.0-rc.4'
-        compileOnly 'com.github.LoneDev6:api-itemsadder:3.6.1'
-        compileOnly 'com.palmergames.bukkit.towny:towny:0.100.1.0'
-        implementation platform('com.intellectualsites.bom:bom-newest:1.35')
-        implementation("com.artillexstudios.axapi:axapi:1.4.507:all")
-        implementation("com.zaxxer:HikariCP:5.1.0")
-        implementation("org.bstats:bstats-bukkit:3.0.2")
-        compileOnly 'org.black_ixx:playerpoints:3.2.6'
-//        compileOnly('com.github.Maxlego08:zShop-API:3.0.5')  {
-//            exclude module: "zMenu-API"
-//        }
-        compileOnly 'me.clip:placeholderapi:2.11.5'
+        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+        implementation("com.artillexstudios.axapi:axapi:1.4.671:all")
     }
 }
 
@@ -175,7 +142,7 @@ shadowJar {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks.build.dependsOn(shadowJar)

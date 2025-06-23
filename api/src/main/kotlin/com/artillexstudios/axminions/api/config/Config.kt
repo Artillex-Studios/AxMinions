@@ -1,12 +1,12 @@
 package com.artillexstudios.axminions.api.config
 
 import com.artillexstudios.axapi.config.Config
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.dvs.versioning.BasicVersioning
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.DumperSettings
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings
-import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings
+import com.artillexstudios.axapi.libs.boostedyaml.block.implementation.Section
+import com.artillexstudios.axapi.libs.boostedyaml.dvs.versioning.BasicVersioning
+import com.artillexstudios.axapi.libs.boostedyaml.settings.dumper.DumperSettings
+import com.artillexstudios.axapi.libs.boostedyaml.settings.general.GeneralSettings
+import com.artillexstudios.axapi.libs.boostedyaml.settings.loader.LoaderSettings
+import com.artillexstudios.axapi.libs.boostedyaml.settings.updater.UpdaterSettings
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import java.io.File
 import java.io.InputStream

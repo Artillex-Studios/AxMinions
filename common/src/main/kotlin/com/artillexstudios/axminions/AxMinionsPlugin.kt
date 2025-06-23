@@ -1,7 +1,8 @@
 package com.artillexstudios.axminions
 
 import com.artillexstudios.axapi.AxPlugin
-import com.artillexstudios.axapi.data.ThreadedQueue
+import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper
+import com.artillexstudios.axapi.executor.ThreadedQueue
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags
 import com.artillexstudios.axminions.api.AxMinionsAPI
@@ -34,8 +35,6 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
-import com.artillexstudios.axapi.libs.libby.BukkitLibraryManager
-import com.artillexstudios.axapi.libs.libby.Library
 import com.artillexstudios.axminions.minions.miniontype.CrafterMinionType
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
@@ -51,16 +50,12 @@ class AxMinionsPlugin : AxPlugin() {
         lateinit var integrations: Integrations
     }
 
-    init {
-        val manager = BukkitLibraryManager(this)
-        val stdLib = Library.builder().groupId("org{}jetbrains{}kotlin").artifactId("kotlin-stdlib").version("1.9.22")
-            .relocate("org{}jetbrains{}kotlin", "com.artillexstudios.axminions.libs.kotlin").build()
-        val h2 = Library.builder().groupId("com{}h2database").artifactId("h2").version("2.2.220")
-            .relocate("org{}h2", "com.artillexstudios.axminions.libs.h2").build()
-        manager.addMavenCentral()
-        manager.loadLibrary(stdLib)
-        manager.loadLibrary(h2)
-    }
+    override fun dependencies(manager: DependencyManagerWrapper) {
+        manager.dependency("org{}jetbrains{}kotlin:kotlin-stdlib:1.9.22")
+        manager.dependency("com{}h2database:h2:2.2.220")
+        manager.relocate("org{}jetbrains{}kotlin", "com.artillexstudios.axminions.libs.kotlin")
+        manager.relocate("org{}h2", "com.artillexstudios.axminions.libs.h2")
+     }
 
     override fun updateFlags(flags: FeatureFlags) {
         flags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
@@ -74,7 +69,7 @@ class AxMinionsPlugin : AxPlugin() {
 
     override fun enable() {
         Metrics(this, 19043)
-        com.artillexstudios.axapi.metrics.AxMetrics(5).start()
+        com.artillexstudios.axapi.metrics.AxMetrics(this, 5).start()
 
         AxMinionsPlugin.config = Config(File(dataFolder, "config.yml"), getResource("config.yml")!!)
         messages = Messages(File(dataFolder, "messages.yml"), getResource("messages.yml")!!)

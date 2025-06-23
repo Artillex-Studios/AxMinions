@@ -63,6 +63,14 @@ class Minion(
     private var charge: Long
 ) : Minion {
     companion object {
+        private val equipmentSlots: Array<EquipmentSlot> = arrayOf(
+            EquipmentSlot.MAIN_HAND,
+            EquipmentSlot.OFF_HAND,
+            EquipmentSlot.BOOTS,
+            EquipmentSlot.LEGGINGS,
+            EquipmentSlot.CHEST_PLATE,
+            EquipmentSlot.HELMET
+        )
         private val numberFormat = NumberFormat.getCompactNumberInstance(Locale.ENGLISH, NumberFormat.Style.SHORT)
         private val notDurable = arrayListOf<Material>()
 
@@ -632,7 +640,7 @@ class Minion(
     }
 
     override fun updateArmour() {
-        for (entry in EquipmentSlot.entries) {
+        for (entry in equipmentSlots) {
             entity.setItem(entry,  null)
         }
 
