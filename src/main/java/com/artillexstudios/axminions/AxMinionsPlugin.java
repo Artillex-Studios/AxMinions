@@ -45,8 +45,8 @@ public final class AxMinionsPlugin extends AxPlugin {
     private MinionSaver minionSaver;
 
     @Override
-    public void updateFlags(FeatureFlags flags) {
-        flags.PACKET_ENTITY_TRACKER_ENABLED.set(true);
+    public void updateFlags() {
+        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true);
     }
 
     @Override

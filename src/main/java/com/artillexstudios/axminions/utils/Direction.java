@@ -16,4 +16,8 @@ public enum Direction {
         this.yaw = yaw;
         this.face = face;
     }
+
+    public BlockFace blockFace() {
+        return this.face;
+    }
 }

@@ -83,7 +83,9 @@ public abstract class Collector<T> {
         CollectorContext.Builder contextBuilder = CollectorContext.builder()
                 .withOption(CollectorOptions.COLLECTOR_ID, collectorID);
 
-        LogUtils.info("Collector: {}", contextBuilder.option(CollectorOptions.COLLECTOR_ID));
+        if (Config.debug) {
+            LogUtils.debug("Collector: {}", contextBuilder.option(CollectorOptions.COLLECTOR_ID));
+        }
         try {
             CollectorOptionRegistry.parseAll(config, contextBuilder);
         } catch (InvalidCollectorOptionException exception) {

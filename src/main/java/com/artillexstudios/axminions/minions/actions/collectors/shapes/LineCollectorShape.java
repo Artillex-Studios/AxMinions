@@ -5,20 +5,42 @@ import com.artillexstudios.axminions.minions.actions.collectors.CollectorOptionN
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public final class LineCollectorShape extends CollectorShape {
+    private static final BlockFace[] blockFaces = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 
     @Override
     public void getBlocks(CollectorContext context) throws CollectorOptionNotPresentException {
         Location location = context.optionOrThrow(CollectorOptions.LOCATION);
-        double range = context.optionOrThrow(CollectorOptions.RANGE);
+        int range = (int) Math.round(context.optionOrThrow(CollectorOptions.RANGE));
         int limit = context.optionOrDefault(CollectorOptions.LIMIT, 0);
         List<Filter<?>> filters = context.optionOrThrow(CollectorOptions.FILTERS);
         Consumer<Location> consumer = context.optionOrThrow(CollectorOptions.LOCATION_CONSUMER);
+
+        int successful = 0;
+        final Location newLocation = new Location(location.getWorld(), 0, 0, 0);
+        for (BlockFace blockFace : blockFaces) {
+            for (int i = 1; i < range; i++) {
+                newLocation.add(blockFace.getModX(), 0, blockFace.getModZ());
+                for (Filter<?> filter : filters) {
+                    if (!filter.isAllowed(newLocation)) {
+                        break;
+                    }
+                }
+
+                consumer.accept(newLocation);
+                successful++;
+                if (successful == limit) {
+                    // Limit reached, no need to do anything with the rest
+                    return;
+                }
+            }
+        }
     }
 
     @Override

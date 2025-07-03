@@ -35,7 +35,7 @@ public final class BlockCollector extends Collector<Location> {
                     .withOption(CollectorOptions.LIMIT, limitExpression.getVariableCount() == 0 ? (int) limitExpression.evaluate() : (int) limitExpression.evaluate(minion.level().id()))
                     .withOption(CollectorOptions.RANGE, rangeExpression.getVariableCount() == 0 ? rangeExpression.evaluate() : rangeExpression.evaluate(minion.level().id()))
                     .withOption(CollectorOptions.LOCATION, minion.location())
-                    .withOption(CollectorOptions.FACING, BlockFace.NORTH) // TODO: Facing option
+                    .withOption(CollectorOptions.FACING, minion.facing().blockFace())
                     .withOption(CollectorOptions.LOCATION_CONSUMER, consumer)
                     .build()
             );
