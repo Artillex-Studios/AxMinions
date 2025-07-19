@@ -14,12 +14,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
 
-public record PlacedMinionData(int id, int ownerId, MinionType type, Direction direction, Location location,
+public record PlacedMinionData(Integer id, Integer ownerId, MinionType type, Direction direction, Location location,
                                Location linkedChest, Level level,
-                               long charge, ItemStack tool, Skin skin, HashMap<String, String> extraData) {
+                               Long charge, ItemStack tool, Skin skin, HashMap<String, String> extraData) {
 
-    public PlacedMinionData(int id, UUID worldUUID, int typeId, int locationX, int locationY, int locationZ, int ownerId, int level, long charge, int facing, Blob tool, Blob extraData) throws SQLException, IOException {
-        this(id, ownerId, MinionTypes.parse((short) typeId), Direction.values()[facing], new Location(Bukkit.getWorld(worldUUID), locationX + 0.5, locationY, locationZ + 0.5), null, MinionTypes.parse((short) typeId).level(level), charge, tool == null ? null : WrapperRegistry.ITEM_STACK.map(tool.getBinaryStream().readAllBytes()).toBukkit(), null, MinionData.deserialize(new String(extraData.getBinaryStream().readAllBytes(), StandardCharsets.UTF_8)));
+    public PlacedMinionData(Integer id, UUID worldUUID, Integer typeId, Integer locationX, Integer locationY, Integer locationZ, Integer ownerId, Integer level, Long charge, Integer facing, Blob tool, Blob extraData) throws SQLException, IOException {
+        this(id, ownerId, MinionTypes.parse(typeId.shortValue()), Direction.values()[facing], new Location(Bukkit.getWorld(worldUUID), locationX + 0.5, locationY, locationZ + 0.5), null, MinionTypes.parse(typeId.shortValue()).level(level), charge, tool == null ? null : WrapperRegistry.ITEM_STACK.map(tool.getBinaryStream().readAllBytes()).toBukkit(), null, MinionData.deserialize(new String(extraData.getBinaryStream().readAllBytes(), StandardCharsets.UTF_8)));
     }
 
     public Minion create() {

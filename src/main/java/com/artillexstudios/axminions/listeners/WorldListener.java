@@ -18,14 +18,14 @@ public final class WorldListener implements Listener {
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent event) {
         MinionArea area = MinionWorldCache.loadArea(event.getWorld());
+        if (area == null) {
+            return;
+        }
+
         AxMinionsPlugin.instance().handler().loadMinions(event.getWorld()).toCompletableFuture()
                 .thenAccept(loaded -> {
                     if (Config.debug) {
                         LogUtils.debug("Loaded {} minions in world {} in {} ms!", loaded.firstInt(), event.getWorld().getName(), loaded.secondLong() / 1_000_000);
-                    }
-
-                    if (area == null) {
-                        return;
                     }
 
                     Scheduler.get().run(() -> {

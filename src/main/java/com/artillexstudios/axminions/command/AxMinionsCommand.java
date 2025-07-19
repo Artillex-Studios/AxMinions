@@ -1,9 +1,7 @@
 package com.artillexstudios.axminions.command;
 
-import com.artillexstudios.axapi.gui.SignInput;
 import com.artillexstudios.axapi.utils.ContainerUtils;
 import com.artillexstudios.axapi.utils.MessageUtils;
-import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.command.arguments.MinionLevelArgument;
@@ -25,8 +23,6 @@ import dev.jorel.commandapi.CommandTree;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LiteralArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -131,35 +127,25 @@ public final class AxMinionsCommand {
                         })
                 )
                 .then(new LiteralArgument("debug")
-                                .withPermission("axminions.command.debug")
-                                .then(new LiteralArgument("spawn")
-                                        .withPermission("axminions.command.debug.spawn")
-                                        .then(MinionTypeArgument.minionType("miniontype")
-                                                .then(MinionLevelArgument.level("level")
-                                                        .executesPlayer((sender, args) -> {
-                                                            MinionType type = args.getByClass("miniontype", MinionType.class);
-                                                            Level level = args.getByClass("level", Level.class);
-                                                            Location location = LocationUtils.toBlockCenter(sender.getLocation());
-                                                            MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
-                                                            Minion minion = new Minion(0, location, data);
-                                                            minion.spawn();
-                                                            MinionArea area = MinionWorldCache.getArea(location.getWorld());
-                                                            MinionWorldCache.add(minion);
-                                                            area.startTicking(location.getChunk());
-                                                        })
-                                                )
+                        .withPermission("axminions.command.debug")
+                        .then(new LiteralArgument("spawn")
+                                .withPermission("axminions.command.debug.spawn")
+                                .then(MinionTypeArgument.minionType("miniontype")
+                                        .then(MinionLevelArgument.level("level")
+                                                .executesPlayer((sender, args) -> {
+                                                    MinionType type = args.getByClass("miniontype", MinionType.class);
+                                                    Level level = args.getByClass("level", Level.class);
+                                                    Location location = LocationUtils.toBlockCenter(sender.getLocation());
+                                                    MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
+                                                    Minion minion = new Minion(0, location, data);
+                                                    minion.spawn();
+                                                    MinionArea area = MinionWorldCache.getArea(location.getWorld());
+                                                    MinionWorldCache.add(minion);
+                                                    area.startTicking(location.getChunk());
+                                                })
                                         )
                                 )
-//                        .then(new LiteralArgument("incomingpackets")
-//                                .executes((sender, args) -> {
-//                                    AxMinionsPlugin.instance().flags().DEBUG_INCOMING_PACKETS.set(!AxMinionsPlugin.instance().flags().DEBUG_INCOMING_PACKETS.get());
-//                                })
-//                        )
-//                        .then(new LiteralArgument("outgoingpackets")
-//                                .executes((sender, args) -> {
-//                                    AxMinionsPlugin.instance().flags().DEBUG_OUTGOING_PACKETS.set(!AxMinionsPlugin.instance().flags().DEBUG_OUTGOING_PACKETS.get());
-//                                })
-//                        )
+                        )
                 )
                 .register();
     }

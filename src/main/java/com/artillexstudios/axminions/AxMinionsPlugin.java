@@ -78,6 +78,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         DatabaseTypes.register(new H2DatabaseType("com.artillexstudios.axminions.h2"), true);
         DatabaseTypes.register(new SQLiteDatabaseType());
         Config.reload();
+        Config.database.tablePrefix("");
         AsyncUtils.setup(Config.asyncProcessorPoolSize);
         this.metrics = new AxMetrics(this, 5);
         this.metrics.start();

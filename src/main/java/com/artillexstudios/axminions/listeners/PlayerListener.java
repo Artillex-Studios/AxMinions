@@ -32,6 +32,7 @@ public final class PlayerListener implements Listener {
                 if (minion.ownerId() == user.id()) {
                     user.minions().add(minion);
                     minion.extraData().put("owner_texture", user.texture());
+                    minion.extraData().put("owner_signature", user.signature());
                     minion.skin(minion.skin());
                 }
             }

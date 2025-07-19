@@ -1,1 +1,1 @@
-INSERT INTO axminions_users(uuid, name, texture, signature, extra_slots, island_slots) VALUES (?,?,?,?);
+INSERT INTO axminions_users(uuid, name, extra_slots, island_slots) VALUES (?,?,?,?);

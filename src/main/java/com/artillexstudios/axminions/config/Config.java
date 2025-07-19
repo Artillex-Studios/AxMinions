@@ -88,7 +88,7 @@ public final class Config implements ConfigurationPart {
     public static boolean debug = false;
     @Comment("Do not touch!")
     public static int configVersion = 1;
-    private YamlConfiguration config = null;
+    private YamlConfiguration<?> config = null;
 
     public static boolean reload() {
         return INSTANCE.refreshConfig();

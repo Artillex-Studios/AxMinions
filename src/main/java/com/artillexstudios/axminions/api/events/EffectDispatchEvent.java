@@ -16,6 +16,14 @@ public final class EffectDispatchEvent extends MinionEvent {
         this.argument = argument;
     }
 
+    public Effect<?, ?> effect() {
+        return this.effect;
+    }
+
+    public Object argument() {
+        return this.argument;
+    }
+
     @NotNull
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;

@@ -12,25 +12,32 @@ import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
+import com.artillexstudios.axminions.exception.MinionWarningException;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.skins.Skin;
+import com.artillexstudios.axminions.minions.warnings.Warnings;
+import com.artillexstudios.axminions.users.User;
+import com.artillexstudios.axminions.users.Users;
 import com.artillexstudios.axminions.utils.Direction;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Minion {
+    private static final UUID PROFILE_UUID = UUID.randomUUID();
     private static final ItemStack AIR = new ItemStack(Material.AIR);
     private final int id;
     private final Location location;
     private final PacketEntity entity;
     private final AtomicBoolean needsSaving = new AtomicBoolean(false);
+    private final Warnings warnings = new Warnings(this);
     private int tick = 0;
     private int armTick = 0;
     private boolean ticking = false;
@@ -65,9 +72,21 @@ public final class Minion {
             return;
         }
 
-        this.tick = 0;
-        if (Config.showHandAnimation & this.minionData.type().tick(this)) {
-            this.armTick = 0;
+        boolean cleanWarnings = true;
+        try {
+            this.tick = 0;
+            if (Config.showHandAnimation & this.minionData.type().tick(this)) {
+                this.armTick = 0;
+            }
+        } catch (MinionWarningException exception) {
+            cleanWarnings = false;
+        }
+
+        if (cleanWarnings) {
+            if (Config.debug) {
+                LogUtils.debug("Cleaning warnings!");
+            }
+            this.warnings.clean();
         }
 
         Integrations.STORAGE.flush(this.minionData.linkedChest());
@@ -95,14 +114,19 @@ public final class Minion {
             WrappedItemStack wrappedItemStack = entry.getValue();
             CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
             if (tag.contains("axminions_ownerskin") && this.extraData().containsKey("owner_texture")) {
-                ProfileProperties properties = new ProfileProperties(UUID.randomUUID(), "axminions");
-                properties.put("textures", new ProfileProperties.Property("textures", this.extraData().get("owner_texture"), null));
+                ProfileProperties properties = new ProfileProperties(PROFILE_UUID, "axminions");
+                properties.put("textures", new ProfileProperties.Property("textures", this.extraData().get("owner_texture"), this.extraData().get("owner_signature")));
                 wrappedItemStack = wrappedItemStack.copy();
                 wrappedItemStack.set(DataComponents.profile(), properties);
             }
 
             this.entity.setItem(entry.getKey(), wrappedItemStack);
         }
+    }
+
+    @Nullable
+    public User owner() {
+        return Users.get(this.ownerId());
     }
 
     public Location linkedChest() {
@@ -154,6 +178,10 @@ public final class Minion {
     public void destroy() {
         this.ticking = false;
         this.entity.remove();
+    }
+
+    public Warnings warnings() {
+        return this.warnings;
     }
 
     public boolean needsSaving() {

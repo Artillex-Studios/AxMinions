@@ -17,6 +17,10 @@ public enum Direction {
         this.face = face;
     }
 
+    public float yaw() {
+        return this.yaw;
+    }
+
     public BlockFace blockFace() {
         return this.face;
     }

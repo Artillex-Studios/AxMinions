@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects;
 
+import com.artillexstudios.axapi.utils.UncheckedUtils;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.AddToContainerEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.BreakEffect;
 import com.artillexstudios.axminions.minions.actions.effects.implementation.CollectEffect;
@@ -40,6 +41,6 @@ public final class Effects {
             return null;
         }
 
-        return (Effect<Object, Object>) effectSupplier.apply(configuration);
+        return UncheckedUtils.unsafeCast(effectSupplier.apply(configuration));
     }
 }

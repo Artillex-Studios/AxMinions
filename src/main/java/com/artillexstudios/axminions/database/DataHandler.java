@@ -95,11 +95,7 @@ public final class DataHandler {
                     .query(player.getUniqueId());
 
             if (foundUser != null) {
-                User user = foundUser;
-                String previousTexture = foundUser.texture();
-                if (Objects.equals(textures.texture(), previousTexture)) {
-                    user = foundUser.texture(textures.texture(), textures.signature());
-                }
+                User user = foundUser.texture(textures.texture(), textures.signature());
 
                 // TODO: Figure out a better way than copying
                 for (Minion minion : MinionWorldCache.copy()) {

@@ -10,6 +10,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
+import com.artillexstudios.axminions.exception.MinionWarningException;
 import com.artillexstudios.axminions.minions.actions.CompiledAction;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -91,10 +92,17 @@ public final class MinionType {
         for (CompiledAction action : this.actions) {
             try {
                 action.run(minion);
+            } catch (MinionWarningException exception) {
+                if (com.artillexstudios.axminions.config.Config.debug) {
+                    LogUtils.debug("Termination of tick due to warning!");
+                }
+                // Rethrow the exception, so we can handle it in the tick
+                throw exception;
             } catch (MinionTickFailException exception) {
                 if (com.artillexstudios.axminions.config.Config.debug) {
                     LogUtils.debug("Termination of tick due to exception!");
                 }
+
                 return false;
             }
         }

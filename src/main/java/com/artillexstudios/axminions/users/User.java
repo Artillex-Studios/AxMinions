@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record User(int id, UUID uuid, String name, String texture, String signature, int minionCount, int extraSlots,
-                   int extraIslandSlots, List<Minion> minions) {
+public record User(Integer id, UUID uuid, String name, String texture, String signature, Integer minionCount, Integer extraSlots,
+                   Integer extraIslandSlots, List<Minion> minions) {
 
-    public User(int id, UUID uuid, String name, String texture, String signature, int extraSlots, int extraIslandSlots, long minionCount) {
-        this(id, uuid, name, texture, signature, (int) minionCount, extraSlots, extraIslandSlots, new ArrayList<>());
+    public User(Integer id, UUID uuid, String name, String texture, String signature, Integer extraSlots, Integer extraIslandSlots, Long minionCount) {
+        this(id, uuid, name, texture, signature, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>());
+    }
+
+    public User(Integer id, UUID uuid, String name, Integer extraSlots, Integer extraIslandSlots, Long minionCount) {
+        this(id, uuid, name, null, null, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>());
     }
 
     public User minionCount(int minionCount) {
