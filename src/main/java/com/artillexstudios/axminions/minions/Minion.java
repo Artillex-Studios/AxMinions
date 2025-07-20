@@ -94,6 +94,9 @@ public final class Minion {
     }
 
     public void skin(Skin skin) {
+        if (Config.debug) {
+            LogUtils.debug("Updating skin!");
+        }
         this.minionData = this.minionData.withSkin(skin);
 
         this.applySkin();
@@ -115,6 +118,9 @@ public final class Minion {
             CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
             if (tag.contains("axminions_ownerskin") && this.extraData().containsKey("owner_texture")) {
                 ProfileProperties properties = new ProfileProperties(PROFILE_UUID, "axminions");
+                if (Config.debug) {
+                    LogUtils.debug("Setting texture to {} with signature: {}", this.extraData().get("owner_texture"), this.extraData().get("owner_signature"));
+                }
                 properties.put("textures", new ProfileProperties.Property("textures", this.extraData().get("owner_texture"), this.extraData().get("owner_signature")));
                 wrappedItemStack = wrappedItemStack.copy();
                 wrappedItemStack.set(DataComponents.profile(), properties);

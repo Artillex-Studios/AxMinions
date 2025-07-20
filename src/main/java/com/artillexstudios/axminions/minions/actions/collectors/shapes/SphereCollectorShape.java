@@ -18,6 +18,9 @@ public final class SphereCollectorShape extends CollectorShape {
 
     @Override
     public void getBlocks(CollectorContext context) throws CollectorOptionNotPresentException {
+        if (Config.debug) {
+            LogUtils.debug("Getting blocks!");
+        }
         Location location = context.optionOrThrow(CollectorOptions.LOCATION);
         double range = context.optionOrThrow(CollectorOptions.RANGE);
         int limit = context.optionOrDefault(CollectorOptions.LIMIT, 0);
@@ -50,12 +53,18 @@ public final class SphereCollectorShape extends CollectorShape {
                     final int distance = xDistance + yDistance + zDistance;
 
                     if (distance < rangeSquared && distance < smallRangeSquared) {
+                        if (Config.debug) {
+                            LogUtils.debug("Block is in range!");
+                        }
                         try {
                             newLocation.setX(x);
                             newLocation.setY(y);
                             newLocation.setZ(z);
                             for (Filter<?> filter : filters) {
                                 if (!filter.isAllowed(newLocation)) {
+                                    if (Config.debug) {
+                                        LogUtils.debug("Not allowed! Filter: {}", filter);
+                                    }
                                     continue z;
                                 }
                             }

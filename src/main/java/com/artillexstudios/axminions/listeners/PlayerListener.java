@@ -23,18 +23,14 @@ public final class PlayerListener implements Listener {
             }
 
             if (Config.debug) {
-                LogUtils.debug("Loaded user for player: {}", event.getPlayer().getName());
+                LogUtils.debug("Loaded user for player: {}, minions: {}", event.getPlayer().getName(), user.minions());
             }
             Users.load(user);
-            
-            ObjectArrayList<Minion> copy = MinionWorldCache.copy();
-            for (Minion minion : copy) {
-                if (minion.ownerId() == user.id()) {
-                    user.minions().add(minion);
-                    minion.extraData().put("owner_texture", user.texture());
-                    minion.extraData().put("owner_signature", user.signature());
-                    minion.skin(minion.skin());
-                }
+
+            for (Minion minion : user.minions()) {
+                minion.extraData().put("owner_texture", user.texture());
+                minion.extraData().put("owner_signature", user.signature());
+                minion.skin(minion.skin());
             }
         });
     }

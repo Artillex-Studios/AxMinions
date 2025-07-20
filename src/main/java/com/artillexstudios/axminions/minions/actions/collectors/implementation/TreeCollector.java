@@ -35,6 +35,9 @@ public final class TreeCollector extends Collector<Location> {
 
     @Override
     public void collect(Minion minion, Consumer<Location> consumer) {
+        if (Config.debug) {
+            LogUtils.debug("TreeCollector run!");
+        }
         CompiledExpression limitExpression = this.context.optionOrDefault(CollectorOptions.LIMIT_RAW, Collector.ZERO_EXPRESSION);
         CompiledExpression rangeExpression = this.context.option(CollectorOptions.RANGE_RAW);
 
@@ -47,6 +50,9 @@ public final class TreeCollector extends Collector<Location> {
                     .withOption(CollectorOptions.LOCATION, minion.location())
                     .withOption(CollectorOptions.FACING, minion.facing().blockFace())
                     .withOption(CollectorOptions.LOCATION_CONSUMER, blockLocation -> {
+                        if (Config.debug) {
+                            LogUtils.debug("Location: {}", blockLocation);
+                        }
                         int counter = 0;
                         queue.add(blockLocation);
                         visited.add(blockLocation);

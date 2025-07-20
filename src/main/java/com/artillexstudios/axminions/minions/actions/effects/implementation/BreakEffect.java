@@ -2,6 +2,7 @@ package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
 import com.artillexstudios.axapi.utils.Pair;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
@@ -72,8 +73,14 @@ public final class BreakEffect extends Effect<Location, ItemCollection> {
 
     @Override
     public ItemCollection run(Minion minion, Location argument) {
+        if (Config.debug) {
+            LogUtils.debug("Break effect run!");
+        }
         Collection<ItemStack> items = Integrations.BLOCK.lootAndBreak(argument, minion.tool(), this.mapper);
         if (items == null) {
+            if (Config.debug) {
+                LogUtils.debug("Items null!");
+            }
             return null;
         }
 
