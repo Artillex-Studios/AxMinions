@@ -53,12 +53,13 @@ public final class TreeCollector extends Collector<Location> {
                         if (Config.debug) {
                             LogUtils.debug("Location: {}", blockLocation);
                         }
+                        Location clone = blockLocation.clone();
                         int counter = 0;
-                        queue.add(blockLocation);
-                        visited.add(blockLocation);
+                        queue.add(clone);
+                        visited.add(clone);
 
                         Location queuedLocation;
-                        while ((queuedLocation = queue.peek()) != null) {
+                        while ((queuedLocation = queue.poll()) != null) {
                             for (Filter<?> filter : this.context.option(CollectorOptions.FILTERS)) {
                                 if (!filter.isAllowed(queuedLocation)) {
                                     continue;
@@ -72,7 +73,7 @@ public final class TreeCollector extends Collector<Location> {
                                 consumer.accept(queuedLocation);
 
                                 for (Vector vector : vectors) {
-                                    Location nearbyLocation = queuedLocation.add(vector);
+                                    Location nearbyLocation = queuedLocation.clone().add(vector);
                                     if (visited.add(nearbyLocation)) {
                                         queue.add(nearbyLocation);
                                     }
@@ -85,6 +86,8 @@ public final class TreeCollector extends Collector<Location> {
             );
         } catch (CollectorOptionNotPresentException exception) {
             LogUtils.warn("Failed to tick minion due to collector option {} not being present! This is not a configuration issue, but an issue in the code! Report to the developer!", exception.option());
+        } catch (Exception exception) {
+            LogUtils.error("Caught an exception while ticking minion!", exception);
         }
     }
 }

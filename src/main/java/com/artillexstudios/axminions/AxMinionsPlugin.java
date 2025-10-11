@@ -79,7 +79,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         DatabaseTypes.register(new SQLiteDatabaseType());
         Config.reload();
         Config.database.tablePrefix("");
-        AsyncUtils.setup(Config.asyncProcessorPoolSize);
+        FeatureFlags.ASYNC_UTILS_POOL_SIZE.set(Config.asyncProcessorPoolSize);
         this.metrics = new AxMetrics(this, 5);
         this.metrics.start();
 

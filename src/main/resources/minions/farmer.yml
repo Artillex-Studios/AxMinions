@@ -1,28 +1,28 @@
 item:
   type: "player_head"
   texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2MjdiZTYyY2VkNzE0MTEzOWQzZjE1NTc5MGE1ZDQzNTZlYjdiOWVlOTVlNTA0YjMzMjI5NzRjYmM1MTVlYSJ9fX0="
-  name: "<#00AAFF>Collector <white>Minion"
+  name: "<#33FF33>Farmer <white>Minion"
   lore:
     - ""
-    - " <gray>- <white>It collects dropped items."
+    - " <gray>- <white>It harvests and replants crops."
     - ""
     - "<#00AAFF>Statistics"
     - " <#00AAFF>❙ <white>Level: <#FFEEAA><level>"
-    - " <#00AAFF>❙ <white>Blocks broken: <#FFEEAA><actions>"
+    - " <#00AAFF>❙ <white>Blocks harvested: <#FFEEAA><actions>"
     - ""
-    - "<#00AAFF><b>(!)</b> Place the minion and give it a shovel!"
+    - "<#00AAFF><b>(!)</b> Place the minion and give it a hoe!"
 
 tool:
   # This only applies if require-tool is disabled in the config.yml
   default:
-    material: "diamond_shovel"
+    material: "diamond_hoe"
   allowed-items:
-    - material: netherite_shovel
-    - material: diamond_shovel
-    - material: golden_shovel
-    - material: iron_shovel
-    - material: stone_shovel
-    - material: wooden_shovel
+    - material: netherite_hoe
+    - material: diamond_hoe
+    - material: golden_hoe
+    - material: iron_hoe
+    - material: stone_hoe
+    - material: wooden_hoe
 
 click-actions:
   - "[menu] minion"
@@ -41,20 +41,24 @@ levels:
 
 actions:
   - collector:
-      id: "entity"
+      id: "block"
       shape: "sphere"
       radius: "<level> * 2"
       filters:
-        - id: "entity"
+        - id: "material"
           whitelist:
-            - "item"
+            - "wheat"
       requirements:
+        - id: "tool"
+          else:
+            - id: "warning"
+              message: "No tool!"
         - id: "container"
           else:
             - id: "warning"
               message: "No container!"
     effects:
-      - id: "collect"
+      - id: "break"
         effects:
           - id: "add_to_container"
             effects:

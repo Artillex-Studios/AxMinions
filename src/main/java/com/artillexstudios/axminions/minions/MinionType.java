@@ -77,7 +77,7 @@ public final class MinionType {
                     return;
                 }
 
-                this.tool = new ItemBuilder(this.config.getSection("tool.default")).get();
+                this.tool = ItemBuilder.create(this.config.getSection("tool.default")).get();
             }
 
             MinionTypes.register(this);
@@ -111,7 +111,7 @@ public final class MinionType {
     }
 
     public ItemStack item(MinionData data) {
-        WrappedItemStack wrappedItemStack = new ItemBuilder(this.config.getSection("item")).wrapped();
+        WrappedItemStack wrappedItemStack = ItemBuilder.create(this.config.getSection("item")).wrapped();
         CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
         tag.putString("axminions_minion_type", this.name);
         tag.putInt("axminions_minion_level", data.level().id());

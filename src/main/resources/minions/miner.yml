@@ -49,7 +49,7 @@ actions:
   - collector:
       id: "block"
       shape: "sphere"
-      radius: "40"
+      radius: "10"
       filters:
         - id: "material"
           whitelist:

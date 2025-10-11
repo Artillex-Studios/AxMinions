@@ -59,7 +59,7 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
                 ownerSkin.set(texture.equals("<owner>"));
             });
 
-            WrappedItemStack wrapped = new ItemBuilder(section).wrapped();
+            WrappedItemStack wrapped = ItemBuilder.create(section).wrapped();
             CompoundTag tag = wrapped.get(DataComponents.customData());
             tag.putBoolean("axminions_ownerskin", ownerSkin.get());
             wrapped.set(DataComponents.customData(), tag);

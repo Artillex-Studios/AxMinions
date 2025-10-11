@@ -52,10 +52,7 @@ public final class SphereCollectorShape extends CollectorShape {
                     final int zDistance = (blockZ - z) * (blockZ - z);
                     final int distance = xDistance + yDistance + zDistance;
 
-                    if (distance < rangeSquared && distance < smallRangeSquared) {
-                        if (Config.debug) {
-                            LogUtils.debug("Block is in range!");
-                        }
+                    if (distance < rangeSquared) {
                         try {
                             newLocation.setX(x);
                             newLocation.setY(y);
@@ -72,6 +69,9 @@ public final class SphereCollectorShape extends CollectorShape {
                             consumer.accept(newLocation);
                             successful++;
                             if (successful == limit) {
+                                if (Config.debug) {
+                                    LogUtils.debug("Limit reached");
+                                }
                                 // Limit reached, no need to do anything with the rest
                                 return;
                             }
@@ -80,6 +80,10 @@ public final class SphereCollectorShape extends CollectorShape {
                                 LogUtils.debug("Tick failed, aborting!");
                             }
                             throw exception;
+                        }
+                    } else {
+                        if (Config.debug) {
+                            LogUtils.debug("Block is not in range!");
                         }
                     }
                 }
