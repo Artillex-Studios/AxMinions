@@ -27,12 +27,12 @@ public final class AddToContainerEffect extends Effect<ItemCollection, ItemColle
 
 
     @Override
-    public Class<?> inputClass() {
+    public Class<ItemCollection> inputClass() {
         return ItemCollection.class;
     }
 
     @Override
-    public Class<?> outputClass() {
+    public Class<ItemCollection> outputClass() {
         return ItemCollection.class;
     }
 }

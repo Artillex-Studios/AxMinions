@@ -73,12 +73,12 @@ public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
     }
 
     @Override
-    public Class<?> inputClass() {
+    public Class<ItemCollection> inputClass() {
         return ItemCollection.class;
     }
 
     @Override
-    public Class<?> outputClass() {
+    public Class<ItemCollection> outputClass() {
         return ItemCollection.class;
     }
 }

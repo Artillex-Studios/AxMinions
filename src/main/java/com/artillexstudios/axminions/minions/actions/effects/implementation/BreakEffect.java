@@ -93,12 +93,12 @@ public final class BreakEffect extends Effect<Location, ItemCollection> {
     }
 
     @Override
-    public Class<?> inputClass() {
+    public Class<Location> inputClass() {
         return Location.class;
     }
 
     @Override
-    public Class<?> outputClass() {
+    public Class<ItemCollection> outputClass() {
         return ItemCollection.class;
     }
 }

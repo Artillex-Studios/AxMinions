@@ -110,9 +110,9 @@ public abstract class Effect<T, Z> {
 
     public abstract Z run(Minion minion, T argument);
 
-    public abstract Class<?> inputClass();
+    public abstract Class<T> inputClass();
 
-    public abstract Class<?> outputClass();
+    public abstract Class<Z> outputClass();
 
     public final Effect<?, ?> parent() {
         return this.parent;

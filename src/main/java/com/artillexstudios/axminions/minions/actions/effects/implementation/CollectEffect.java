@@ -33,12 +33,12 @@ public final class CollectEffect extends Effect<Entity, ItemCollection> {
     }
 
     @Override
-    public Class<?> inputClass() {
+    public Class<Entity> inputClass() {
         return Entity.class;
     }
 
     @Override
-    public Class<?> outputClass() {
+    public Class<ItemCollection> outputClass() {
         return ItemCollection.class;
     }
 }

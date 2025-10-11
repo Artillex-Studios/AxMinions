@@ -24,12 +24,12 @@ public final class WarningEffect extends Effect<Object, Object> {
     }
 
     @Override
-    public Class<?> inputClass() {
+    public Class<Object> inputClass() {
         return Object.class;
     }
 
     @Override
-    public Class<?> outputClass() {
+    public Class<Object> outputClass() {
         return Object.class;
     }
 }
