@@ -27,7 +27,7 @@ dependencies {
         exclude group: "org.spigotmc"
         exclude group: "org.bukkit"
     }
-    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2023.2'
+    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2025.2'
     compileOnly 'world.bentobox:bentobox:1.24.0-SNAPSHOT'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'com.github.angeschossen:LandsAPI:6.29.12'
