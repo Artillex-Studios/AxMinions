@@ -1,13 +1,13 @@
 plugins {
     id 'java-library'
-    id 'io.github.goooler.shadow' version "8.1.7"
+    id 'com.gradleup.shadow' version "9.2.2"
     id 'maven-publish'
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.9.23'
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.15'
+version = '1.0.18'
 
 repositories {
     mavenCentral()
@@ -28,13 +28,15 @@ dependencies {
     implementation project(path: ":nms:v1_21_R2", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R3", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R4", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R5", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R6", configuration: "reobf")
 }
 
 allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
     apply plugin: 'java-library'
-    apply plugin: 'io.github.goooler.shadow'
+    apply plugin: 'com.gradleup.shadow'
 
     kotlin {
         jvmToolchain(21)
@@ -123,8 +125,16 @@ allprojects {
 
     dependencies {
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
-        implementation("com.artillexstudios.axapi:axapi:1.4.671:all")
+        implementation("com.artillexstudios.axapi:axapi:1.4.812:all")
     }
+
+if (project.name != "api") {
+    tasks.named("shadowJar") {
+    mustRunAfter(":api:shadowJar")
+}
+}
+
+
 }
 
 
@@ -140,6 +150,11 @@ shadowJar {
     relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
     relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
 }
+
+tasks.named("shadowJar") {
+    mustRunAfter(":api:shadowJar")
+}
+
 
 kotlin {
     jvmToolchain(21)

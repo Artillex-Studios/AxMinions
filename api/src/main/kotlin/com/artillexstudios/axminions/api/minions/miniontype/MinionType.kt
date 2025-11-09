@@ -71,7 +71,7 @@ abstract class MinionType(private val name: String, private val defaults: InputS
     }
 
     fun getItem(level: Int = 1, actions: Long = 0, charge: Long = 0): ItemStack {
-        val builder = ItemBuilder(
+        val builder = ItemBuilder.create(
             config.getSection("item"),
             Placeholder.unparsed("level", level.toString()),
             Placeholder.unparsed("actions", actions.toString())

@@ -2,7 +2,12 @@ package com.artillexstudios.axminions.minions
 
 import com.artillexstudios.axapi.events.PacketEntityInteractEvent
 import com.artillexstudios.axapi.hologram.Hologram
-import com.artillexstudios.axapi.hologram.HologramLine
+import com.artillexstudios.axapi.hologram.HologramType
+import com.artillexstudios.axapi.hologram.HologramTypes
+import com.artillexstudios.axapi.hologram.page.HologramPage
+import com.artillexstudios.axapi.hologram.page.TextDisplayHologramPage
+import com.artillexstudios.axapi.packetentity.meta.entity.DisplayMeta
+import com.artillexstudios.axapi.packetentity.meta.entity.TextDisplayMeta
 import com.artillexstudios.axapi.items.WrappedItemStack
 import com.artillexstudios.axapi.nms.NMSHandlers
 import com.artillexstudios.axapi.packetentity.PacketEntity
@@ -173,8 +178,16 @@ class Minion(
         meta.customNameVisible(true)
 
         if (Config.DEBUG()) {
-            debugHologram = Hologram(location.clone().add(0.0, 2.0, 0.0), "$locationID")
-            debugHologram?.addLine("ticking: $ticking", HologramLine.Type.TEXT)
+            debugHologram = Hologram(location.clone().add(0.0, 2.0, 0.0))
+            val page = hologram?.createPage(HologramTypes.TEXT)
+            page?.setEntityMetaHandler({ meta ->
+                val textDisplayMeta = meta as TextDisplayMeta;
+                textDisplayMeta.seeThrough(true);
+                textDisplayMeta.alignment(TextDisplayMeta.Alignment.CENTER);
+                textDisplayMeta.billboardConstrain(DisplayMeta.BillboardConstrain.CENTER);
+            })
+            page?.setContent(StringUtils.formatToString("ticking: $ticking"));
+            page?.spawn();
         }
 
         meta.metadata().set(Accessors.POSE, Pose.STANDING)
@@ -222,7 +235,7 @@ class Minion(
         }
 
         if (Config.DEBUG() && debugHologram != null) {
-            debugHologram?.setLine(0, "Ticking: $ticking")
+            (debugHologram?.page(0) as TextDisplayHologramPage).setContent("Ticking: $ticking")
         }
 
         if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {
@@ -333,7 +346,7 @@ class Minion(
                     ).toString()
                 )
 
-                item = ItemBuilder(
+                item = ItemBuilder.create(
                     type.getConfig().getSection("gui.$it"),
                     level,
                     nextLevel,
@@ -364,7 +377,7 @@ class Minion(
             } else if (it.equals("charge")) {
                 if (Config.CHARGE_ENABLED()) {
                     val charge = Placeholder.parsed("charge", TimeUtils.format(charge - System.currentTimeMillis()))
-                    item = ItemBuilder(
+                    item = ItemBuilder.create(
                         AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"),
                         charge
                     ).get()
@@ -385,7 +398,7 @@ class Minion(
                             .replace("<z>", location.blockZ.toString())
                     }
                 )
-                item = ItemBuilder(
+                item = ItemBuilder.create(
                     AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.$it"),
                     rotation,
                     linked
@@ -415,7 +428,7 @@ class Minion(
             )
         )
 
-        val filler = ItemBuilder(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.filler")).get()
+        val filler = ItemBuilder.create(AxMinionsAPI.INSTANCE.getConfig().getConfig().getSection("gui.items.filler")).get()
         for (i in 0..<Config.GUI_SIZE()) {
             inventory.setItem(i, filler)
         }
@@ -647,19 +660,19 @@ class Minion(
         setTool(this.tool ?: ItemStack(Material.AIR), false)
 
         type.getSection("items.helmet", level)?.let {
-            entity.setItem(EquipmentSlot.HELMET, WrappedItemStack.wrap(ItemBuilder(it).get()))
+            entity.setItem(EquipmentSlot.HELMET, WrappedItemStack.wrap(ItemBuilder.create(it).get()))
         }
 
         type.getSection("items.chestplate", level)?.let {
-            entity.setItem(EquipmentSlot.CHEST_PLATE, WrappedItemStack.wrap(ItemBuilder(it).get()))
+            entity.setItem(EquipmentSlot.CHEST_PLATE, WrappedItemStack.wrap(ItemBuilder.create(it).get()))
         }
 
         type.getSection("items.leggings", level)?.let {
-            entity.setItem(EquipmentSlot.LEGGINGS, WrappedItemStack.wrap(ItemBuilder(it).get()))
+            entity.setItem(EquipmentSlot.LEGGINGS, WrappedItemStack.wrap(ItemBuilder.create(it).get()))
         }
 
         type.getSection("items.boots", level)?.let {
-            entity.setItem(EquipmentSlot.BOOTS, WrappedItemStack.wrap(ItemBuilder(it).get()))
+            entity.setItem(EquipmentSlot.BOOTS, WrappedItemStack.wrap(ItemBuilder.create(it).get()))
         }
     }
 

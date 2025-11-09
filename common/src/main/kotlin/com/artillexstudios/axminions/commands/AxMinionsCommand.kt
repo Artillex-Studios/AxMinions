@@ -48,7 +48,7 @@ class AxMinionsCommand {
     @Subcommand("fuel give")
     @CommandPermission("axminions.command.fuel.give")
     fun give(sender: CommandSender, id: String, receiver: Player, @Default("1") amount: Int) {
-        val item = ItemBuilder(Config.CHARGE_ITEMS().getSection(id)).get()
+        val item = ItemBuilder.create(Config.CHARGE_ITEMS().getSection(id)).get()
         item.amount = amount
         receiver.inventory.addItem(item)
     }
@@ -56,7 +56,7 @@ class AxMinionsCommand {
     @Subcommand("fuel add")
     @CommandPermission("axminions.command.fuel.add")
     fun add(player: Player, id: String, charge: Int) {
-        val item = ItemBuilder(player.inventory.itemInMainHand).serialize(true)
+        val item = ItemBuilder.create(player.inventory.itemInMainHand).serialize(true)
         item["charge"] = charge
         AxMinionsPlugin.config.getConfig().set("charge.items.$id", item)
         AxMinionsPlugin.config.getConfig().save()

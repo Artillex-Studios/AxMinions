@@ -57,9 +57,9 @@ class AxMinionsPlugin : AxPlugin() {
         manager.relocate("org{}h2", "com.artillexstudios.axminions.libs.h2")
      }
 
-    override fun updateFlags(flags: FeatureFlags) {
-        flags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
-        flags.USE_LEGACY_HEX_FORMATTER.set(true)
+    override fun updateFlags() {
+        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
+        FeatureFlags.USE_LEGACY_HEX_FORMATTER.set(true)
     }
 
     override fun load() {

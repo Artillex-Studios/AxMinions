@@ -217,7 +217,7 @@ class MinionInventoryListener : Listener {
                         val section = Config.CHARGE_ITEMS()
 
                         for (key in section.keys) {
-                            val item = ItemBuilder(section.getSection(key.toString())).get()
+                            val item = ItemBuilder.create(section.getSection(key.toString())).get()
                             if (player.inventory.containsAtLeast(item, 1)) {
                                 itemCharge = true
                                 chargeAmount = section.getSection(key.toString()).getInt("charge")
@@ -274,7 +274,7 @@ class MinionInventoryListener : Listener {
                     val section = Config.CHARGE_ITEMS()
 
                     for (key in section.keys) {
-                        val item = ItemBuilder(section.getSection(key.toString())).get()
+                        val item = ItemBuilder.create(section.getSection(key.toString())).get()
                         if (player.inventory.containsAtLeast(item, 1)) {
                             itemCharge = true
                             chargeAmount = section.getSection(key.toString()).getInt("charge")
