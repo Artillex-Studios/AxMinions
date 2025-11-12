@@ -77,7 +77,7 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
                 return@fastFor
             }
 
-            if (!getConfig().getBoolean("damage-renamed") && it.customName != null) {
+            if (!getConfig().getBoolean("damage-renamed") && it.customName != null && AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(it) <= 1) {
                 return@fastFor
             }
 

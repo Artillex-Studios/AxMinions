@@ -147,6 +147,7 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("BentoBox") != null) {
             register(BentoBoxIntegration())
+            register(com.artillexstudios.axminions.integrations.island.BentoBoxIntegration())
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into BentoBox!"))
         }
@@ -180,12 +181,6 @@ class Integrations : Integrations {
             kGeneratorsIntegration = true
             Bukkit.getConsoleSender()
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into KGenerators!"))
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            itemsAdderIntegration = true
-            Bukkit.getConsoleSender()
-                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
