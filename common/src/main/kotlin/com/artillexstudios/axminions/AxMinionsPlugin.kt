@@ -58,6 +58,7 @@ class AxMinionsPlugin : AxPlugin() {
      }
 
     override fun updateFlags() {
+        FeatureFlags.ENABLE_PACKET_LISTENERS.set(true)
         FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
         FeatureFlags.USE_LEGACY_HEX_FORMATTER.set(true)
     }
