@@ -14,8 +14,11 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Tameable
 import org.bukkit.inventory.DoubleChestInventory
+import org.bukkit.NamespacedKey
+import org.bukkit.persistence.PersistentDataType
 
 class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResource("minions/slayer.yml")!!) {
+    private val stackedMobKey = NamespacedKey.fromString("stackmob:stack-size")!!
 
     override fun shouldRun(minion: Minion): Boolean {
         return MinionTicker.getTick() % minion.getNextAction() == 0L
@@ -77,7 +80,7 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
                 return@fastFor
             }
 
-            if (!getConfig().getBoolean("damage-renamed") && it.customName != null) {
+            if (!getConfig().getBoolean("damage-renamed") && hasCustomName(it)) {
                 return@fastFor
             }
 
@@ -88,5 +91,17 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
             NMSHandler.get().attack(minion, it)
             minion.damageTool()
         }
+    }
+
+    private fun hasCustomName(entity: LivingEntity): Boolean {
+        return entity.customName != null && !isStackMob(entity)
+    }
+
+    private fun isStackMob(entity: LivingEntity): Boolean {
+        val hasStackedMobKey = entity.getPersistentDataContainer().has(stackedMobKey, PersistentDataType.INTEGER)
+        if (!hasStackedMobKey) return false
+
+        val stackSize = entity.getPersistentDataContainer().getOrDefault(stackedMobKey, PersistentDataType.INTEGER, 1)
+        return stackSize > 1
     }
 }
