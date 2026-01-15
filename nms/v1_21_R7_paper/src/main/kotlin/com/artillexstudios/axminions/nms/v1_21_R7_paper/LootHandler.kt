@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.nms.v1_21_R7
+package com.artillexstudios.axminions.nms.v1_21_R7_paper
 
 import com.artillexstudios.axminions.api.minions.Minion
 import net.minecraft.server.MinecraftServer

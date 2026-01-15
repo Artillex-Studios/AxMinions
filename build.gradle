@@ -31,6 +31,7 @@ dependencies {
     implementation project(path: ":nms:v1_21_R5", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R6", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R7", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R7_paper", configuration: "reobf")
 }
 
 allprojects {
@@ -126,7 +127,7 @@ allprojects {
 
     dependencies {
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
-        implementation("com.artillexstudios.axapi:axapi:1.4.830:all")
+        implementation(files("${rootProject.projectDir}/libs/AxAPI-1.4.749-all.jar"))
     }
 
 if (project.name != "api") {
