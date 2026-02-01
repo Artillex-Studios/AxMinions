@@ -393,9 +393,9 @@ class Minion(
                 val linked = Placeholder.unparsed(
                     "linked", when (linkedChest) {
                         null -> "---"
-                        else -> Messages.LOCATION_FORMAT().replace("<world>", location.world!!.name)
-                            .replace("<x>", location.blockX.toString()).replace("<y>", location.blockY.toString())
-                            .replace("<z>", location.blockZ.toString())
+                        else -> Messages.LOCATION_FORMAT().replace("<world>", linkedChest?.world!!.name)
+                            .replace("<x>", linkedChest?.blockX.toString()).replace("<y>", linkedChest?.blockY.toString())
+                            .replace("<z>", linkedChest?.blockZ.toString())
                     }
                 )
                 item = ItemBuilder.create(
