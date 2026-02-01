@@ -64,6 +64,8 @@ class Integrations : Integrations {
             "rosestacker" -> {
                 if (isPluginLoaded("RoseStacker")) {
                     register(RoseStackerIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into RoseStacker!"))
                 } else {
                     register(DefaultStackerIntegration())
                 }
@@ -72,6 +74,8 @@ class Integrations : Integrations {
             "wildstacker" -> {
                 if (isPluginLoaded("WildStacker")) {
                     register(WildStackerIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into WildStacker!"))
                 } else {
                     register(DefaultStackerIntegration())
                 }
@@ -86,18 +90,24 @@ class Integrations : Integrations {
             "shopguiplus", "shopgui+" -> {
                 if (isPluginLoaded("ShopGuiPlus")) {
                     register(ShopGUIPlusIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ShopGUIPlus!"))
                 }
             }
 
             "essentials" -> {
                 if (isPluginLoaded("Essentials")) {
                     register(EssentialsIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Essentials!"))
                 }
             }
 
             "cmi" -> {
                 if (isPluginLoaded("CMI")) {
                     register(CMIIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into CMI!"))
                 }
             }
 
@@ -105,7 +115,8 @@ class Integrations : Integrations {
                 if (Bukkit.getPluginManager().getPlugin("EconomyShopGUI") != null || Bukkit.getPluginManager().getPlugin("EconomyShopGUI-Premium") != null) {
                     register(EconomyShopGUIIntegration())
                     Bukkit.getConsoleSender()
-                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into EconomyShopGUI!"))}
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into EconomyShopGUI!"))
+                }
             }
 
 //            "zshop" -> {
@@ -119,12 +130,16 @@ class Integrations : Integrations {
             "vault" -> {
                 if (isPluginLoaded("Vault")) {
                     register(VaultIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Vault!"))
                 }
             }
 
             "playerpoints" -> {
                 if (isPluginLoaded("PlayerPoints")) {
                     register(PlayerPointsIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into PlayerPoints!"))
                 }
             }
         }
@@ -196,10 +211,14 @@ class Integrations : Integrations {
 
         if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
             register(TownyIntegration())
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Towny!"))
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             PlaceholderAPIIntegration().register()
+            Bukkit.getConsoleSender()
+                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into PlaceholderAPI!"))
         }
     }
 
