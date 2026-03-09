@@ -5,6 +5,7 @@ import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper
 import com.artillexstudios.axapi.executor.ThreadedQueue
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags
+import com.artillexstudios.axapi.utils.Version
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.AxMinionsAPIImpl
 import com.artillexstudios.axminions.api.config.Config
@@ -39,9 +40,35 @@ import com.artillexstudios.axminions.minions.miniontype.CrafterMinionType
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitCommandHandler
+import java.util.logging.Logger
 
 class AxMinionsPlugin : AxPlugin() {
     companion object {
+        private const val PROTOCOL_1_21_11 = 774
+
+        init {
+            ensureProtocolSupport()
+        }
+
+        private fun ensureProtocolSupport() {
+            try {
+                if (Version.getServerVersion() != Version.UNKNOWN) return
+                val protocol = Version.getProtocolVersion()
+                if (protocol != PROTOCOL_1_21_11) return
+                val fallback = Version.valueOf("v1_21")
+                val versionClass = Version::class.java
+                val versionMapField = versionClass.getDeclaredField("versionMap").apply { isAccessible = true }
+                val versionMap = versionMapField.get(null)
+                val putMethod = versionMap.javaClass.getMethod("put", Int::class.javaPrimitiveType, Any::class.java)
+                putMethod.invoke(versionMap, protocol, fallback)
+                versionClass.getDeclaredField("serverVersion").apply { isAccessible = true }.set(null, fallback)
+                versionClass.getDeclaredField("protocolVersion").apply { isAccessible = true }.setInt(null, protocol)
+                Logger.getLogger("AxMinions").info("Added protocol $protocol (Minecraft 1.21.11) to AxAPI version map.")
+            } catch (ex: ReflectiveOperationException) {
+                Logger.getLogger("AxMinions").warning("Failed to patch AxAPI version map: ${ex.message}")
+            }
+        }
+
         lateinit var INSTANCE: AxMinionsPlugin
         lateinit var messages: Messages
         lateinit var config: Config
@@ -58,8 +85,8 @@ class AxMinionsPlugin : AxPlugin() {
      }
 
     override fun updateFlags() {
-        FeatureFlags.ENABLE_PACKET_LISTENERS.set(true)
-        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true)
+        FeatureFlags.ENABLE_PACKET_LISTENERS.set(false)
+        FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(false)
         FeatureFlags.USE_LEGACY_HEX_FORMATTER.set(true)
     }
 

@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java-library'
     id 'com.gradleup.shadow' version "9.2.2"
@@ -8,6 +10,14 @@ plugins {
 
 group = 'com.artillexstudios.axminions'
 version = '1.0.18'
+
+sourceSets {
+    patcher {
+        java {
+            srcDir("patcher/src/main/java")
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -30,6 +40,7 @@ dependencies {
     implementation project(path: ":nms:v1_21_R4", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R5", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R6", configuration: "reobf")
+    patcherImplementation("org.ow2.asm:asm:9.6")
 }
 
 allprojects {
@@ -128,15 +139,34 @@ allprojects {
         implementation("com.artillexstudios.axapi:axapi:1.4.812:all")
     }
 
-if (project.name != "api") {
-    tasks.named("shadowJar") {
-    mustRunAfter(":api:shadowJar")
-}
-}
-
-
+    if (project.name != "api") {
+        tasks.named("shadowJar") {
+            mustRunAfter(":api:shadowJar")
+        }
+    }
 }
 
+sourceSets {
+    patcher {
+        java {
+            srcDir("patcher/src/main/java")
+        }
+    }
+}
+
+tasks.register("patchServerPlayerWrapper", JavaExec) {
+    group = "patch"
+    dependsOn(tasks.named("shadowJar"))
+    dependsOn(tasks.named("compilePatcherJava"))
+    mainClass.set("com.artillexstudios.axminions.patch.ServerPlayerWrapperPatcher")
+    classpath = sourceSets["patcher"].runtimeClasspath
+    def shadowJarTask = tasks.named("shadowJar", ShadowJar)
+    args = [shadowJarTask.get().archiveFile.get().asFile.absolutePath]
+}
+
+tasks.named("build") {
+    dependsOn("patchServerPlayerWrapper")
+}
 
 shadowJar {
     relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.libs.axapi")
@@ -148,12 +178,12 @@ shadowJar {
     relocate("revxrsal.commands", "com.artillexstudios.axminions.libs.lamp")
     relocate("org.jetbrains.annotations", "com.artillexstudios.axminions.libs.annotations")
     relocate("org.intellij.lang.annotations", "com.artillexstudios.axminions.libs.intellij.annotations")
+    relocate("org.bukkit.craftbukkit.v1_21_R1", "org.bukkit.craftbukkit")
 }
 
 tasks.named("shadowJar") {
     mustRunAfter(":api:shadowJar")
 }
-
 
 kotlin {
     jvmToolchain(21)

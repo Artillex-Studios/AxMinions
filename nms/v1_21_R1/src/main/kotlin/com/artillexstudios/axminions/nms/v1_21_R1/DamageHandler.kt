@@ -2,17 +2,18 @@ package com.artillexstudios.axminions.nms.v1_21_R1
 
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
+import net.minecraft.core.Holder
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.animal.Fox
+import net.minecraft.world.entity.ai.attributes.Attribute
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.item.AxeItem
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.TridentItem
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import org.bukkit.Bukkit
@@ -22,10 +23,41 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import java.util.*
+import kotlin.LazyThreadSafetyMode
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.util.UUID
+import net.minecraft.world.level.Level
 
 object DamageHandler {
-    private var DUMMY_ENTITY = Fox(EntityType.FOX, (Bukkit.getWorlds().get(0) as CraftWorld).handle)
+    private val PAPER_REFLECTION_METHOD: Method? by lazy(LazyThreadSafetyMode.NONE) {
+        runCatching {
+            val holderClass = Class.forName("io.papermc.paper.pluginremap.reflect.PaperReflectionHolder")
+            holderClass.getMethod("forName", String::class.java)
+        }.getOrNull()
+    }
+
+    private fun resolveNmsClass(name: String): Class<*> {
+        return try {
+            Class.forName(name)
+        } catch (ex: ClassNotFoundException) {
+            val method = PAPER_REFLECTION_METHOD
+                ?: throw ex
+            try {
+                method.invoke(null, name) as Class<*>
+            } catch (invokeEx: InvocationTargetException) {
+                throw (invokeEx.cause as? ClassNotFoundException) ?: RuntimeException(invokeEx.cause ?: invokeEx)
+            }
+        }
+    }
+
+    private val DUMMY_ENTITY: LivingEntity by lazy(LazyThreadSafetyMode.NONE) {
+        val world = (Bukkit.getWorlds()[0] as CraftWorld).handle
+        val animalClass = resolveNmsClass("net.minecraft.world.entity.animal.Fox")
+        val constructor = animalClass.getDeclaredConstructor(EntityType::class.java, Level::class.java)
+        constructor.isAccessible = true
+        constructor.newInstance(EntityType.FOX, world) as LivingEntity
+    }
     private var minion: Minion? = null
 
     fun getUUID(): UUID {
@@ -49,12 +81,10 @@ object DamageHandler {
             } else {
                 nmsItem = CraftItemStack.asNMSCopy(source.getTool())
 
-                if (nmsItem.item is SwordItem) {
-                    f = (f + (nmsItem.item as SwordItem).tier.attackDamageBonus).toInt()
-                }
-
-                if (nmsItem.item is AxeItem) {
-                    f = (f + (nmsItem.item as SwordItem).tier.attackDamageBonus).toInt()
+                nmsItem.get(DataComponents.ATTRIBUTE_MODIFIERS)?.forEach(EquipmentSlotGroup.MAINHAND) { h: Holder<Attribute>, m ->
+                    if (h.unwrapKey().orElseThrow() == Attributes.ATTACK_DAMAGE.unwrapKey().orElseThrow()) {
+                        f += m.amount().toInt()
+                    }
                 }
 
                 if (nmsItem.item is TridentItem) {
@@ -66,6 +96,9 @@ object DamageHandler {
 
             if (!nmsEntity.isAttackable || entity is Player) return
             val f2 = 1.0f
+            val yawRad = Math.toRadians(source.getLocation().yaw.toDouble())
+            val sinYaw = Math.sin(yawRad)
+            val cosYaw = Math.cos(yawRad)
 
             val damageSource = nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY)
             var f1 = EnchantmentHelper.modifyDamage(
@@ -87,7 +120,7 @@ object DamageHandler {
                 f = (f * 1.5f).toInt()
                 f = (f + f1).toInt()
 
-                if (nmsItem.item is SwordItem) {
+                if (nmsItem.item.components().get(DataComponents.WEAPON) != null) {
                     flag3 = true
                 }
 
@@ -109,21 +142,21 @@ object DamageHandler {
                     return
                 }
 
-                val flag5 = nmsEntity.hurt(damageSource, f.toFloat())
+                val flag5 = nmsEntity.hurtServer((source.getLocation().world as CraftWorld).handle as ServerLevel, damageSource, f.toFloat())
 
                 if (flag5) {
                     if (i > 0) {
                         if (nmsEntity is LivingEntity) {
-                            (nmsEntity).knockback(
-                                (i.toFloat() * 0.5f).toDouble(),
-                                Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
-                                (-Mth.cos(source.getLocation().yaw * 0.017453292f)).toDouble()
+                            nmsEntity.knockback(
+                                i * 0.5,
+                                sinYaw,
+                                -cosYaw
                             )
                         } else {
                             nmsEntity.push(
-                                (-Mth.sin(source.getLocation().yaw * 0.017453292f) * i.toFloat() * 0.5f).toDouble(),
+                                -sinYaw * i * 0.5,
                                 0.1,
-                                (Mth.cos(source.getLocation().yaw * 0.017453292f) * i.toFloat() * 0.5f).toDouble()
+                                cosYaw * i * 0.5
                             )
                         }
                     }
@@ -156,19 +189,24 @@ object DamageHandler {
                                 }
 
                                 // CraftBukkit start - Only apply knockback if the damage hits
-                                if (entityliving.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f4)) {
+                                if (entityliving.hurtServer(
+                                        (source.getLocation().world as CraftWorld).handle as ServerLevel,
+                                        nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY),
+                                        f4.toFloat()
+                                    )
+                                ) {
                                     entityliving.knockback(
                                         0.4000000059604645,
-                                        Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
-                                        (-Mth.cos(source.getLocation().yaw * 0.017453292f)).toDouble()
+                                        sinYaw,
+                                        -cosYaw
                                     )
                                 }
                                 // CraftBukkit end
                             }
                         }
 
-                        val d0 = -Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble()
-                        val d1 = Mth.cos(source.getLocation().yaw * 0.017453292f).toDouble()
+                        val d0 = -sinYaw
+                        val d1 = cosYaw
 
                         if ((source.getLocation().world as CraftWorld).handle is ServerLevel) {
                             ((source.getLocation().world as CraftWorld).handle as ServerLevel).sendParticles(
