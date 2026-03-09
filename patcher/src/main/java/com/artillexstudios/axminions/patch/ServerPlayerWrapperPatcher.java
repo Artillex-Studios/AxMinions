@@ -23,8 +23,9 @@ public final class ServerPlayerWrapperPatcher {
     private static final String ATTRIBUTE_FIELD_NAME = "e";
     private static final String ATTRIBUTE_FIELD_FALLBACK = "supplier";
     private static final String COMPONENT_SERIALIZER_ENTRY = "com/artillexstudios/axminions/libs/axapi/utils/ComponentSerializer.class";
-    private static final Map<String, String> COMPONENT_SER_STRING_REPLACEMENTS = Map.of(
-            "net.minecraft.network.chat.Component$ChatSerializer", "net.minecraft.network.chat.Component$Serializer"
+    private static final Map<String, String> COMPONENT_SER_STRING_REPLACEMENTS = Map.ofEntries(
+            Map.entry("net.minecraft.network.chat.Component$ChatSerializer", "net.minecraft.network.chat.Component$Serializer"),
+            Map.entry("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer", "net.minecraft.network.chat.Component$Serializer")
     );
 
     public static void main(String[] args) throws Exception {
