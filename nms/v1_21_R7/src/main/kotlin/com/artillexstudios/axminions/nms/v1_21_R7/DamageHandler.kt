@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.nms.v1_21_R3
+package com.artillexstudios.axminions.nms.v1_21_R7
 
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
@@ -8,11 +8,10 @@ import net.minecraft.util.Mth
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.animal.Fox
+import net.minecraft.world.entity.animal.fox.Fox
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.AxeItem
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.TridentItem
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import org.bukkit.Bukkit
@@ -26,7 +25,6 @@ import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.Holder
-import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.ai.attributes.Attribute
 import java.util.*
 
@@ -55,7 +53,7 @@ object DamageHandler {
             } else {
                 nmsItem = CraftItemStack.asNMSCopy(source.getTool())
 
-                nmsItem.get(DataComponents.ATTRIBUTE_MODIFIERS)?.forEach(EquipmentSlotGroup.MAINHAND) { h: Holder<Attribute>, m -> 
+                nmsItem.get(DataComponents.ATTRIBUTE_MODIFIERS)?.forEach(EquipmentSlotGroup.MAINHAND) { h: Holder<Attribute>, m ->
                     if (h.unwrapKey().orElseThrow() == Attributes.ATTACK_DAMAGE.unwrapKey().orElseThrow()) {
                         f += m.amount().toInt()
                     }
@@ -87,7 +85,8 @@ object DamageHandler {
                 f = (f * 1.5f).toInt()
                 f = (f + f1).toInt()
 
-                if (nmsItem.item is SwordItem) {
+
+                if (nmsItem.item.components().get(DataComponents.WEAPON) != null) {
                     flag3 = true
                 }
 
@@ -116,14 +115,14 @@ object DamageHandler {
                         if (nmsEntity is LivingEntity) {
                             (nmsEntity).knockback(
                                 (i.toFloat() * 0.5f).toDouble(),
-                                Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
-                                (-Mth.cos(source.getLocation().yaw * 0.017453292f)).toDouble()
+                                Mth.sin(source.getLocation().yaw.toDouble() * 0.017453292).toDouble(),
+                                (-Mth.cos(source.getLocation().yaw.toDouble() * 0.017453292)).toDouble()
                             )
                         } else {
                             nmsEntity.push(
-                                (-Mth.sin(source.getLocation().yaw * 0.017453292f) * i.toFloat() * 0.5f).toDouble(),
+                                (-Mth.sin(source.getLocation().yaw.toDouble() * 0.017453292) * i.toFloat() * 0.5f).toDouble(),
                                 0.1,
-                                (Mth.cos(source.getLocation().yaw * 0.017453292f) * i.toFloat() * 0.5f).toDouble()
+                                (Mth.cos(source.getLocation().yaw.toDouble() * 0.017453292) * i.toFloat() * 0.5f).toDouble()
                             )
                         }
                     }
@@ -159,16 +158,16 @@ object DamageHandler {
                                 if (entityliving.hurtServer((source.getLocation().world as CraftWorld).handle as ServerLevel, nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f4)) {
                                     entityliving.knockback(
                                         0.4000000059604645,
-                                        Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),
-                                        (-Mth.cos(source.getLocation().yaw * 0.017453292f)).toDouble()
+                                        Mth.sin(source.getLocation().yaw.toDouble() * 0.017453292).toDouble(),
+                                        (-Mth.cos(source.getLocation().yaw.toDouble() * 0.017453292)).toDouble()
                                     )
                                 }
                                 // CraftBukkit end
                             }
                         }
 
-                        val d0 = -Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble()
-                        val d1 = Mth.cos(source.getLocation().yaw * 0.017453292f).toDouble()
+                        val d0 = -Mth.sin(source.getLocation().yaw.toDouble() * 0.017453292).toDouble()
+                        val d1 = Mth.cos(source.getLocation().yaw.toDouble() * 0.017453292).toDouble()
 
                         if ((source.getLocation().world as CraftWorld).handle is ServerLevel) {
                             ((source.getLocation().world as CraftWorld).handle as ServerLevel).sendParticles(
