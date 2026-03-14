@@ -158,10 +158,12 @@ class Minion(
                         }
                     }
                 } else {
-                    if (ownerUUID == event.player.uniqueId) {
-                        openInventory(event.player)
-                    } else if ((canBuildAt && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")) {
-                        openInventory(event.player)
+                    if (!event.player.isSneaking()) {
+                        if (ownerUUID == event.player.uniqueId) {
+                            openInventory(event.player)
+                        } else if ((canBuildAt && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")) {
+                            openInventory(event.player)
+                        }
                     }
                 }
             }
