@@ -1,20 +1,18 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.StringUtils;
-import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionWarningException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import net.kyori.adventure.text.Component;
 
-import java.util.Map;
-
 public final class WarningEffect extends Effect<Object, Object> {
     private final Component message;
 
-    public WarningEffect(Map<Object, Object> configuration) {
+    public WarningEffect(MapConfigurationGetter configuration) {
         super(configuration);
-        this.message = StringUtils.format((String) this.configuration().get("message"));
+        this.message = StringUtils.format(this.configuration().getString("message"));
     }
 
     @Override

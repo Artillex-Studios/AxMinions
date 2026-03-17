@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
-import com.artillexstudios.axapi.config.Config;
+import com.artillexstudios.axapi.config.YamlConfiguration;
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
@@ -18,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,9 +29,9 @@ public final class MinionType {
     private ItemStack tool;
     private final String name;
     private final AtomicInteger id = new AtomicInteger(UNINITIALIZED);
-    private final Config config;
+    private final YamlConfiguration<?> config;
 
-    public MinionType(String name, Config config) {
+    public MinionType(String name, YamlConfiguration<?> config) {
         this.name = name;
         this.config = config;
     }
@@ -47,14 +47,14 @@ public final class MinionType {
                 return;
             }
 
-            List<Map<Object, Object>> actions = this.config.getMapList("actions");
-            for (Map<Object, Object> action : actions) {
+            List<MapConfigurationGetter> actions = this.config.getConfigurationList("actions");
+            for (MapConfigurationGetter action : actions) {
                 this.actions.add(CompiledAction.of(action));
             }
 
-            int maxLevel = this.config.getInt("max-level");
-            List<Map<Object, Object>> levels = this.config.getMapList("levels");
-            for (Map<Object, Object> level : levels) {
+            int maxLevel = this.config.getInteger("max-level");
+            List<MapConfigurationGetter> levels = this.config.getConfigurationList("levels");
+            for (MapConfigurationGetter level : levels) {
                 Level levelInstance = Level.of(level);
                 if (levelInstance == null) {
                     continue;
@@ -72,7 +72,7 @@ public final class MinionType {
             }
 
             if (!com.artillexstudios.axminions.config.Config.requireTool) {
-                if (!this.config.getBackingDocument().contains("tool.default")) {
+                if (!this.config.contains("tool.default")) {
                     LogUtils.warn("Failed to load minion {}, due to default tool missing, but not requiring a tool from the user!", this.name);
                     return;
                 }
@@ -83,7 +83,7 @@ public final class MinionType {
             MinionTypes.register(this);
             Bukkit.getPluginManager().callEvent(new MinionTypeLoadEvent(this));
         }).exceptionallyAsync(throwable -> {
-            LogUtils.warn("An unexpected error occurred on miniontype registration!", throwable);
+            LogUtils.warn("An unexpected error occurred while registering {} miniontype!", this.name, throwable);
             return null;
         });
     }

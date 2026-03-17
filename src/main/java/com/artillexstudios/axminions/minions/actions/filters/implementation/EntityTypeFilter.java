@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
 import com.artillexstudios.axapi.collections.IdentityArrayMap;
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
@@ -11,7 +12,6 @@ import org.bukkit.entity.EntityType;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public final class EntityTypeFilter extends Filter<EntityType> {
     private final Set<EntityType> allowed = Collections.newSetFromMap(new IdentityArrayMap<>());
 
-    public EntityTypeFilter(Map<Object, Object> configuration) {
+    public EntityTypeFilter(MapConfigurationGetter configuration) {
         this.addTransformer(Entity.class, new Transformer<Entity, EntityType>() {
             @Override
             public EntityType transform(Object object) {
@@ -54,7 +54,7 @@ public final class EntityTypeFilter extends Filter<EntityType> {
             }
         });
 
-        List<String> whitelist = (List<String>) configuration.get("whitelist");
+        List<String> whitelist = configuration.getStringList("whitelist");
         if (whitelist != null) {
             for (String s : whitelist) {
                 if (s.equals("*")) {
@@ -71,7 +71,7 @@ public final class EntityTypeFilter extends Filter<EntityType> {
             }
         }
 
-        List<String> blacklist = (List<String>) configuration.get("blacklist");
+        List<String> blacklist = configuration.getStringList("blacklist");
         if (blacklist != null) {
             for (String s : blacklist) {
                 if (s.equals("*")) {

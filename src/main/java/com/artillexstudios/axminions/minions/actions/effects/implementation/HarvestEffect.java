@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
@@ -7,12 +8,10 @@ import org.bukkit.Location;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 
-import java.util.Map;
-
 // TODO: Get loot, set type/age based on type
 public final class HarvestEffect extends Effect<Location, ItemCollection> {
 
-    public HarvestEffect(Map<Object, Object> configuration) {
+    public HarvestEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
@@ -10,13 +11,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 
-import java.util.Map;
-
 public final class StoneGeneratorFilter extends Filter<Block> {
     private static final BlockFace[] FACES = new BlockFace[]{BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     private static final int FACE_COUNT = 6;
 
-    public StoneGeneratorFilter(Map<Object, Object> configuration) {
+    public StoneGeneratorFilter(MapConfigurationGetter configuration) {
         this.addTransformer(Location.class, new Transformer<Location, Block>() {
             @Override
             public Block transform(Object object) {

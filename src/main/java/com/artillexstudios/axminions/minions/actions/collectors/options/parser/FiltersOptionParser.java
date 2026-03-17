@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.collectors.options.parser;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorRegistry;
@@ -9,22 +10,21 @@ import com.artillexstudios.axminions.minions.actions.filters.Filters;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public final class FiltersOptionParser implements CollectorOptionParser {
 
     @Override
-    public void parse(Map<Object, Object> config, CollectorContext.Builder builder) {
-        List<Map<Object, Object>> filterMap = (List<Map<Object, Object>>) config.get("filters");
+    public void parse(MapConfigurationGetter config, CollectorContext.Builder builder) {
+        List<MapConfigurationGetter> filterMap = config.getConfigurationList("filters");
         if (filterMap == null) {
             builder.withOption(CollectorOptions.FILTERS, List.of());
             return;
         }
 
         List<Filter<?>> filters = new ObjectArrayList<>(1);
-        for (Map<Object, Object> map : filterMap) {
-            String filterId = (String) map.get("id");
+        for (MapConfigurationGetter map : filterMap) {
+            String filterId = map.getString("id");
 
             if (filterId == null) {
                 LogUtils.warn("Could not find id in filter config!");

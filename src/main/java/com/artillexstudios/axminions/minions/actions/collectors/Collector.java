@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.collectors;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
@@ -16,7 +17,6 @@ import redempt.crunch.Crunch;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class Collector<T> {
@@ -24,7 +24,7 @@ public abstract class Collector<T> {
     protected final CollectorContext context;
     protected final List<Requirement> requirements;
 
-    public static Collector<?> of(Map<Object, Object> config, EffectCompiler compiler) {
+    public static Collector<?> of(MapConfigurationGetter config, EffectCompiler compiler) {
         if (Config.debug) {
             LogUtils.debug("Collector of {}", config);
         }
@@ -32,7 +32,7 @@ public abstract class Collector<T> {
             return null;
         }
 
-        String collectorID = (String) config.get("id");
+        String collectorID = config.getString("id");
         if (collectorID == null) {
             LogUtils.warn("Collector id was not defined!");
             return null;
@@ -44,17 +44,17 @@ public abstract class Collector<T> {
         }
 
         List<Requirement> parsedRequirements = new ArrayList<>();
-        List<Map<Object, Object>> requirements = (List<Map<Object, Object>>) config.get("requirements");
+        List<MapConfigurationGetter> requirements = config.getConfigurationList("requirements");
         if (requirements != null) {
-            for (Map<Object, Object> requirementConfig : requirements) {
-                String requirementId = (String) requirementConfig.get("id");
+            for (MapConfigurationGetter requirementConfig : requirements) {
+                String requirementId = requirementConfig.getString("id");
                 if (requirementId == null) {
                     LogUtils.warn("Requirement id is not present for collector id {}!", collectorID);
                     continue;
                 }
 
                 List<Effect<Object, Object>> elseEffects = null;
-                List<Map<Object, Object>> elseBranch = (List<Map<Object, Object>>) requirementConfig.get("else");
+                List<MapConfigurationGetter> elseBranch = requirementConfig.getConfigurationList("else");
                 if (elseBranch != null) {
                     elseEffects = compiler.compile(null, null, elseBranch);
                 }

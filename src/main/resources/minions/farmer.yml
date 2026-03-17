@@ -62,4 +62,4 @@ actions:
         effects:
           - id: "add_to_container"
             effects:
-              id: "drop_at_minion"
+              - id: "drop_at_minion"

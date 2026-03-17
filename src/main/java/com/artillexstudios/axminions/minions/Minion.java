@@ -48,6 +48,11 @@ public final class Minion {
         this.location = location;
         this.minionData = data;
         this.entity = NMSHandlers.getNmsHandler().createEntity(EntityType.ARMOR_STAND, location);
+        this.entity.onInteract(event -> {
+            if (event.isAttack()) {
+
+            }
+        });
         ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
         meta.small(true);
         meta.showArms(true);

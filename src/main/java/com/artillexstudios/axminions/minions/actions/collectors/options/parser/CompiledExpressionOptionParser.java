@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.collectors.options.parser;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.Pair;
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOption;
@@ -7,7 +8,6 @@ import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 
 import java.util.List;
-import java.util.Map;
 
 public final class CompiledExpressionOptionParser implements CollectorOptionParser {
     private final List<String> keys;
@@ -22,9 +22,9 @@ public final class CompiledExpressionOptionParser implements CollectorOptionPars
     }
 
     @Override
-    public void parse(Map<Object, Object> config, CollectorContext.Builder builder) {
+    public void parse(MapConfigurationGetter config, CollectorContext.Builder builder) {
         for (String key : this.keys) {
-            String value = (String) config.get(key);
+            String value = config.getString(key);
             if (value == null) {
                 continue;
             }

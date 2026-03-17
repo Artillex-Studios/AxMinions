@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.ForcedMinionTickFailException;
@@ -10,16 +11,15 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
-import java.util.Map;
 
 public final class CompiledAction {
     private final Collector<?> collector;
     private final List<Effect<Object, Object>> effects;
 
-    public CompiledAction(EffectCompiler compiler, Map<Object, Object> map) {
-        this.collector = Collector.of((Map<Object, Object>) map.get("collector"), compiler);
+    public CompiledAction(EffectCompiler compiler, MapConfigurationGetter map) {
+        this.collector = Collector.of(map.getConfiguration("collector"), compiler);
         this.effects = new ObjectArrayList<>();
-        this.effects.addAll(compiler.compile(this.collector, null, (List<Map<Object, Object>>) map.get("effects")));
+        this.effects.addAll(compiler.compile(this.collector, null, map.getConfigurationList("effects")));
 
         if (Config.debug) {
             LogUtils.debug("Printing children of compiledaction!");
@@ -31,7 +31,7 @@ public final class CompiledAction {
     }
 
     // TODO: Add support for custom compilers
-    public static CompiledAction of(Map<Object, Object> map) {
+    public static CompiledAction of(MapConfigurationGetter map) {
         return new CompiledAction(new BasicEffectCompiler(), map);
     }
 

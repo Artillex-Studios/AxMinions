@@ -1,19 +1,16 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollection> {
 
-    public DropAtMinionEffect(Map<Object, Object> configuration) {
+    public DropAtMinionEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

@@ -11,7 +11,7 @@ import com.artillexstudios.axapi.utils.AsyncUtils;
 import com.artillexstudios.axapi.utils.PaperUtils;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
-import com.artillexstudios.axminions.command.AxMinionsCommand;
+import com.artillexstudios.axminions.command.CommandRegistration;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.config.Language;
 import com.artillexstudios.axminions.config.Minions;
@@ -29,8 +29,6 @@ import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
 import com.artillexstudios.axminions.minions.ticker.FoliaMinionTicker;
 import com.artillexstudios.axminions.utils.ReloadUtils;
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -59,14 +57,6 @@ public final class AxMinionsPlugin extends AxPlugin {
     }
 
     @Override
-    public void load() {
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
-                .setNamespace("axminions")
-                .skipReloadDatapacks(true)
-        );
-    }
-
-    @Override
     public void enable() {
         instance = this;
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(ReloadUtils::isReload)) {
@@ -83,7 +73,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         this.metrics = new AxMetrics(this, 5);
         this.metrics.start();
 
-        this.handler = new DataHandler(new DatabaseHandler(this, Config.database));
+        this.handler = new DataHandler(new DatabaseHandler(Config.database));
         this.handler.setup().thenRun(() -> {
             if (Config.debug) {
                 LogUtils.debug("Loaded database!");
@@ -130,8 +120,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         }
 
         this.ticker.start();
-        AxMinionsCommand.register();
-        CommandAPI.onEnable();
+        CommandRegistration.INSTANCE.register(this);
     }
 
     @Override
@@ -140,7 +129,6 @@ public final class AxMinionsPlugin extends AxPlugin {
             this.metrics.cancel();
         }
 
-        CommandAPI.onDisable();
         this.ticker.cancel();
         this.minionSaver.stop();
         AsyncUtils.stop();

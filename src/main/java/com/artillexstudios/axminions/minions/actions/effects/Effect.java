@@ -1,21 +1,20 @@
 package com.artillexstudios.axminions.minions.actions.effects;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.api.events.EffectDispatchEvent;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import java.util.Map;
-
 public abstract class Effect<T, Z> {
-    private final Map<Object, Object> configuration;
+    private final MapConfigurationGetter configuration;
     private ObjectArrayList<Effect<Z, ?>> children;
     private ObjectArrayList<Effect<T, ?>> elseBranch;
     private ObjectArrayList<Requirement> requirements;
     private Effect<?, ?> parent;
 
-    public Effect(Map<Object, Object> configuration) {
+    public Effect(MapConfigurationGetter configuration) {
         this.configuration = configuration;
     }
 
@@ -104,7 +103,7 @@ public abstract class Effect<T, Z> {
         return true;
     }
 
-    public Map<Object, Object> configuration() {
+    public MapConfigurationGetter configuration() {
         return this.configuration;
     }
 

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
@@ -7,11 +8,9 @@ import com.artillexstudios.axminions.minions.actions.filters.Transformer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Tameable;
 
-import java.util.Map;
-
 public final class TamedFilter extends Filter<Entity> {
 
-    public TamedFilter(Map<Object, Object> configuration) {
+    public TamedFilter(MapConfigurationGetter configuration) {
         this.addTransformer(Entity.class, new Transformer<Entity, Entity>() {
             @Override
             public Entity transform(Object object) {

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.minions.skins.SkinRegistry;
@@ -7,22 +8,20 @@ import redempt.crunch.CompiledExpression;
 import redempt.crunch.Crunch;
 import redempt.crunch.exceptions.ExpressionCompilationException;
 
-import java.util.Map;
-
 public record Level(int id, int actionTicks, Skin skin) {
 
-    public static Level of(Map<Object, Object> map) {
+    public static Level of(MapConfigurationGetter map) {
         if (map == null) {
             return null;
         }
 
-        Integer level = (Integer) map.get("level");
+        Integer level = map.getInteger("level");
         if (level == null) {
             LogUtils.warn("Could not find level int in level configuration!");
             return null;
         }
 
-        String actionTicks = (String) map.get("action-ticks");
+        String actionTicks = map.getString("action-ticks");
         if (actionTicks == null) {
             LogUtils.warn("Could not find action-ticks in level configuration!");
             return null;
@@ -35,7 +34,7 @@ public record Level(int id, int actionTicks, Skin skin) {
             return null;
         }
 
-        String skinName = (String) map.get("skin");
+        String skinName = map.getString("skin");
         if (skinName == null) {
             LogUtils.warn("Could not find skin in level configuration!");
             return null;

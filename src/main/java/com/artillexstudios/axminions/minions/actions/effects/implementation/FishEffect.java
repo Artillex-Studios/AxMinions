@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.loot.LootContextParamSets;
 import com.artillexstudios.axapi.loot.LootContextParams;
 import com.artillexstudios.axapi.loot.LootParams;
@@ -10,11 +11,9 @@ import com.artillexstudios.axminions.utils.ItemCollection;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 
-import java.util.Map;
-
 public final class FishEffect extends Effect<Location, ItemCollection> {
 
-    public FishEffect(Map<Object, Object> configuration) {
+    public FishEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

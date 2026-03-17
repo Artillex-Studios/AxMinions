@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axminions.api.events.MinionSmeltEffectEvent;
@@ -8,14 +9,12 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
 import java.util.Iterator;
-import java.util.Map;
 
 public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
     private static final Object2ObjectLinkedOpenHashMap<Material, Material> recipes = new Object2ObjectLinkedOpenHashMap<>();
@@ -32,7 +31,7 @@ public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
         }
     }
 
-    public SmeltEffect(Map<Object, Object> configuration) {
+    public SmeltEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

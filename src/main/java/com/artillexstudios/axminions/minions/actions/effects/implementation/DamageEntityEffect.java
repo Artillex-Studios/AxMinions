@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.loot.LootContextParamSets;
 import com.artillexstudios.axapi.loot.LootContextParams;
 import com.artillexstudios.axapi.loot.LootParams;
@@ -13,12 +14,10 @@ import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import org.bukkit.entity.Entity;
 
-import java.util.Map;
-
 public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
     private static final ServerPlayerWrapper dummyPlayer = NMSHandlers.getNmsHandler().dummyPlayer();
 
-    public DamageEntityEffect(Map<Object, Object> configuration) {
+    public DamageEntityEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.Pair;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
@@ -17,28 +18,27 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 public final class BreakEffect extends Effect<Location, ItemCollection> {
     private final Function<Material, Material> mapper;
 
-    public BreakEffect(Map<Object, Object> configuration) {
+    public BreakEffect(MapConfigurationGetter configuration) {
         super(configuration);
-        List<Map<Object, Object>> options = (List<Map<Object, Object>>) configuration.get("options");
+        List<MapConfigurationGetter> options = configuration.getConfigurationList("options");
         if (options != null) {
             final List<Pair<List<Filter<?>>, List<Material>>> replacements = new ArrayList<>();
-            for (Map<Object, Object> option : options) {
-                List<Map<Object, Object>> filterSection = (List<Map<Object, Object>>) option.get("filters");
+            for (MapConfigurationGetter option : options) {
+                List<MapConfigurationGetter> filterSection = option.getConfigurationList("filters");
                 if (filterSection == null) {
                     replacements.add(Pair.of(List.of(), null));
                 } else {
                     List<Filter<?>> filters = new ArrayList<>(filterSection.size());
-                    for (Map<Object, Object> filter : filterSection) {
+                    for (MapConfigurationGetter filter : filterSection) {
                         filters.add(Filters.parse(filter));
                     }
-                    List<String> replaceSection = (List<String>) option.get("replacements");
+                    List<String> replaceSection = option.getStringList("replacements");
                     if (replaceSection != null) {
                         replacements.add(Pair.of(filters, MaterialMatcher.matchAll(replaceSection)));
                     } else {

@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.filters;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.actions.filters.implementation.AnimalFilter;
 import com.artillexstudios.axminions.minions.actions.filters.implementation.EntityTypeFilter;
@@ -22,7 +23,7 @@ public final class Filters {
             return true;
         }
     };
-    private static final HashMap<String, Function<Map<Object, Object>, Filter<?>>> filters = new HashMap<>();
+    private static final HashMap<String, Function<MapConfigurationGetter, Filter<?>>> filters = new HashMap<>();
 
     static {
         register("material", MaterialFilter::new);
@@ -32,26 +33,23 @@ public final class Filters {
         register("tamed", TamedFilter::new);
     }
 
-    public static void register(String id, Function<Map<Object, Object>, Filter<?>> supplier) {
+    public static void register(String id, Function<MapConfigurationGetter, Filter<?>> supplier) {
         filters.put(id.toLowerCase(Locale.ENGLISH), supplier);
     }
 
-    public static Filter<Object> parse(Map<Object, Object> configuration) {
-        String id = (String) configuration.get("id");
+    public static Filter<Object> parse(MapConfigurationGetter configuration) {
+        String id = configuration.getString("id");
 
         if (id == null) {
             LogUtils.warn("Could not find id in filter config!");
             return null;
         }
 
-        boolean inverted = false;
-        if (id.startsWith("!")) {
-            inverted = true;
-        }
+        boolean inverted = id.startsWith("!");
 
         id = StringUtils.replaceOnce(id, "!", "");
 
-        Function<Map<Object, Object>, Filter<?>> effectSupplier = filters.get(id.toLowerCase(Locale.ENGLISH));
+        Function<MapConfigurationGetter, Filter<?>> effectSupplier = filters.get(id.toLowerCase(Locale.ENGLISH));
         if (effectSupplier == null) {
             return Filters.EMPTY;
         }

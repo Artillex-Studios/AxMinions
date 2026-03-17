@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.minions.actions.filters.implementation;
 
 import com.artillexstudios.axapi.collections.IdentityArrayMap;
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.exception.TransformerNotPresentException;
 import com.artillexstudios.axminions.minions.actions.filters.Filter;
@@ -12,13 +13,12 @@ import org.bukkit.block.Block;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public final class MaterialFilter extends Filter<Material> {
     private final Set<Material> allowed = Collections.newSetFromMap(new IdentityArrayMap<>());
 
-    public MaterialFilter(Map<Object, Object> configuration) {
+    public MaterialFilter(MapConfigurationGetter configuration) {
         this.addTransformer(Location.class, new Transformer<Location, Material>() {
             @Override
             public Material transform(Object object) {
@@ -70,7 +70,7 @@ public final class MaterialFilter extends Filter<Material> {
             }
         });
 
-        List<String> whitelist = (List<String>) configuration.get("whitelist");
+        List<String> whitelist = configuration.getStringList("whitelist");
         if (whitelist != null) {
             for (String s : whitelist) {
                 if (s.equals("*")) {
@@ -87,7 +87,7 @@ public final class MaterialFilter extends Filter<Material> {
             }
         }
 
-        List<String> blacklist = (List<String>) configuration.get("blacklist");
+        List<String> blacklist = configuration.getStringList("blacklist");
         if (blacklist != null) {
             for (String s : blacklist) {
                 if (s.equals("*")) {

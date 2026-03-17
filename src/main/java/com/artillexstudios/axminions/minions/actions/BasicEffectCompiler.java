@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.RequirementOptionNotPresentException;
@@ -11,12 +12,11 @@ import com.artillexstudios.axminions.minions.actions.requirements.Requirements;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
-import java.util.Map;
 
 public final class BasicEffectCompiler implements EffectCompiler {
 
     @Override
-    public List<Effect<Object, Object>> compile(Collector<?> collector, Effect<Object, Object> parent, List<Map<Object, Object>> list) {
+    public List<Effect<Object, Object>> compile(Collector<?> collector, Effect<Object, Object> parent, List<MapConfigurationGetter> list) {
         ObjectArrayList<Effect<Object, Object>> effects = new ObjectArrayList<>(2);
         if (Config.debug) {
             LogUtils.debug("CompileEffects");
@@ -28,8 +28,8 @@ public final class BasicEffectCompiler implements EffectCompiler {
             return List.of();
         }
 
-        for (Map<Object, Object> map : list) {
-            String id = (String) map.get("id");
+        for (MapConfigurationGetter map : list) {
+            String id = map.getString("id");
             if (Config.debug) {
                 LogUtils.debug("id {}", id == null ? "null" : id);
             }
@@ -58,17 +58,17 @@ public final class BasicEffectCompiler implements EffectCompiler {
 
             effects.add(effect);
 
-            List<Map<Object, Object>> requirements = (List<Map<Object, Object>>) map.get("requirements");
+            List<MapConfigurationGetter> requirements = map.getConfigurationList("requirements");
             if (requirements != null) {
-                for (Map<Object, Object> requirementConfig : requirements) {
-                    String requirementId = (String) requirementConfig.get("id");
+                for (MapConfigurationGetter requirementConfig : requirements) {
+                    String requirementId = requirementConfig.getString("id");
                     if (requirementId == null) {
                         LogUtils.warn("Requirement id is not present for effect id {}!", id);
                         continue;
                     }
 
                     List<Effect<Object, Object>> elseEffects = null;
-                    List<Map<Object, Object>> elseBranch = (List<Map<Object, Object>>) requirementConfig.get("else");
+                    List<MapConfigurationGetter> elseBranch = requirementConfig.getConfigurationList("else");
                     if (elseBranch != null) {
                         elseEffects = this.compile(collector, null, elseBranch);
                     }
@@ -93,9 +93,9 @@ public final class BasicEffectCompiler implements EffectCompiler {
                 }
             }
 
-            Map<Object, Object> elseBranch = (Map<Object, Object>) map.get("else");
+            MapConfigurationGetter elseBranch = map.getConfiguration("else");
             if (elseBranch != null) {
-                List<Map<Object, Object>> elseEffects = (List<Map<Object, Object>>) elseBranch.get("effects");
+                List<MapConfigurationGetter> elseEffects = elseBranch.getConfigurationList("effects");
                 if (requirements != null) {
                     if (elseEffects != null) {
                         for (Effect<Object, Object> children : this.compile(collector, effect, elseEffects)) {
@@ -109,7 +109,7 @@ public final class BasicEffectCompiler implements EffectCompiler {
                 }
             }
 
-            List<Map<Object, Object>> childEffects = (List<Map<Object, Object>>) map.get("effects");
+            List<MapConfigurationGetter> childEffects = map.getConfigurationList("effects");
             if (Config.debug) {
                 LogUtils.debug("Child {}", childEffects);
             }

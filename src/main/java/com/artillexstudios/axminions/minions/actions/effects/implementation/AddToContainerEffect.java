@@ -1,5 +1,6 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public final class AddToContainerEffect extends Effect<ItemCollection, ItemCollection> {
 
-    public AddToContainerEffect(Map<Object, Object> configuration) {
+    public AddToContainerEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

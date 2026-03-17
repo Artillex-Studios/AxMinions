@@ -1,18 +1,16 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
+import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 
-import java.util.Map;
-
 public final class CollectEffect extends Effect<Entity, ItemCollection> {
 
-    public CollectEffect(Map<Object, Object> configuration) {
+    public CollectEffect(MapConfigurationGetter configuration) {
         super(configuration);
     }
 

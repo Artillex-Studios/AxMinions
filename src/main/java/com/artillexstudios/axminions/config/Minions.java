@@ -1,8 +1,8 @@
 package com.artillexstudios.axminions.config;
 
-import com.artillexstudios.axapi.config.Config;
-import com.artillexstudios.axapi.utils.logging.LogUtils;
+import com.artillexstudios.axapi.config.YamlConfiguration;
 import com.artillexstudios.axapi.utils.YamlUtils;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.MinionType;
 import com.artillexstudios.axminions.minions.MinionTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -62,7 +62,9 @@ public final class Minions {
                     .replace(".yml", "")
                     .replace(".yaml", "");
 
-            Config config = new Config(file);
+            YamlConfiguration<?> config = YamlConfiguration.of(file.toPath())
+                    .build();
+            config.load();
             MinionType type = new MinionType(name, config);
             this.loadingMinions.add(type.load().toCompletableFuture());
         }
