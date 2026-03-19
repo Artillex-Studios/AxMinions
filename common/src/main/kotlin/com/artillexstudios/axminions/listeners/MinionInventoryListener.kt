@@ -13,6 +13,8 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.CoolDown
 import com.artillexstudios.axminions.api.utils.Keys
 import com.artillexstudios.axminions.api.utils.fastFor
+import fr.aethel.clans.core.models.MinionPermission
+import fr.aethel.clans.core.models.MinionPermissionAPI
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.Locale
 import net.md_5.bungee.api.ChatMessageType
@@ -46,6 +48,12 @@ class MinionInventoryListener : Listener {
         event.isCancelled = true
         val player = event.whoClicked as Player
 
+
+        // Check clan permission for minion interaction
+        if (!MinionPermissionAPI.hasPermission(minion.getOwnerUUID(), player.getUniqueId(), MinionPermission.INTERACT)) {
+            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + "§cYou don't have permission to interact with this minion!"))
+            return
+        }
         if (coolDown.contains(player)) {
             return
         }
