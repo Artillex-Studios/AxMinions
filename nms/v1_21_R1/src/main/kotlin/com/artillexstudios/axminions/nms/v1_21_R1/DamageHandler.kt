@@ -1,4 +1,4 @@
-package com.artillexstudios.axminions.nms.v1_21_R1
+package com.artillexstudios.axminions.nms.v1_21_R3
 
 import com.artillexstudios.axminions.api.events.PreMinionDamageEntityEvent
 import com.artillexstudios.axminions.api.minions.Minion
@@ -22,6 +22,12 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import net.minecraft.world.entity.EquipmentSlotGroup
+import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.core.component.DataComponents
+import net.minecraft.core.Holder
+import net.minecraft.resources.ResourceKey
+import net.minecraft.world.entity.ai.attributes.Attribute
 import java.util.*
 
 object DamageHandler {
@@ -49,16 +55,10 @@ object DamageHandler {
             } else {
                 nmsItem = CraftItemStack.asNMSCopy(source.getTool())
 
-                if (nmsItem.item is SwordItem) {
-                    f = (f + (nmsItem.item as SwordItem).tier.attackDamageBonus).toInt()
-                }
-
-                if (nmsItem.item is AxeItem) {
-                    f = (f + (nmsItem.item as SwordItem).tier.attackDamageBonus).toInt()
-                }
-
-                if (nmsItem.item is TridentItem) {
-                    f = (f + TridentItem.BASE_DAMAGE).toInt()
+                nmsItem.get(DataComponents.ATTRIBUTE_MODIFIERS)?.forEach(EquipmentSlotGroup.MAINHAND) { h: Holder<Attribute>, m -> 
+                    if (h.unwrapKey().orElseThrow() == Attributes.ATTACK_DAMAGE.unwrapKey().orElseThrow()) {
+                        f += m.amount().toInt()
+                    }
                 }
             }
 
@@ -109,7 +109,7 @@ object DamageHandler {
                     return
                 }
 
-                val flag5 = nmsEntity.hurt(damageSource, f.toFloat())
+                val flag5 = nmsEntity.hurtServer((source.getLocation().world as CraftWorld).handle as ServerLevel, damageSource, f.toFloat())
 
                 if (flag5) {
                     if (i > 0) {
@@ -156,7 +156,7 @@ object DamageHandler {
                                 }
 
                                 // CraftBukkit start - Only apply knockback if the damage hits
-                                if (entityliving.hurt(nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f4)) {
+                                if (entityliving.hurtServer((source.getLocation().world as CraftWorld).handle as ServerLevel, nmsEntity.damageSources().noAggroMobAttack(DUMMY_ENTITY), f4)) {
                                     entityliving.knockback(
                                         0.4000000059604645,
                                         Mth.sin(source.getLocation().yaw * 0.017453292f).toDouble(),

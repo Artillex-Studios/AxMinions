@@ -14,6 +14,7 @@ dependencies {
     compileOnly files('../libs/IridiumSkyblock-4.0.9.jar')
     compileOnly files('../libs/KingdomsX-1.16.12.jar')
     compileOnly files('../libs/KGenerators-7.3-b161.jar')
+    compileOnly files('../libs/AethelClansCore-0.1.0-SNAPSHOT.jar')
     compileOnly 'dev.rosewood:rosestacker:1.5.11'
     compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
