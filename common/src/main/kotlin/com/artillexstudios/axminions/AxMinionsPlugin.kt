@@ -51,7 +51,7 @@ class AxMinionsPlugin : AxPlugin() {
     }
 
     override fun dependencies(manager: DependencyManagerWrapper) {
-        manager.dependency("org{}jetbrains{}kotlin:kotlin-stdlib:1.9.22")
+        manager.dependency("org{}jetbrains{}kotlin:kotlin-stdlib:2.1.10")
         manager.dependency("com{}h2database:h2:2.2.220")
         manager.relocate("org{}jetbrains{}kotlin", "com.artillexstudios.axminions.libs.kotlin")
         manager.relocate("org{}h2", "com.artillexstudios.axminions.libs.h2")

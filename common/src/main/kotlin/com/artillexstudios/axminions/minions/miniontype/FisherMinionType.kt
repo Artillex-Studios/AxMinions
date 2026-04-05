@@ -51,10 +51,6 @@ class FisherMinionType : MinionType("fisher", AxMinionsPlugin.INSTANCE.getResour
             }
         }
 
-        if (minion.getLinkedInventory() == null) {
-            minion.setLinkedChest(null)
-        }
-
         if (minion.getLinkedInventory()?.firstEmpty() == -1) {
             Warnings.CONTAINER_FULL.display(minion)
             return

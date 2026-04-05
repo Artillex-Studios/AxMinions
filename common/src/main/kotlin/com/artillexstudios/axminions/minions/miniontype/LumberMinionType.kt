@@ -49,10 +49,6 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
             }
         }
 
-        if (minion.getLinkedInventory() == null) {
-            minion.setLinkedChest(null)
-        }
-
         if (!minion.canUseTool()) {
             Warnings.NO_TOOL.display(minion)
             return
@@ -113,6 +109,18 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
 
             "CHERRY_LOG" -> {
                 Material.CHERRY_SAPLING
+            }
+
+            "WARPED_STEM" -> {
+                Material.valueOf("WARPED_FUNGUS")
+            }
+
+            "PALE_OAK_LOG" -> {
+                Material.valueOf("PALE_OAK_SAPLING")
+            }
+
+            "CRIMSON_STEM" -> {
+                Material.valueOf("CRIMSON_FUNGUS")
             }
 
             else -> Material.OAK_SAPLING

@@ -49,10 +49,6 @@ class SlayerMinionType : MinionType("slayer", AxMinionsPlugin.INSTANCE.getResour
             }
         }
 
-        if (minion.getLinkedInventory() == null) {
-            minion.setLinkedChest(null)
-        }
-
         if (!minion.canUseTool()) {
             Warnings.NO_TOOL.display(minion)
             return

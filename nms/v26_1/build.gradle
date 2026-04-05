@@ -1,0 +1,21 @@
+plugins {
+    id("io.papermc.paperweight.userdev")
+}
+
+group = 'com.artillexstudios.axminions.nms'
+version = '1.0-SNAPSHOT'
+
+reobfJar {
+    enabled = false
+}
+
+dependencies {
+    paperweight.paperDevBundle("26.1.1.build.+")
+}
+
+kotlin {
+    jvmToolchain(25)
+}
+
+
+configurations.all { resolutionStrategy { { details -> if (details.getSelected() != details.getRequested()) { details.useVersion(details.getSelected().toString()) } } } }

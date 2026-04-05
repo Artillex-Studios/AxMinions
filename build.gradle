@@ -1,13 +1,13 @@
 plugins {
     id 'java-library'
-    id 'com.gradleup.shadow' version "9.2.2"
+    id 'com.gradleup.shadow' version "9.4.1"
     id 'maven-publish'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.18'
+version = '1.0.19'
 
 repositories {
     mavenCentral()
@@ -30,6 +30,12 @@ dependencies {
     implementation project(path: ":nms:v1_21_R4", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R5", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R6", configuration: "reobf")
+    implementation project(path: ":nms:v1_21_R7", configuration: "reobf")
+    implementation(project(path: ":nms:v26_1")) {
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+        }
+    }
 }
 
 allprojects {
@@ -67,11 +73,11 @@ allprojects {
         }
 
         maven {
-            url = uri('https://repo.rosewooddev.io/repository/public/' )
+            url = uri('https://repo.rosewooddev.io/repository/public/')
         }
 
         maven {
-            url = uri('https://repo.bg-software.com/repository/api/' )
+            url = uri('https://repo.bg-software.com/repository/api/')
         }
 
         maven {
@@ -124,17 +130,15 @@ allprojects {
     }
 
     dependencies {
-        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
-        implementation("com.artillexstudios.axapi:axapi:1.4.812:all")
+        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
+        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-9:all")
     }
 
-if (project.name != "api") {
-    tasks.named("shadowJar") {
-    mustRunAfter(":api:shadowJar")
-}
-}
-
-
+    if (project.name != "api") {
+        tasks.named("shadowJar") {
+            mustRunAfter(":api:shadowJar")
+        }
+    }
 }
 
 
@@ -153,7 +157,6 @@ shadowJar {
 tasks.named("shadowJar") {
     mustRunAfter(":api:shadowJar")
 }
-
 
 kotlin {
     jvmToolchain(21)

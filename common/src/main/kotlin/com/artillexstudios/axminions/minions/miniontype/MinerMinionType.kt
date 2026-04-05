@@ -82,10 +82,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             }
         }
 
-        if (minion.getLinkedInventory() == null) {
-            minion.setLinkedChest(null)
-        }
-
         if (!minion.canUseTool()) {
             Warnings.NO_TOOL.display(minion)
             return
