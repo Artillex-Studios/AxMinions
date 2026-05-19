@@ -32,13 +32,13 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
+import com.artillexstudios.axminions.utils.Enchantments
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.block.Container
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Pose
@@ -738,7 +738,8 @@ class Minion(
         val damage = toolMeta.damage
         val remaining = maxDurability - damage
 
-        if (Math.random() > 1f / (toolMeta.getEnchantLevel(Enchantment.DURABILITY) + 1)) return
+        val unbreakingLevel = Enchantments.UNBREAKING?.let { toolMeta.getEnchantLevel(it) } ?: 0
+        if (Math.random() > 1f / (unbreakingLevel + 1)) return
 
         if (remaining > amount) {
             // We can damage the tool

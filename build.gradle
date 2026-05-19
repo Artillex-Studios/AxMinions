@@ -64,12 +64,19 @@ allprojects {
         mavenCentral()
         mavenLocal()
 
-        maven {
-            url = uri("https://repo.papermc.io/repository/maven-public/")
+        exclusiveContent {
+            forRepository {
+                maven {
+                    url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+                }
+            }
+            filter {
+                includeGroup('org.spigotmc')
+            }
         }
 
         maven {
-            url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+            url = uri("https://repo.papermc.io/repository/maven-public/")
         }
 
         maven {

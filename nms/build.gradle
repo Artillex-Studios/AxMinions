@@ -10,4 +10,8 @@ subprojects {
         compileOnly project(":common")
         compileOnly project(":api")
     }
+
+    tasks.named("shadowJar") {
+        exclude("com/artillexstudios/axapi/**")
+    }
 }

@@ -9,16 +9,13 @@ import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
+import com.artillexstudios.axminions.utils.Enchantments
 import dev.lone.itemsadder.api.CustomBlock
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import kotlin.math.roundToInt
 import org.bukkit.Material
-import org.bukkit.block.Block
-import org.bukkit.block.BlockFace
-import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Ageable
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.ItemStack
 
@@ -31,7 +28,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
     override fun onToolDirty(minion: Minion) {
         val minionImpl = minion as com.artillexstudios.axminions.minions.Minion
         minionImpl.setRange(getDouble("range", minion.getLevel()))
-        val tool = minion.getTool()?.getEnchantmentLevel(Enchantment.DIG_SPEED)?.div(10.0) ?: 0.1
+        val tool = Enchantments.EFFICIENCY?.let { minion.getTool()?.getEnchantmentLevel(it)?.div(10.0) } ?: 0.1
         val efficiency = 1.0 - if (tool > 0.9) 0.9 else tool
         minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
     }
