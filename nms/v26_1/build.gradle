@@ -13,6 +13,12 @@ dependencies {
     paperweight.paperDevBundle("26.1.1.build.+")
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
 kotlin {
     jvmToolchain(25)
 }
