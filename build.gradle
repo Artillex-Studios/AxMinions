@@ -138,7 +138,7 @@ allprojects {
 
     dependencies {
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
-        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-9:all")
+        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-31:all")
     }
 
     if (project.name != "api") {
