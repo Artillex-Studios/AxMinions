@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/nms/v1_21_R6" />
             <option value="$PROJECT_DIR$/nms/v1_21_R7" />
             <option value="$PROJECT_DIR$/nms/v26_1" />
+            <option value="$PROJECT_DIR$/nms/v26_2" />
           </set>
         </option>
       </GradleProjectSettings>

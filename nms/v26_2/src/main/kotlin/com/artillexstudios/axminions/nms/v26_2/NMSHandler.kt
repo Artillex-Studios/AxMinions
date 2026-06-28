@@ -1,18 +1,18 @@
-package com.artillexstudios.axminions.nms.v1_19_R3
+package com.artillexstudios.axminions.nms.v26_2
 
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.nms.NMSHandler
-import java.util.UUID
 import net.minecraft.world.entity.MobCategory
 import org.bukkit.Location
 import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock
-import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockState
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack
-import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation
+import org.bukkit.craftbukkit.block.CraftBlock
+import org.bukkit.craftbukkit.block.CraftBlockState
+import org.bukkit.craftbukkit.entity.CraftEntity
+import org.bukkit.craftbukkit.inventory.CraftItemStack
+import org.bukkit.craftbukkit.util.CraftLocation
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
+import java.util.UUID
 
 class NMSHandler : NMSHandler {
 
@@ -38,6 +38,12 @@ class NMSHandler : NMSHandler {
 
     override fun getExp(block: Block, itemStack: ItemStack): Int {
         val craftBlock = block as CraftBlock
-        return craftBlock.nms.block.getExpDrop((block.state as CraftBlockState).handle, craftBlock.handle.minecraftWorld, CraftLocation.toBlockPosition(block.location), CraftItemStack.asNMSCopy(itemStack), true)
+        return craftBlock.blockState.block.getExpDrop(
+            (block.state as CraftBlockState).handle,
+            craftBlock.level.minecraftWorld,
+            CraftLocation.toBlockPos(block.location),
+            CraftItemStack.asNMSCopy(itemStack),
+            true
+        )
     }
 }

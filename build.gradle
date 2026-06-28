@@ -3,11 +3,11 @@ plugins {
     id 'com.gradleup.shadow' version "9.4.1"
     id 'maven-publish'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+    id 'org.jetbrains.kotlin.jvm' version '2.3.21'
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.19'
+version = '1.0.20'
 
 repositories {
     mavenCentral()
@@ -32,6 +32,11 @@ dependencies {
     implementation project(path: ":nms:v1_21_R6", configuration: "reobf")
     implementation project(path: ":nms:v1_21_R7", configuration: "reobf")
     implementation(project(path: ":nms:v26_1")) {
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+        }
+    }
+    implementation(project(path: ":nms:v26_2")) {
         attributes {
             attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
         }
@@ -137,8 +142,8 @@ allprojects {
     }
 
     dependencies {
-        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.1.10'
-        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-9:all")
+        compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.3.21'
+        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-36:all")
     }
 
     if (project.name != "api") {
