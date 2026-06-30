@@ -22,15 +22,15 @@ abstract class Warning(private val name: String) {
         if (!Config.DISPLAY_WARNINGS()) return
 
         if (minion.getWarning() == null) {
-            val hologram = Hologram(minion.getLocation().clone().add(0.0, 1.35, 0.0))
+            val hologram = Hologram(minion.getLocation().clone().add(0.0, 1.55, 0.0))
             val page = hologram.createPage(HologramTypes.TEXT)
-            page.setEntityMetaHandler({ meta ->
+            page.setEntityMetaHandler { meta ->
                 val textDisplayMeta = meta as TextDisplayMeta;
                 textDisplayMeta.seeThrough(true);
                 textDisplayMeta.alignment(TextDisplayMeta.Alignment.CENTER);
                 textDisplayMeta.billboardConstrain(DisplayMeta.BillboardConstrain.CENTER);
-            })
-            page.setContent(StringUtils.formatToString(this.getContent()));
+            }
+            page.content = StringUtils.formatToString(this.getContent());
             page.spawn();
             minion.setWarning(this)
             minion.setWarningHologram(hologram)

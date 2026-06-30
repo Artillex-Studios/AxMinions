@@ -202,8 +202,14 @@ class MinionInventoryListener : Listener {
             }
 
             "charge" -> {
-
                 if (event.isShiftClick) {
+                    val itemCache = mutableListOf<Pair<ItemStack, String>>()
+                    val section = Config.CHARGE_ITEMS()
+
+                    for (key in section.keys) {
+                        itemCache.add(Pair(ItemBuilder.create(section.getSection(key.toString())).get(), key.toString()))
+                    }
+
                     while (true) {
                         val chargeSeconds = (minion.getCharge() - System.currentTimeMillis()) / 1000
 
@@ -214,14 +220,12 @@ class MinionInventoryListener : Listener {
 
                         var chargeAmount = Config.CHARGE_AMOUNT()
                         var itemCharge = false
-                        val section = Config.CHARGE_ITEMS()
 
-                        for (key in section.keys) {
-                            val item = ItemBuilder.create(section.getSection(key.toString())).get()
-                            if (player.inventory.containsAtLeast(item, 1)) {
+                        for (pair in itemCache) {
+                            if (player.inventory.containsAtLeast(pair.first, 1)) {
                                 itemCharge = true
-                                chargeAmount = section.getSection(key.toString()).getInt("charge")
-                                player.inventory.removeItem(item)
+                                chargeAmount = section.getSection(pair.second).getInt("charge")
+                                player.inventory.removeItem(pair.first)
                                 break
                             }
                         }
