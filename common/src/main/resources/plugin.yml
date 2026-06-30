@@ -6,6 +6,7 @@ folia-supported: true
 softdepend:
   - RoseStacker
   - WildStacker
+  - StackMob
   - CMI
   - Vault
   - EconomyShopGUI

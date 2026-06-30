@@ -8,7 +8,9 @@ import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.nms.NMSHandler
 import dev.rosewood.rosestacker.api.RoseStackerAPI
+import uk.antiperson.stackmob.StackMob
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
+import com.artillexstudios.axminions.integrations.stacker.StackMobIntegration
 import org.bukkit.Bukkit
 import java.util.concurrent.ThreadLocalRandom
 import java.util.Random
@@ -26,16 +28,36 @@ class MinionDamageListener : Listener {
     @EventHandler
     fun onMinionKillEntityEvent(event: MinionKillEntityEvent) {
         val minion = event.minion
-        val entitySize = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(event.target)
-        if (AxMinionsPlugin.integrations.getStackerIntegration() is RoseStackerIntegration && entitySize > 1) {
-            // chance can be 0.01 = 1% or 0.1 = 10% or 1 = 100%
-            val chance = minion.getType().getDouble("chance-kill-stacked-amount", minion.getLevel())
-            val amount = minion.getType().getLong("stacked-amount", minion.getLevel())
+
+        // chance can be 0.01 = 1% or 0.1 = 10% or 1 = 100%
+        val stackedChance = minion.getType().getDouble("chance-kill-stacked-amount", minion.getLevel())
+        val stackedAmount = minion.getType().getLong("stacked-amount", minion.getLevel())
+
+        val stackerIntegration = AxMinionsPlugin.integrations.getStackerIntegration()
+
+        val entitySize = stackerIntegration.getStackSize(event.target)
+
+        val amountToKill = (if (entitySize > stackedAmount) stackedAmount else entitySize)
+
+        if (stackerIntegration is RoseStackerIntegration && entitySize > 1) {
             val stackedEntity = RoseStackerAPI.getInstance().getStackedEntity(event.target)!!
-            val amountToKill = (if (entitySize > amount) amount else entitySize) as Long
-            if (random.nextDouble() <= chance) {
-                stackedEntity.killPartialStack(null, (amountToKill as Number).toInt())
-                minion.setActions((minion.getActionAmount() + (amountToKill - 1L) as Long) as Long)
+            if (random.nextDouble() <= stackedChance) {
+                stackedEntity.killPartialStack(null, amountToKill.toInt())
+                minion.setActions(minion.getActionAmount() + (amountToKill - 1L))
+            }
+        } else if (stackerIntegration is StackMobIntegration && entitySize > 1) {
+            val stackMobPlugin = Bukkit.getPluginManager().getPlugin("StackMob") as StackMob
+            val stackMobEntity = stackMobPlugin.getEntityManager().getStackEntity(event.target)
+            if (random.nextDouble() <= stackedChance) {
+                val newSize = (entitySize - amountToKill).toInt()
+
+                if (newSize < 1) {
+                    stackMobEntity.remove()
+                } else {
+                    stackMobEntity.setSize(newSize)
+                }
+
+                minion.setActions(minion.getActionAmount() + (amountToKill - 1L))
             }
         } else {
             event.minion.setActions(event.minion.getActionAmount() + entitySize)

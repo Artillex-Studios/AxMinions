@@ -19,7 +19,7 @@ dependencies {
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
     compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'
     compileOnly 'com.h2database:h2:2.2.220'
-    compileOnly 'com.bgsoftware:WildStackerAPI:2023.2'
+    compileOnly 'uk.antiperson.stackmob:StackMob:5.8.2'
     compileOnly 'net.essentialsx:EssentialsX:2.19.0'
     compileOnly 'com.github.Gypopo:EconomyShopGUI-API:1.7.0'
     compileOnly 'com.github.brcdev-minecraft:shopgui-api:3.0.0'

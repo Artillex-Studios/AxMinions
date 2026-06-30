@@ -63,7 +63,7 @@ database:
   type: "H2"
 
 hooks:
-  # Supported stacker plugins: WildStacker, RoseStacker, none
+  # Supported stacker plugins: WildStacker, RoseStacker, StackMob, none
   stacker: "none"
   # Supported economy providers: Vault, PlayerPoints, custom
   economy: "Vault"
