@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.api.events.MinionTypeLoadEvent;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.exception.MinionTypeNotYetLoadedException;
 import com.artillexstudios.axminions.exception.MinionWarningException;
@@ -71,7 +72,7 @@ public final class MinionType {
                 }
             }
 
-            if (!com.artillexstudios.axminions.config.Config.requireTool) {
+            if (!Config.requireTool) {
                 if (!this.config.contains("tool.default")) {
                     LogUtils.warn("Failed to load minion {}, due to default tool missing, but not requiring a tool from the user!", this.name);
                     return;

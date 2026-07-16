@@ -3,6 +3,7 @@ package com.artillexstudios.axminions.minions.actions.effects;
 import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.api.events.EffectDispatchEvent;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -58,6 +59,9 @@ public abstract class Effect<T, Z> {
             return;
         }
 
+        if (Config.debug) {
+            LogUtils.debug("Running effect {}", this.getClass());
+        }
         Z out = this.run(minion, argument);
 
         if (out == null) {

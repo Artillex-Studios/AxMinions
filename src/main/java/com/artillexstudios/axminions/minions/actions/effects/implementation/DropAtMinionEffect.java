@@ -1,6 +1,8 @@
 package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
 import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
+import com.artillexstudios.axapi.utils.logging.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.MinionTickFailException;
 import com.artillexstudios.axminions.integrations.Integrations;
 import com.artillexstudios.axminions.minions.Minion;
@@ -16,6 +18,9 @@ public final class DropAtMinionEffect extends Effect<ItemCollection, ItemCollect
 
     @Override
     public ItemCollection run(Minion minion, ItemCollection argument) {
+        if (Config.debug) {
+            LogUtils.debug("Dropping items: {}", argument);
+        }
         if (argument == ItemCollection.EMPTY) {
             return null;
         }

@@ -1,6 +1,7 @@
 package com.artillexstudios.axminions.config;
 
 import com.artillexstudios.axapi.config.YamlConfiguration;
+import com.artillexstudios.axapi.libs.snakeyaml.DumperOptions;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.minions.MinionType;
@@ -63,6 +64,10 @@ public final class Minions {
                     .replace(".yaml", "");
 
             YamlConfiguration<?> config = YamlConfiguration.of(file.toPath())
+                    .withDumperOptions(dumperOptions -> {
+                        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                        dumperOptions.setPrettyFlow(true);
+                    })
                     .build();
             config.load();
             MinionType type = new MinionType(name, config);

@@ -19,6 +19,7 @@ import com.artillexstudios.axminions.config.Skins;
 import com.artillexstudios.axminions.database.DataHandler;
 import com.artillexstudios.axminions.listeners.BlockPlaceListener;
 import com.artillexstudios.axminions.listeners.ChunkListener;
+import com.artillexstudios.axminions.listeners.MinionLinkListener;
 import com.artillexstudios.axminions.listeners.MinionPlaceListener;
 import com.artillexstudios.axminions.listeners.PlayerListener;
 import com.artillexstudios.axminions.listeners.WorldListener;
@@ -28,6 +29,7 @@ import com.artillexstudios.axminions.minions.MinionTicker;
 import com.artillexstudios.axminions.minions.MinionWorldCache;
 import com.artillexstudios.axminions.minions.ticker.BukkitMinionTicker;
 import com.artillexstudios.axminions.minions.ticker.FoliaMinionTicker;
+import com.artillexstudios.axminions.placeholders.Placeholders;
 import com.artillexstudios.axminions.utils.ReloadUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -65,6 +67,7 @@ public final class AxMinionsPlugin extends AxPlugin {
             return;
         }
 
+        Placeholders.register();
         DatabaseTypes.register(new H2DatabaseType("com.artillexstudios.axminions.h2"), true);
         DatabaseTypes.register(new SQLiteDatabaseType());
         Config.reload();
@@ -108,6 +111,7 @@ public final class AxMinionsPlugin extends AxPlugin {
         Bukkit.getPluginManager().registerEvents(new ChunkListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MinionLinkListener(), this);
         Bukkit.getPluginManager().registerEvents(new MinionPlaceListener(), this);
 
         this.minionSaver = new MinionSaver();

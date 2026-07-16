@@ -29,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -115,7 +114,7 @@ public final class DataHandler {
                 return null;
             }
 
-            return new User(userId, player.getUniqueId(), player.getName(), textures.texture(), textures.signature(), 0, 0, 0, new ArrayList<>());
+            return new User(userId, player.getUniqueId(), player.getName(), textures.texture(), textures.signature(), 0, 0, 0, new ArrayList<>(), null);
         }, AsyncUtils.executor()).exceptionallyAsync(throwable -> {
             LogUtils.error("An unexpected error occurred while updating user {}!", player.getName(), throwable);
             return null;

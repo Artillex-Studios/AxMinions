@@ -51,13 +51,19 @@ public final class CompiledAction {
         // TODO: Optimize: can we somehow batch actions/lazily evaluate instead of eager evaluation
         // We want this collector to avoid the initialization of a list. I'd think that
         // this is cheaper than a whole array/list initialization.
-        LogUtils.debug("Are requirements met check {}", minion.type().name());
+        if (Config.debug) {
+            LogUtils.debug("Are requirements met check {}", minion.type().name());
+        }
         if (!this.collector.areRequirementsMet(minion)) {
-            LogUtils.debug("Not met");
+            if (Config.debug) {
+                LogUtils.debug("Not met");
+            }
             return;
         }
 
-        LogUtils.debug("Met");
+        if (Config.debug) {
+            LogUtils.debug("Met");
+        }
         this.collector.collect(minion, collected -> {
             for (Effect<Object, Object> effect : this.effects) {
                 try {

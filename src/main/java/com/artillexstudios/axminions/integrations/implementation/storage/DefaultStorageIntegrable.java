@@ -26,7 +26,7 @@ public final class DefaultStorageIntegrable implements StorageIntegrable {
         BlockState state = location.getBlock().getState();
         if (state instanceof Container container) {
             HashMap<Integer, ItemStack> remaining = container.getInventory().addItem(items.elements());
-            remaining.forEach((slot, item) -> {
+            remaining.forEach((_, item) -> {
                 World world = location.getWorld();
                 if (world == null) {
                     return;

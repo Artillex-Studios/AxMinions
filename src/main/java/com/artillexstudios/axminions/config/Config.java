@@ -5,7 +5,6 @@ import com.artillexstudios.axapi.config.annotation.Comment;
 import com.artillexstudios.axapi.config.annotation.ConfigurationPart;
 import com.artillexstudios.axapi.config.annotation.PostProcess;
 import com.artillexstudios.axapi.database.DatabaseConfig;
-import com.artillexstudios.axapi.libs.snakeyaml.DumperOptions;
 import com.artillexstudios.axapi.utils.YamlUtils;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
@@ -106,10 +105,7 @@ public final class Config implements ConfigurationPart {
             this.config = YamlConfiguration.of(path, Config.class)
                     .configVersion(1, "config-version")
                     .withDefaults(AxMinionsPlugin.instance().getResource("config.yml"))
-                    .withDumperOptions(options -> {
-                        options.setPrettyFlow(true);
-                        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                    }).build();
+                    .build();
         }
 
         this.config.load();

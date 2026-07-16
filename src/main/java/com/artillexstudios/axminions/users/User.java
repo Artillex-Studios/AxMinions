@@ -7,24 +7,30 @@ import java.util.List;
 import java.util.UUID;
 
 public record User(Integer id, UUID uuid, String name, String texture, String signature, Integer minionCount, Integer extraSlots,
-                   Integer extraIslandSlots, List<Minion> minions) {
+                   Integer extraIslandSlots, List<Minion> minions, LinkData linkData) {
 
     public User(Integer id, UUID uuid, String name, String texture, String signature, Integer extraSlots, Integer extraIslandSlots, Long minionCount) {
-        this(id, uuid, name, texture, signature, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>());
+        this(id, uuid, name, texture, signature, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>(), null);
     }
 
     public User(Integer id, UUID uuid, String name, Integer extraSlots, Integer extraIslandSlots, Long minionCount) {
-        this(id, uuid, name, null, null, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>());
+        this(id, uuid, name, null, null, minionCount.intValue(), extraSlots, extraIslandSlots, new ArrayList<>(), null);
     }
 
     public User minionCount(int minionCount) {
-        User user = new User(this.id, this.uuid, this.name, this.texture, this.signature, minionCount, this.extraSlots, this.extraIslandSlots, this.minions);
+        User user = new User(this.id, this.uuid, this.name, this.texture, this.signature, minionCount, this.extraSlots, this.extraIslandSlots, this.minions, this.linkData);
         Users.load(user);
         return user;
     }
 
     public User texture(String texture, String signature) {
-        User user = new User(this.id, this.uuid, this.name, texture, signature, this.minionCount, this.extraSlots, this.extraIslandSlots, this.minions);
+        User user = new User(this.id, this.uuid, this.name, texture, signature, this.minionCount, this.extraSlots, this.extraIslandSlots, this.minions, this.linkData);
+        Users.load(user);
+        return user;
+    }
+
+    public User linkData(LinkData linkData) {
+        User user = new User(this.id, this.uuid, this.name, texture, signature, this.minionCount, this.extraSlots, this.extraIslandSlots, this.minions, linkData);
         Users.load(user);
         return user;
     }

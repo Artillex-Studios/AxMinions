@@ -1,5 +1,6 @@
 title: "<white>Minion"
 rows: 3
+tool-slot: 13
 
 items:
   - material: "light_gray_stained_glass_pane"

@@ -1,5 +1,7 @@
 package com.artillexstudios.axminions.integrations.implementation.storage;
 
+import com.artillexstudios.axapi.utils.logging.LogUtils;
+import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.integrations.Integration;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -40,19 +42,35 @@ public final class StorageIntegration extends Integration<StorageIntegrable> {
 
     public void pushDrop(Location location, List<ItemStack> itemStacks) {
         ObjectArrayList<ItemStack> items = this.drops.computeIfAbsent(location, k -> new ObjectArrayList<>());
+        if (Config.debug) {
+            LogUtils.debug("Pushing drop, drops: {}, location: {}", this.drops, location);
+        }
 
         for (ItemStack itemStack : itemStacks) {
+            boolean contains = false;
             for (ItemStack item : items) {
                 if (item.isSimilar(itemStack)) {
-                    itemStack.setAmount(itemStack.getAmount() + item.getAmount());
+                    contains = true;
+                    item.setAmount(itemStack.getAmount() + item.getAmount());
+                    break;
                 }
+            }
+
+            if (!contains) {
+                items.add(itemStack);
             }
         }
     }
 
     public void flush(Location location) {
+        if (Config.debug) {
+            LogUtils.debug("Flush, items: {}, location: {}", this.items, location);
+        }
         ObjectArrayList<ItemStack> items = this.items.remove(location);
         if (items == null) {
+            if (Config.debug) {
+                LogUtils.debug("No items");
+            }
             return;
         }
 
@@ -64,8 +82,14 @@ public final class StorageIntegration extends Integration<StorageIntegrable> {
     }
 
     public void flushDrops(Location location) {
+        if (Config.debug) {
+            LogUtils.debug("Flushdrops, items: {}, location: {}", this.drops, location);
+        }
         ObjectArrayList<ItemStack> items = this.drops.remove(location);
         if (items == null) {
+            if (Config.debug) {
+                LogUtils.debug("No items");
+            }
             return;
         }
 

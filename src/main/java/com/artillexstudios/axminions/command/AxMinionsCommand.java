@@ -111,22 +111,17 @@ public final class AxMinionsCommand {
         });
     }
 
-    @Subcommand("debug")
-    @CommandPermission("axminions.command.debug")
-    public static final class Debug {
+    @Subcommand("debug spawn")
+    @CommandPermission("axminions.command.debug.spawn")
+    public void spawn(Player sender, MinionType type, Level level) {
+        Location location = LocationUtils.toBlockCenter(sender.getLocation());
+        MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
+        Minion minion = new Minion(0, location, data);
+        minion.spawn();
+        MinionArea area = MinionWorldCache.getArea(location.getWorld());
+        MinionWorldCache.add(minion);
+        area.startTicking(location.getChunk());
 
-        @Subcommand("spawn")
-        @CommandPermission("axminions.command.debug.spawn")
-        public void spawn(Player sender, MinionType type, Level level) {
-            Location location = LocationUtils.toBlockCenter(sender.getLocation());
-            MinionData data = new MinionData(0, type, Direction.NORTH, null, level, 0, new ItemStack(Material.DIAMOND_PICKAXE), null, new HashMap<>());
-            Minion minion = new Minion(0, location, data);
-            minion.spawn();
-            MinionArea area = MinionWorldCache.getArea(location.getWorld());
-            MinionWorldCache.add(minion);
-            area.startTicking(location.getChunk());
-
-        }
     }
 
 //    public static void register(JavaPlugin plugin) {

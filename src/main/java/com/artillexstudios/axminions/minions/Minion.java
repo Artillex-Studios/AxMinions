@@ -1,5 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
+import com.artillexstudios.axapi.context.HashMapContext;
+import com.artillexstudios.axapi.gui.inventory.Gui;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.component.type.ProfileProperties;
@@ -14,6 +16,7 @@ import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.config.Config;
 import com.artillexstudios.axminions.exception.MinionWarningException;
 import com.artillexstudios.axminions.integrations.Integrations;
+import com.artillexstudios.axminions.minions.gui.MinionGui;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.minions.warnings.Warnings;
 import com.artillexstudios.axminions.users.User;
@@ -30,6 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// TODO: Maybe add a ticket to the chunk the container is in?
 public final class Minion {
     private static final UUID PROFILE_UUID = UUID.randomUUID();
     private static final ItemStack AIR = new ItemStack(Material.AIR);
@@ -51,16 +55,24 @@ public final class Minion {
         this.entity.onInteract(event -> {
             if (event.isAttack()) {
 
+            } else {
+                // TODO: Check if owner
+                Gui gui = MinionGui.GUI.create(event.getPlayer(), HashMapContext.create()
+                        .with(MinionGui.MINION, this)
+                );
+                // TODO: tool
+//                gui.setItem();
+                gui.open();
             }
         });
         ArmorStandMeta meta = (ArmorStandMeta) this.entity.meta();
         meta.small(true);
         meta.showArms(true);
-        this.applySkin();
 
         if (!Config.requireTool) {
-            this.minionData.withTool(this.minionData.type().tool());
+            this.minionData = this.minionData.withTool(this.minionData.type().tool());
         }
+        this.applySkin();
     }
 
     public void tick() {
@@ -133,11 +145,20 @@ public final class Minion {
 
             this.entity.setItem(entry.getKey(), wrappedItemStack);
         }
+
+        if (!Config.requireTool) {
+            this.entity.setItem(EquipmentSlot.MAIN_HAND, WrappedItemStack.wrap(this.tool()));
+        }
     }
 
     @Nullable
     public User owner() {
         return Users.get(this.ownerId());
+    }
+
+    public void withLinkedChest(Location location) {
+        this.minionData = this.minionData.withLinkedChest(location);
+        this.needsSaving.set(true);
     }
 
     public Location linkedChest() {
