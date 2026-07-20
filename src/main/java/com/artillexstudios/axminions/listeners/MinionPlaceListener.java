@@ -3,7 +3,9 @@ package com.artillexstudios.axminions.listeners;
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
+import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.scheduler.Scheduler;
+import com.artillexstudios.axapi.utils.PlayerTextures;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.config.Config;
@@ -111,7 +113,10 @@ public final class MinionPlaceListener implements Listener {
             LogUtils.debug("Minion count for user: " + user.minionCount());
         }
         // TODO: Database queries, etc..
-//        data.extraData().put("owner_texture", NMSHandlers.getNmsHandler().textures(event.getPlayer()).getKey());
+        ServerPlayerWrapper wrapper = ServerPlayerWrapper.wrap(event.getPlayer());
+        PlayerTextures textures = wrapper.textures();
+        data.extraData().put("owner_texture", textures.texture());
+        data.extraData().put("owner_signature", textures.signature());
         user.minionCount(user.minionCount() + 1);
 
         AxMinionsPlugin.instance().handler().insertMinion(location, data).thenAcceptAsync(minion -> {

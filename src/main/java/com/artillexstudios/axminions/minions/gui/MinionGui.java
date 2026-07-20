@@ -9,6 +9,7 @@ import com.artillexstudios.axapi.gui.inventory.Gui;
 import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.gui.actions.ChargeMinionAction;
+import com.artillexstudios.axminions.minions.gui.actions.LinkToContainerAction;
 import com.artillexstudios.axminions.minions.gui.actions.PickupMinionAction;
 import com.artillexstudios.axminions.utils.FileUtils;
 
@@ -23,6 +24,7 @@ public final class MinionGui {
     static {
         Actions.INSTANCE.register("charge", ChargeMinionAction::new);
         Actions.INSTANCE.register("pickup", PickupMinionAction::new);
+        Actions.INSTANCE.register("link", LinkToContainerAction::new);
         MINION_CONFIG.load();
         GUI = ConfigurationBackedGuiBuilder.builder(MINION_CONFIG, false).build();
     }

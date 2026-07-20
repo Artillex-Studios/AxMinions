@@ -7,7 +7,6 @@ import com.artillexstudios.axminions.minions.actions.collectors.CollectorContext
 import com.artillexstudios.axminions.minions.actions.collectors.CollectorOptionNotPresentException;
 import com.artillexstudios.axminions.minions.actions.collectors.options.CollectorOptions;
 import com.artillexstudios.axminions.minions.actions.requirements.Requirement;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import redempt.crunch.CompiledExpression;
 
@@ -31,7 +30,7 @@ public final class EntityCollector extends Collector<Entity> {
         CompiledExpression rangeExpression = this.context.option(CollectorOptions.RANGE_RAW);
 
         try {
-            this.context.option(CollectorOptions.SHAPE).getBlocks(this.context.toBuilder()
+            this.context.option(CollectorOptions.SHAPE).getEntities(this.context.toBuilder()
                     .withOption(CollectorOptions.LIMIT, limitExpression.getVariableCount() == 0 ? (int) limitExpression.evaluate() : (int) limitExpression.evaluate(minion.level().id()))
                     .withOption(CollectorOptions.RANGE, rangeExpression.getVariableCount() == 0 ? rangeExpression.evaluate() : rangeExpression.evaluate(minion.level().id()))
                     .withOption(CollectorOptions.LOCATION, minion.location())

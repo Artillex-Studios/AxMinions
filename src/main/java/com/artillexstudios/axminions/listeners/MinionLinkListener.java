@@ -14,7 +14,7 @@ public final class MinionLinkListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || clickedBlock.getType().isAir())return;
+        if (clickedBlock == null || clickedBlock.getType().isAir()) return;
         User user = Users.get(event.getPlayer());
         if (user == null) return;
         LinkData linkData = user.linkData();
@@ -23,10 +23,14 @@ public final class MinionLinkListener implements Listener {
         if (!(clickedBlock.getState() instanceof Container)) {
             // TODO: Message saying couldn't link
             user.linkData(null);
+            event.setCancelled(true);
+            event.getPlayer().sendMessage("Failed to link");
             return;
         }
 
         linkData.minion().withLinkedChest(clickedBlock.getLocation());
         user.linkData(null);
+        event.setCancelled(true);
+        event.getPlayer().sendMessage("Linked");
     }
 }

@@ -25,15 +25,18 @@ public final class DefaultStorageIntegrable implements StorageIntegrable {
     public boolean flush(Location location, ObjectArrayList<ItemStack> items) {
         BlockState state = location.getBlock().getState();
         if (state instanceof Container container) {
-            HashMap<Integer, ItemStack> remaining = container.getInventory().addItem(items.elements());
-            remaining.forEach((_, item) -> {
-                World world = location.getWorld();
-                if (world == null) {
-                    return;
-                }
+            for (Object element : (Object[]) items.elements()) {
+                HashMap<Integer, ItemStack> remaining = container.getInventory().addItem((ItemStack) element);
+                remaining.forEach((_, item) -> {
+                    World world = location.getWorld();
+                    if (world == null) {
+                        return;
+                    }
 
-                world.dropItem(location, item);
-            });
+                    world.dropItem(location, item);
+                });
+            }
+
             return true;
         }
 

@@ -47,6 +47,8 @@ public final class AxMinionsPlugin extends AxPlugin {
     @Override
     public void updateFlags() {
         FeatureFlags.PACKET_ENTITY_TRACKER_ENABLED.set(true);
+        FeatureFlags.ENABLE_PACKET_LISTENERS.set(true);
+        FeatureFlags.ENABLE_GUI_LISTENERS.set(true);
     }
 
     @Override

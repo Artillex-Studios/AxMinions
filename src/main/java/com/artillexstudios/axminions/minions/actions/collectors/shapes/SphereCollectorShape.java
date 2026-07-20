@@ -100,10 +100,11 @@ public final class SphereCollectorShape extends CollectorShape {
         Consumer<Entity> consumer = context.optionOrThrow(CollectorOptions.ENTITY_CONSUMER);
 
         int successful = 0;
+        outer:
         for (Entity nearbyEntity : location.getWorld().getNearbyEntities(location, range, range, range)) {
             for (Filter<?> filter : filters) {
                 if (!filter.isAllowed(nearbyEntity)) {
-                    break;
+                    continue outer;
                 }
             }
 
