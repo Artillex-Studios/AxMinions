@@ -26,6 +26,7 @@ import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegrati
 import com.artillexstudios.axminions.integrations.stacker.DefaultStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.WildStackerIntegration
+import com.artillexstudios.axminions.integrations.stacker.StackMobIntegration
 import com.artillexstudios.axminions.listeners.SuperiorSkyBlock2Listener
 import java.util.Locale
 import org.bukkit.Bukkit
@@ -76,6 +77,16 @@ class Integrations : Integrations {
                     register(WildStackerIntegration())
                     Bukkit.getConsoleSender()
                         .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into WildStacker!"))
+                } else {
+                    register(DefaultStackerIntegration())
+                }
+            }
+
+            "stackmob" -> {
+                if (isPluginLoaded("StackMob")) {
+                    register(StackMobIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into StackMob!"))
                 } else {
                     register(DefaultStackerIntegration())
                 }
