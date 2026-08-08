@@ -110,6 +110,10 @@ class LumberMinionType : MinionType("lumber", AxMinionsPlugin.INSTANCE.getResour
             "CHERRY_LOG" -> {
                 Material.CHERRY_SAPLING
             }
+            
+            "PALE_OAK_LOG" -> {
+                Material.PALE_OAK_SAPLING
+            }
 
             "WARPED_STEM" -> {
                 Material.valueOf("WARPED_FUNGUS")
