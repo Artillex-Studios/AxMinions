@@ -22,6 +22,10 @@ interface NMSHandler {
 
     fun generateRandomFishingLoot(minion: Minion, waterLocation: Location): List<ItemStack>
 
+    fun generateEntityLoot(minion: Minion, entity: Entity): List<ItemStack>? {
+        return null
+    }
+
     fun isAnimal(entity: Entity): Boolean
 
     fun getAnimalUUID(): UUID

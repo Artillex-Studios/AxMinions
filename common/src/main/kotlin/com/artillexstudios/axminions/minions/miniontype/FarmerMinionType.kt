@@ -34,7 +34,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
     }
 
     override fun run(minion: Minion) {
-        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+        if (minion.getLinkedInventory() != null && !MinionUtils.isFull(minion.getLinkedInventory()!!)) {
             Warnings.remove(minion, Warnings.CONTAINER_FULL)
         }
 
@@ -53,7 +53,7 @@ class FarmerMinionType : MinionType("farmer", AxMinionsPlugin.INSTANCE.getResour
             }
         }
 
-        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+        if (minion.getLinkedInventory()?.let { MinionUtils.isFull(it) } == true) {
             Warnings.CONTAINER_FULL.display(minion)
             return
         }

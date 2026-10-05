@@ -5,9 +5,9 @@ import com.artillexstudios.axapi.hologram.HologramType
 import com.artillexstudios.axapi.hologram.HologramTypes
 import com.artillexstudios.axapi.hologram.page.HologramPage
 import com.artillexstudios.axapi.utils.StringUtils
-import com.artillexstudios.axapi.packetentity.meta.entity.DisplayMeta
 import com.artillexstudios.axapi.packetentity.meta.entity.TextDisplayMeta
 import com.artillexstudios.axminions.api.config.Config
+import com.artillexstudios.axminions.api.hologram.HologramStyler
 import com.artillexstudios.axminions.api.minions.Minion
 
 abstract class Warning(private val name: String) {
@@ -22,14 +22,13 @@ abstract class Warning(private val name: String) {
         if (!Config.DISPLAY_WARNINGS()) return
 
         if (minion.getWarning() == null) {
-            val hologram = Hologram(minion.getLocation().clone().add(0.0, 1.55, 0.0))
+            val section = Config.HOLOGRAM_WARNINGS_SECTION()
+            val hologram = Hologram(HologramStyler.offset(minion.getLocation(), section))
             val page = hologram.createPage(HologramTypes.TEXT)
             page.setEntityMetaHandler { meta ->
-                val textDisplayMeta = meta as TextDisplayMeta;
-                textDisplayMeta.seeThrough(true);
-                textDisplayMeta.alignment(TextDisplayMeta.Alignment.CENTER);
-                textDisplayMeta.billboardConstrain(DisplayMeta.BillboardConstrain.CENTER);
+                HologramStyler.apply(meta as TextDisplayMeta, section)
             }
+            HologramStyler.applyViewDistance(page, section)
             page.content = StringUtils.formatToString(this.getContent());
             page.spawn();
             minion.setWarning(this)

@@ -14,8 +14,8 @@ place-permissions: false
 # This setting can be overwritten by setting the 'axminions.limit.<amount>' permission!
 default-minion-limit: 5
 
-# If true, only the owner of this minion can break it
-# If false, everyone, who can break blocks at said location can break this minion
+# If true, only the owner of this minion can pick it up (Shift + Right Click)
+# If false, everyone, who can break blocks at said location can pick up this minion
 # You should enable this, if you aren't using a supported protection plugin!
 only-owner-break: true
 
@@ -35,6 +35,12 @@ can-break-tools: true
 
 # The limit to use for islands
 island-limit: 10
+
+# If true, when a player leaves an island's membership, gets kicked from it, or the island gets disbanded,
+# their minions (and the tools inside them) on that island are returned to their inventory (or dropped on
+# the ground at the minion's location if their inventory is full or they're offline).
+# If false, the minions (and their tools) are simply dropped on the ground at the minion's location instead,
+return-minions-on-island-leave: true
 
 # If the minion should be able to take durability from it's held item
 use-durability: true
@@ -65,10 +71,12 @@ database:
 hooks:
   # Supported stacker plugins: WildStacker, RoseStacker, none
   stacker: "none"
-  # Supported economy providers: Vault, PlayerPoints, custom
+  # Supported economy providers: Vault, PlayerPoints, ExcellentEconomy, custom
   economy: "Vault"
+  # Currency ID to use, only applies to the ExcellentEconomy provider ( default: coins )
+  economy-currency: "coins"
   # Supported prices providers: ShopGUIPlus, Essentials, EconomyShopGUI, CMI, custom
-  prices: "ShopGUIPlus"
+  prices: "Essentials"
 
 charge:
   enabled: false
@@ -86,6 +94,21 @@ charge:
 # 2 - short format, for example 20m
 # 3 - text format, for example 01h 25m 35s
 timer-format: 1
+
+# Controls how economy amounts (stored coins, upgrade prices) are displayed
+number-formatting:
+  # modes:
+  # 0 - formatted (np. 1,000.42)
+  # 1 - short (np. 1K)
+  # 2 - raw (np. 1000.4242)
+  mode: 1
+  # Pattern for mode 0
+  # A tutorial can be found here: https://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
+  formatted: '#,###.##'
+  # Language for mode 1 (e.g. en_US)
+  short: en_US
+  # Allowed modes: UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY
+  rounding: HALF_EVEN
 
 gui:
   size: 27
@@ -129,9 +152,42 @@ gui:
       slot: 15
     statistics:
       slot: 16
+
+# Hologram appearance settings.
+# "name" controls the hologram showing the minion's name above its head.
+# "warnings" controls the hologram shown when a minion has an issue (no fuel, container full, etc.)
+holograms:
+  name:
+    # "transparent", "default" (vanilla dark box) or a hex ARGB color like "#80000000"
+    background: "transparent"
+    shadow: true
+    see-through: false
+    scale: 1.0
+    offset:
+      x: 0.0
+      y: 1.3
+      z: 0.0
+    billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
+    alignment: "CENTER" # LEFT, CENTER, RIGHT
+    # The distance, in blocks, from which players can see this hologram
+    visibility-distance: 10
+  warnings:
+    background: "transparent"
+    shadow: true
+    see-through: false
+    scale: 1.0
+    offset:
+      x: 0.0
+      y: 1.7
+      z: 0.0
+    billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
+    alignment: "CENTER" # LEFT, CENTER, RIGHT
+    # The distance, in blocks, from which players can see this hologram
+    visibility-distance: 10
+
 # Only change this, if you are asked to! This will make your performance worse, and will spam messages in your console!
 # Requires restart!
 debug: false
 
 # Do not change!
-config-version: 10
+config-version: 12

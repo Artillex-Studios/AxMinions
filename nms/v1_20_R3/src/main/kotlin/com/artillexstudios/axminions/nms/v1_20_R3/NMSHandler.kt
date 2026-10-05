@@ -25,6 +25,10 @@ class NMSHandler : NMSHandler {
         return LootHandler.generateFishingLoot(minion, waterLocation)
     }
 
+    override fun generateEntityLoot(minion: Minion, entity: Entity): List<ItemStack> {
+        return LootHandler.generateEntityLoot(minion, entity)
+    }
+
     override fun isAnimal(entity: Entity): Boolean {
         return (entity as CraftEntity).handle.type.category == MobCategory.CREATURE
     }

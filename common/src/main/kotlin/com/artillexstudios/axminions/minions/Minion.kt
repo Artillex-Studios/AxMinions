@@ -27,8 +27,10 @@ import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.Keys
+import com.artillexstudios.axminions.api.utils.NumberFormatUtils
 import com.artillexstudios.axminions.api.utils.TimeUtils
 import com.artillexstudios.axminions.api.utils.fastFor
+import com.artillexstudios.axminions.api.hologram.HologramStyler
 import com.artillexstudios.axminions.api.warnings.Warning
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.listeners.LinkingListener
@@ -48,7 +50,6 @@ import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.util.EulerAngle
-import java.text.NumberFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -76,7 +77,6 @@ class Minion(
             EquipmentSlot.CHEST_PLATE,
             EquipmentSlot.HELMET
         )
-        private val numberFormat = NumberFormat.getCompactNumberInstance(Locale.ENGLISH, NumberFormat.Style.SHORT)
         private val notDurable = arrayListOf<Material>()
 
         init {
@@ -97,6 +97,9 @@ class Minion(
     private var armTick = 2.0
     private var warning: Warning? = null
     private var hologram: Hologram? = null
+    private var nameHologram: Hologram? = null
+    private val nameHologramViewers = HashSet<UUID>()
+    private val warningHologramViewers = HashSet<UUID>()
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
     internal val openInventories = mutableListOf<Inventory>()
@@ -133,9 +136,16 @@ class Minion(
                 return@onInteract
             }
 
+            // Left-click no longer does anything; pickup is Shift + Right Click
+            if (event.isAttack) {
+                return@onInteract
+            }
+
+            val pickup = event.player.isSneaking
+
             // We want to do this, so we don't accidentally cause dupes...
             // Atomic variable; we don't want the scheduler to mess up the state
-            if (event.isAttack) {
+            if (pickup) {
                 broken.set(true)
             }
 
@@ -145,7 +155,7 @@ class Minion(
                     event.packetEntity.location()
                 )
 
-                if (event.isAttack) {
+                if (pickup) {
                     if (event.player.inventory.firstEmpty() == -1) {
                         broken.set(false)
                     } else {
@@ -167,16 +177,6 @@ class Minion(
             }
         }
 
-        meta.name(
-            StringUtils.format(
-                type.getConfig().get("entity.name"),
-                Placeholder.unparsed("owner", owner.name ?: "???"),
-                Placeholder.unparsed("level", level.toString()),
-                Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
-            )
-        )
-        meta.customNameVisible(true)
-
         if (Config.DEBUG()) {
             debugHologram = Hologram(location.clone().add(0.0, 2.0, 0.0))
             val page = debugHologram?.createPage(HologramTypes.TEXT)
@@ -194,6 +194,21 @@ class Minion(
         setDirection(direction, false)
         updateArmour()
         entity.spawn()
+
+        val nameSection = Config.HOLOGRAM_NAME_SECTION()
+        nameHologram = Hologram(HologramStyler.offset(location, nameSection))
+        val namePage = nameHologram!!.createPage(HologramTypes.TEXT)
+        namePage.setEntityMetaHandler { meta ->
+            HologramStyler.apply(meta as TextDisplayMeta, nameSection)
+        }
+        HologramStyler.applyViewDistance(namePage, nameSection)
+        namePage.content = StringUtils.formatToString(
+            type.getConfig().get("entity.name"),
+            Placeholder.unparsed("owner", owner.name ?: "???"),
+            Placeholder.unparsed("level", level.toString()),
+            Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
+        )
+        namePage.spawn()
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
@@ -238,6 +253,10 @@ class Minion(
             debugHologram!!.setContent(0, "Ticking: $ticking")
         }
 
+        if (MinionTicker.getTick() % 20L == 0L) {
+            updateHologramVisibility()
+        }
+
         if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {
             Warnings.NO_CHARGE.display(this)
             return
@@ -249,6 +268,29 @@ class Minion(
             type.tick(this)
         }
         animate()
+    }
+
+    private fun updateHologramVisibility() {
+        val world = location.world ?: return
+        val nameDistance = Config.HOLOGRAM_NAME_SECTION().getDouble("visibility-distance", 10.0) ?: 10.0
+        val warningsDistance = Config.HOLOGRAM_WARNINGS_SECTION().getDouble("visibility-distance", 10.0) ?: 10.0
+        Bukkit.getOnlinePlayers().forEach { player ->
+            if (player.world != world) return@forEach
+            val distance = player.location.distance(location)
+            nameHologram?.page(0)?.let { updateViewer(it, player, distance <= nameDistance, nameHologramViewers) }
+            hologram?.page(0)?.let { updateViewer(it, player, distance <= warningsDistance, warningHologramViewers) }
+        }
+    }
+
+    private fun updateViewer(page: HologramPage<*, *>, player: Player, shouldSee: Boolean, viewers: MutableSet<UUID>) {
+        val currentlySeeing = viewers.contains(player.uniqueId)
+        if (shouldSee && !currentlySeeing) {
+            HologramStyler.showTo(page, player)
+            viewers.add(player.uniqueId)
+        } else if (!shouldSee && currentlySeeing) {
+            HologramStyler.hideTo(page, player)
+            viewers.remove(player.uniqueId)
+        }
     }
 
     override fun getLocation(): Location {
@@ -322,10 +364,9 @@ class Minion(
                 )
                 val price = Placeholder.parsed(
                     "price",
-                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else type.getDouble(
-                        "requirements.money",
-                        this.level + 1
-                    ).toString()
+                    if (type.hasReachedMaxLevel(this)) Messages.UPGRADES_MAX_LEVEL_REACHED() else NumberFormatUtils.format(
+                        type.getDouble("requirements.money", this.level + 1)
+                    )
                 )
                 val requiredActions =
                     Placeholder.parsed(
@@ -335,7 +376,7 @@ class Minion(
                             this.level + 1
                         ).toString()
                     )
-                val stored = Placeholder.parsed("storage", numberFormat.format(storage))
+                val stored = Placeholder.parsed("storage", NumberFormatUtils.format(storage))
                 val actions = Placeholder.parsed("actions", actions.toString())
                 val multiplier = Placeholder.parsed("multiplier", type.getDouble("multiplier", this.level).toString())
                 val nextMultiplier = Placeholder.parsed(
@@ -516,9 +557,9 @@ class Minion(
         updateArmour()
         updateInventories()
 
-        val meta = entity.meta()
-        meta.name(
-            StringUtils.format(
+        nameHologram?.setContent(
+            0,
+            StringUtils.formatToString(
                 type.getConfig().get("entity.name"),
                 Placeholder.unparsed("owner", owner.name ?: "???"),
                 Placeholder.unparsed("level", level.toString()),
@@ -606,6 +647,7 @@ class Minion(
 
     override fun remove() {
         Warnings.remove(this, warning ?: Warnings.NO_CONTAINER)
+        nameHologram?.remove()
         Minions.remove(this)
         entity.remove()
 

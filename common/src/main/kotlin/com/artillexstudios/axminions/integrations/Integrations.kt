@@ -7,6 +7,7 @@ import com.artillexstudios.axminions.api.exception.InvalidIntegrationException
 import com.artillexstudios.axminions.api.integrations.Integration
 import com.artillexstudios.axminions.api.integrations.Integrations
 import com.artillexstudios.axminions.api.integrations.types.*
+import com.artillexstudios.axminions.integrations.economy.ExcellentEconomyIntegration
 import com.artillexstudios.axminions.integrations.economy.PlayerPointsIntegration
 import com.artillexstudios.axminions.integrations.economy.VaultIntegration
 import com.artillexstudios.axminions.integrations.placeholder.PlaceholderAPIIntegration
@@ -14,14 +15,13 @@ import com.artillexstudios.axminions.integrations.prices.CMIIntegration
 import com.artillexstudios.axminions.integrations.prices.EconomyShopGUIIntegration
 import com.artillexstudios.axminions.integrations.prices.EssentialsIntegration
 import com.artillexstudios.axminions.integrations.prices.ShopGUIPlusIntegration
-//import com.artillexstudios.axminions.integrations.prices.ZShopIntegration
 import com.artillexstudios.axminions.integrations.protection.BentoBoxIntegration
 import com.artillexstudios.axminions.integrations.protection.GriefPreventionIntegration
 import com.artillexstudios.axminions.integrations.protection.IridiumSkyBlockIntegration
 import com.artillexstudios.axminions.integrations.protection.KingdomsXIntegration
 import com.artillexstudios.axminions.integrations.protection.LandsIntegration
 import com.artillexstudios.axminions.integrations.protection.SuperiorSkyBlock2Integration
-import com.artillexstudios.axminions.integrations.protection.TownyIntegration
+//import com.artillexstudios.axminions.integrations.protection.TownyIntegration
 import com.artillexstudios.axminions.integrations.protection.WorldGuardIntegration
 import com.artillexstudios.axminions.integrations.stacker.DefaultStackerIntegration
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
@@ -36,7 +36,6 @@ class Integrations : Integrations {
     private var economyIntegration: EconomyIntegration? = null
     private var islandIntegration: IslandIntegration? = null
     private val protectionIntegrations = com.artillexstudios.axminions.integrations.protection.ProtectionIntegrations()
-    internal var kGeneratorsIntegration = false
     internal var itemsAdderIntegration = false
 
     override fun getStackerIntegration(): StackerIntegration {
@@ -118,12 +117,6 @@ class Integrations : Integrations {
                         .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into EconomyShopGUI!"))
                 }
             }
-
-//            "zshop" -> {
-//                if (isPluginLoaded("zShop")) {
-//                    register(ZShopIntegration())
-//                }
-//            }
         }
 
         when (Config.ECONOMY_HOOK().lowercase(Locale.ENGLISH)) {
@@ -140,6 +133,14 @@ class Integrations : Integrations {
                     register(PlayerPointsIntegration())
                     Bukkit.getConsoleSender()
                         .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into PlayerPoints!"))
+                }
+            }
+
+            "excellenteconomy" -> {
+                if (isPluginLoaded("ExcellentEconomy")) {
+                    register(ExcellentEconomyIntegration())
+                    Bukkit.getConsoleSender()
+                        .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ExcellentEconomy!"))
                 }
             }
         }
@@ -191,12 +192,6 @@ class Integrations : Integrations {
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into KingdomsX!"))
         }
 
-        if (Bukkit.getPluginManager().getPlugin("KGenerators") != null) {
-            kGeneratorsIntegration = true
-            Bukkit.getConsoleSender()
-                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into KGenerators!"))
-        }
-
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             itemsAdderIntegration = true
             Bukkit.getConsoleSender()
@@ -209,11 +204,11 @@ class Integrations : Integrations {
                 .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into ItemsAdder!"))
         }
 
-        if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
-            register(TownyIntegration())
-            Bukkit.getConsoleSender()
-                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Towny!"))
-        }
+//        if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
+//            register(TownyIntegration())
+//            Bukkit.getConsoleSender()
+//                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into Towny!"))
+//        }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             PlaceholderAPIIntegration().register()
@@ -253,8 +248,6 @@ class Integrations : Integrations {
 
     private fun isPluginLoaded(pluginName: String): Boolean {
         if (Bukkit.getPluginManager().getPlugin(pluginName) != null) {
-            Bukkit.getConsoleSender()
-                .sendMessage(StringUtils.formatToString("<#33FF33>[AxMinions] Hooked into $pluginName!"))
             return true
         } else {
             Bukkit.getConsoleSender()

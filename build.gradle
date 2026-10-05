@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.artillexstudios.axminions'
-version = '1.0.20'
+version = '1.0.21'
 
 repositories {
     mavenCentral()
@@ -138,8 +138,12 @@ allprojects {
         }
 
         maven {
-            url = uri("https://repo.glaremasters.me/repository/towny")
+            url = uri("https://repo.nightexpressdev.com/releases")
         }
+
+//        maven {
+//            url = uri("https://repo.glaremasters.me/repository/towny/")
+//        }
 
         maven {
             url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -159,7 +163,12 @@ allprojects {
 }
 
 
+jar {
+    enabled = false
+}
+
 shadowJar {
+    archiveClassifier.set("")
     relocate("com.artillexstudios.axapi", "com.artillexstudios.axminions.libs.axapi")
     relocate("org.h2", "com.artillexstudios.axminions.libs.h2")
     relocate("org.jetbrains.kotlin", "com.artillexstudios.axminions.libs.kotlin")

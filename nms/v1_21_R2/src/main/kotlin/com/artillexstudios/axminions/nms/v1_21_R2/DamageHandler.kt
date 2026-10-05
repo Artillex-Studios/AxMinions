@@ -42,6 +42,10 @@ object DamageHandler {
         return minion
     }
 
+    fun getDummyEntity(): LivingEntity {
+        return DUMMY_ENTITY
+    }
+
     fun damage(source: Minion, entity: Entity) {
         val nmsEntity = (entity as CraftEntity).handle
 

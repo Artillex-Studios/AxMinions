@@ -1,24 +1,20 @@
 package com.artillexstudios.axminions.listeners
 
-import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
-import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.events.MinionKillEntityEvent
-import com.artillexstudios.axminions.api.utils.fastFor
-import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.nms.NMSHandler
 import dev.rosewood.rosestacker.api.RoseStackerAPI
 import com.artillexstudios.axminions.integrations.stacker.RoseStackerIntegration
 import org.bukkit.Bukkit
 import java.util.concurrent.ThreadLocalRandom
 import java.util.Random
-import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDeathEvent
 
 class MinionDamageListener : Listener {
     private val random = Random()
@@ -46,27 +42,6 @@ class MinionDamageListener : Listener {
                 event.minion.getType().getLong("storage", event.minion.getLevel()).toDouble()
         )
         event.minion.setStorage(coerced)
-
-        Scheduler.get().runLaterAt(event.target.location, { task ->
-            event.target.location.world!!.getNearbyEntities(event.target.location, 4.0, 4.0, 4.0)
-                .filterIsInstance<Item>().fastFor { item ->
-                if (event.minion.getLinkedInventory()?.firstEmpty() == -1) {
-                    Warnings.CONTAINER_FULL.display(event.minion)
-                    return@runLaterAt
-                }
-
-                val amount = AxMinionsPlugin.integrations.getStackerIntegration().getStackSize(item)
-                val stack = item.itemStack
-                stack.amount = amount.toInt()
-
-                val map = event.minion.addWithRemaining(stack) ?: return@fastFor
-                if (map.isEmpty() || stack.amount <= 0) {
-                    item.remove()
-                } else {
-                    AxMinionsAPI.INSTANCE.getIntegrations().getStackerIntegration().setStackSize(item, stack.amount)
-                }
-            }
-        }, 2)
     }
 
     @EventHandler
@@ -77,6 +52,17 @@ class MinionDamageListener : Listener {
                 Bukkit.getPluginManager().callEvent(MinionKillEntityEvent(NMSHandler.get().getMinion() ?: return, entity))
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    fun onEntityDeathEvent(event: EntityDeathEvent) {
+        val cause = event.entity.lastDamageCause as? EntityDamageByEntityEvent ?: return
+        if (cause.damager.uniqueId != NMSHandler.get().getAnimalUUID()) return
+        val minion = NMSHandler.get().getMinion() ?: return
+
+        val loot = NMSHandler.get().generateEntityLoot(minion, event.entity) ?: return
+        event.drops.clear()
+        minion.addToContainerOrDrop(loot)
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

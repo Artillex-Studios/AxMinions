@@ -4,7 +4,6 @@ import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.scheduler.impl.FoliaScheduler
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
-import com.artillexstudios.axminions.api.config.Config
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.utils.LocationUtils
@@ -15,12 +14,12 @@ import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.utils.Enchantments
 import com.artillexstudios.axminions.nms.NMSHandler
 import dev.lone.itemsadder.api.CustomBlock
-import me.kryniowesegryderiusz.kgenerators.Main
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
 import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.FurnaceRecipe
+import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -42,6 +41,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
     }
 
     private var generatorMode = false
+    private var smeltOre = false
     private val whitelist = arrayListOf<Material>()
 
     override fun shouldRun(minion: Minion): Boolean {
@@ -56,14 +56,26 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         minionImpl.setNextAction((getLong("speed", minion.getLevel()) * efficiency).roundToInt())
 
         generatorMode = getConfig().getString("break", "generator").equals("generator", true)
+        smeltOre = getConfig().getBoolean("smelt", false)
         whitelist.clear()
         getConfig().getStringList("whitelist").fastFor {
             whitelist.add(Material.matchMaterial(it.uppercase(Locale.ENGLISH)) ?: return@fastFor)
         }
     }
 
+    private fun smeltDrops(drops: Collection<ItemStack>): Collection<ItemStack> {
+        if (!smeltOre || smeltingRecipes.isEmpty()) return drops
+
+        return drops.map { item ->
+            val recipe = smeltingRecipes.firstOrNull { it.inputChoice.test(item) } ?: return@map item
+            val result = recipe.result.clone()
+            result.amount = item.amount
+            result
+        }
+    }
+
     override fun run(minion: Minion) {
-        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+        if (minion.getLinkedInventory() != null && !MinionUtils.isFull(minion.getLinkedInventory()!!)) {
             Warnings.remove(minion, Warnings.CONTAINER_FULL)
         }
 
@@ -87,7 +99,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
             return
         }
 
-        if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+        if (minion.getLinkedInventory()?.let { MinionUtils.isFull(it) } == true) {
             Warnings.CONTAINER_FULL.display(minion)
             return
         }
@@ -99,23 +111,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
         when (getConfig().getString("mode").lowercase(Locale.ENGLISH)) {
             "sphere" -> {
                 LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false).fastFor { location ->
-                    if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
-                        val gen = Main.getPlacedGenerators().getLoaded(location)
-                        if (gen != null) {
-                            val possible = gen.isBlockPossibleToMine(location)
-
-                            if (possible) {
-                                minion.addToContainerOrDrop(
-                                    gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
-                                )
-                                gen.scheduleGeneratorRegeneration()
-                                return@fastFor
-                            } else {
-                                return@fastFor
-                            }
-                        }
-                    }
-
                     val canBreak = if (generatorMode) {
                         MinionUtils.isStoneGenerator(location)
                     } else {
@@ -124,7 +119,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                     if (canBreak) {
                         val block = location.block
-                        val drops = block.getDrops(minion.getTool())
+                        val drops = smeltDrops(block.getDrops(minion.getTool()))
                         xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                         drops.forEach {
                             amount += it.amount
@@ -147,23 +142,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     asyncExecutor!!.execute {
                         LocationUtils.getAllBlocksInRadius(minion.getLocation(), minion.getRange(), false)
                             .fastFor { location ->
-                                if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
-                                    val gen = Main.getPlacedGenerators().getLoaded(location)
-                                    if (gen != null) {
-                                        val possible = gen.isBlockPossibleToMine(location)
-
-                                        if (possible) {
-                                            minion.addToContainerOrDrop(
-                                                gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
-                                            )
-                                            gen.scheduleGeneratorRegeneration()
-                                            return@fastFor
-                                        } else {
-                                            return@fastFor
-                                        }
-                                    }
-                                }
-
                                 val canBreak = if (generatorMode) {
                                     MinionUtils.isStoneGenerator(location)
                                 } else {
@@ -173,7 +151,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                                 if (canBreak) {
                                     Scheduler.get().run { task ->
                                         val block = location.block
-                                        val drops = block.getDrops(minion.getTool())
+                                        val drops = smeltDrops(block.getDrops(minion.getTool()))
                                         xp += NMSHandler.get().getExp(block, minion.getTool() ?: return@run)
                                         drops.forEach {
                                             amount += it.amount
@@ -194,23 +172,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     locCopy.setZ(locCopy.getBlockZ().toDouble())
                     LocationUtils.getAllBlocksInRadius(locCopy, minion.getRange(), false)
                         .fastFor { location ->
-                            if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
-                                val gen = Main.getPlacedGenerators().getLoaded(location)
-                                if (gen != null) {
-                                    val possible = gen.isBlockPossibleToMine(location)
-
-                                    if (possible) {
-                                        minion.addToContainerOrDrop(
-                                            gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
-                                        )
-                                        gen.scheduleGeneratorRegeneration()
-                                        return@fastFor
-                                    } else {
-                                        return@fastFor
-                                    }
-                                }
-                            }
-
                             val canBreak = if (generatorMode) {
                                 MinionUtils.isStoneGenerator(location)
                             } else {
@@ -219,7 +180,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                             if (canBreak) {
                                 val block = location.block
-                                val drops = block.getDrops(minion.getTool())
+                                val drops = smeltDrops(block.getDrops(minion.getTool()))
                                 xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                                 drops.forEach {
                                     amount += it.amount
@@ -241,36 +202,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                     locCopy.setY(locCopy.getBlockY().toDouble())
                     locCopy.setZ(locCopy.getBlockZ().toDouble())
                     LocationUtils.getAllBlocksFacing(locCopy, minion.getRange(), it).fastFor { location ->
-                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
-                            if (Config.DEBUG()) {
-                                println("KGenerators integration!")
-                            }
-                            val gen = Main.getPlacedGenerators().getLoaded(location)
-                            if (gen != null) {
-                                if (Config.DEBUG()) {
-                                    println("Gen not null")
-                                }
-                                val possible = gen.isBlockPossibleToMine(location)
-
-                                if (possible) {
-                                    if (Config.DEBUG()) {
-                                        println("Not possible")
-                                    }
-                                    minion.addToContainerOrDrop(
-                                        gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
-                                    )
-                                    gen.scheduleGeneratorRegeneration()
-                                    return@fastFor
-                                } else {
-                                    return@fastFor
-                                }
-                            }
-                        } else {
-                            if (Config.DEBUG()) {
-                                println("Else")
-                            }
-                        }
-
                         val canBreak = if (generatorMode) {
                             MinionUtils.isStoneGenerator(location)
                         } else {
@@ -279,7 +210,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (canBreak) {
                             val block = location.block
-                            val drops = block.getDrops(minion.getTool())
+                            val drops = smeltDrops(block.getDrops(minion.getTool()))
                             xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach { item ->
                                 amount += item.amount
@@ -301,22 +232,6 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
                 locCopy.setZ(locCopy.getBlockZ().toDouble())
                 LocationUtils.getAllBlocksFacing(locCopy, minion.getRange(), minion.getDirection().facing)
                     .fastFor { location ->
-                        if (AxMinionsPlugin.integrations.kGeneratorsIntegration) {
-                            val gen = Main.getPlacedGenerators().getLoaded(location)
-                            if (gen != null) {
-                                val possible = gen.isBlockPossibleToMine(location)
-
-                                if (possible) {
-                                    minion.addToContainerOrDrop(
-                                        gen.lastGeneratedObject.customDrops?.item?.clone() ?: return@fastFor
-                                    )
-                                    gen.scheduleGeneratorRegeneration()
-                                    return@fastFor
-                                } else {
-                                    return@fastFor
-                                }
-                            }
-                        }
                         if (AxMinionsPlugin.integrations.itemsAdderIntegration) {
                             val block = CustomBlock.byAlreadyPlaced(location.block)
                             if (block !== null) {
@@ -338,7 +253,7 @@ class MinerMinionType : MinionType("miner", AxMinionsPlugin.INSTANCE.getResource
 
                         if (canBreak) {
                             val block = location.block
-                            val drops = block.getDrops(minion.getTool())
+                            val drops = smeltDrops(block.getDrops(minion.getTool()))
                             xp += NMSHandler.get().getExp(block, minion.getTool() ?: return)
                             drops.forEach {
                                 amount += it.amount

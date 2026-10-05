@@ -26,12 +26,48 @@ mode: line
 # with whitelist mode, it will break all blocks that match the whitelist
 break: generator
 
+# Only used when break is set to whitelist.
+# List of block types (Bukkit Material names, case-insensitive) that the minion is allowed to break.
+# Any block the minion encounters that is not in this list will simply be left untouched.
 whitelist:
+  # Stone-like blocks
   - "stone"
   - "cobblestone"
+  - "deepslate"
+  - "cobbled_deepslate"
+  - "granite"
+  - "diorite"
+  - "andesite"
+  - "tuff"
+  - "calcite"
+  - "dripstone_block"
+  # Overworld ores
+  - "coal_ore"
+  - "deepslate_coal_ore"
   - "iron_ore"
+  - "deepslate_iron_ore"
+  - "copper_ore"
+  - "deepslate_copper_ore"
   - "gold_ore"
+  - "deepslate_gold_ore"
   - "redstone_ore"
+  - "deepslate_redstone_ore"
+  - "lapis_ore"
+  - "deepslate_lapis_ore"
+  - "diamond_ore"
+  - "deepslate_diamond_ore"
+  - "emerald_ore"
+  - "deepslate_emerald_ore"
+  # Nether ores
+  - "nether_gold_ore"
+  - "nether_quartz_ore"
+  - "ancient_debris"
+
+
+# If set to true, the minion will automatically smelt the mined ores/blocks
+# into their smelted result (e.g. raw iron -> iron ingot), using the server's
+# vanilla furnace recipes.
+smelt: false
 
 item:
   type: "player_head"

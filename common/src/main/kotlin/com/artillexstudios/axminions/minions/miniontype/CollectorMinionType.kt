@@ -4,6 +4,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.minions.Minion
 import com.artillexstudios.axminions.api.minions.miniontype.MinionType
+import com.artillexstudios.axminions.api.utils.MinionUtils
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.api.warnings.Warnings
 import com.artillexstudios.axminions.minions.MinionTicker
@@ -28,7 +29,7 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
     }
 
     override fun run(minion: Minion) {
-        if (minion.getLinkedInventory() != null && minion.getLinkedInventory()?.firstEmpty() != -1) {
+        if (minion.getLinkedInventory() != null && !MinionUtils.isFull(minion.getLinkedInventory()!!)) {
             Warnings.remove(minion, Warnings.CONTAINER_FULL)
         }
 
@@ -75,7 +76,7 @@ class CollectorMinionType : MinionType("collector", AxMinionsPlugin.INSTANCE.get
         )
 
         entities?.filterIsInstance<Item>()?.fastFor { item ->
-            if (minion.getLinkedInventory()?.firstEmpty() == -1) {
+            if (minion.getLinkedInventory()?.let { MinionUtils.isFull(it) } == true) {
                 Warnings.CONTAINER_FULL.display(minion)
                 return
             }

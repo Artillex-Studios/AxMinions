@@ -62,7 +62,7 @@ class AxMinionsAPIImpl(private val plugin: AxMinionsPlugin) : AxMinionsAPI {
                 limit = value
             }
         }
-
+        limit += AxMinionsPlugin.dataHandler.getExtraSlots(player.uniqueId)
         return limit
     }
 

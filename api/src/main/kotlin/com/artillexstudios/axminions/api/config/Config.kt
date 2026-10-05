@@ -33,6 +33,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun ISLAND_LIMIT() = AxMinionsAPI.INSTANCE.getConfig().get("island-limit", 0)
         @JvmStatic
+        fun RETURN_MINIONS_ON_ISLAND_LEAVE() = AxMinionsAPI.INSTANCE.getConfig().get("return-minions-on-island-leave", true)
+        @JvmStatic
         fun USE_DURABILITY() = AxMinionsAPI.INSTANCE.getConfig().get("use-durability", true)
         @JvmStatic
         fun DATABASE_TYPE() = AxMinionsAPI.INSTANCE.getConfig().get("database.type", "H2")
@@ -40,6 +42,8 @@ class Config(file: File, stream: InputStream) {
         fun STACKER_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.stacker", "none")
         @JvmStatic
         fun ECONOMY_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.economy", "Vault")
+        @JvmStatic
+        fun ECONOMY_CURRENCY() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.economy-currency", "coins")
         @JvmStatic
         fun PRICES_HOOK() = AxMinionsAPI.INSTANCE.getConfig().get("hooks.prices", "ShopGUIPlus")
         @JvmStatic
@@ -55,7 +59,19 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun CHARGE_ITEMS() = AxMinionsAPI.INSTANCE.getConfig().get<Section>("charge.items")
         @JvmStatic
+        fun HOLOGRAM_NAME_SECTION() = AxMinionsAPI.INSTANCE.getConfig().get<Section>("holograms.name")
+        @JvmStatic
+        fun HOLOGRAM_WARNINGS_SECTION() = AxMinionsAPI.INSTANCE.getConfig().get<Section>("holograms.warnings")
+        @JvmStatic
         fun TIMER_FORMAT() = AxMinionsAPI.INSTANCE.getConfig().get("timer-format", 1)
+        @JvmStatic
+        fun NUMBER_FORMATTING_MODE() = AxMinionsAPI.INSTANCE.getConfig().get("number-formatting.mode", 1)
+        @JvmStatic
+        fun NUMBER_FORMATTING_PATTERN() = AxMinionsAPI.INSTANCE.getConfig().get("number-formatting.formatted", "#,###.##")
+        @JvmStatic
+        fun NUMBER_FORMATTING_SHORT_LOCALE() = AxMinionsAPI.INSTANCE.getConfig().get("number-formatting.short", "en_US")
+        @JvmStatic
+        fun NUMBER_FORMATTING_ROUNDING() = AxMinionsAPI.INSTANCE.getConfig().get("number-formatting.rounding", "HALF_EVEN")
         @JvmStatic
         fun GUI_SIZE() = AxMinionsAPI.INSTANCE.getConfig().get<Int>("gui.size")
         @JvmStatic
