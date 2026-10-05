@@ -41,6 +41,11 @@ dependencies {
             attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
         }
     }
+    implementation(project(path: ":nms:v26_3")) {
+        attributes {
+            attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+        }
+    }
 }
 
 allprojects {
@@ -143,7 +148,7 @@ allprojects {
 
     dependencies {
         compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.3.21'
-        implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-37:all")
+        implementation("com.artillexstudios.axapi:axapi:2.2.0-DEV-NEW-VERSION-7:all")
     }
 
     if (project.name != "api") {
