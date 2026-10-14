@@ -9,7 +9,10 @@ import com.artillexstudios.axminions.minions.MinionTicker
 import com.artillexstudios.axminions.utils.Enchantments
 import kotlin.math.roundToInt
 import org.bukkit.Material
+import org.bukkit.block.Container
 import org.bukkit.inventory.DoubleChestInventory
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BlockStateMeta
 
 class SellerMinionType : MinionType("seller", AxMinionsPlugin.INSTANCE.getResource("minions/seller.yml")!!) {
 
@@ -74,25 +77,73 @@ class SellerMinionType : MinionType("seller", AxMinionsPlugin.INSTANCE.getResour
                 continue
             }
 
-            var price = AxMinionsPlugin.integrations.getPricesIntegration()!!.getPrice(it)
-
-            if (price <= 0) {
-                if (getConfig().get("delete-unsellable")) {
-                    it.amount = 0
-                }
+            if (sellContainerContents(minion, it)) {
                 continue
             }
 
-            price *= getDouble("multiplier", minion.getLevel())
-
-            if (minion.getStorage() + price > getDouble("storage", minion.getLevel())) {
-                continue
+            if (sellItemStack(minion, it)) {
+                it.amount = 0
             }
-
-            minion.setActions(minion.getActionAmount() + it.amount)
-            minion.damageTool()
-            minion.setStorage(minion.getStorage() + price)
-            it.amount = 0
         }
+    }
+
+    // Sells the contents of an item that holds an inventory (shulker box etc.), returns true if the item is a container
+    private fun sellContainerContents(minion: Minion, it: ItemStack): Boolean {
+        if (!it.hasItemMeta()) {
+            return false
+        }
+
+        val itemMeta = it.itemMeta
+        if (itemMeta !is BlockStateMeta) {
+            return false
+        }
+
+        val blockState = itemMeta.blockState
+        if (blockState !is Container) {
+            return false
+        }
+
+        val inventory = blockState.inventory
+        val stacks = arrayOfNulls<ItemStack>(inventory.size)
+        var changed = false
+        for ((slot, stack) in inventory.contents.withIndex()) {
+            if (stack == null || stack.type == Material.AIR) {
+                continue
+            }
+
+            if (sellItemStack(minion, stack)) {
+                changed = true
+            } else {
+                stacks[slot] = stack
+            }
+        }
+
+        if (changed) {
+            inventory.contents = stacks
+            itemMeta.blockState = blockState
+            it.itemMeta = itemMeta
+        }
+
+        return true
+    }
+
+    // Returns if the item should be removed
+    private fun sellItemStack(minion: Minion, it: ItemStack): Boolean {
+        var price = AxMinionsPlugin.integrations.getPricesIntegration()!!.getPrice(it)
+
+        if (price <= 0) {
+            return getConfig().get("delete-unsellable")
+        }
+
+        price *= getDouble("multiplier", minion.getLevel())
+
+        if (minion.getStorage() + price > getDouble("storage", minion.getLevel())) {
+            return false
+        }
+
+        minion.setActions(minion.getActionAmount() + it.amount)
+        minion.damageTool()
+        minion.setStorage(minion.getStorage() + price)
+        return true
     }
 }
