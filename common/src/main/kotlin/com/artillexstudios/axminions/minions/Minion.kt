@@ -791,43 +791,12 @@ class Minion(
             return
         } else {
             // Tool is breaking
-            if (Config.CAN_BREAK_TOOLS()) {
-                if (Config.PULL_FROM_CHEST()) {
-                    val item = pullFromChest()
-                    linkedInventory?.addItem(tool)
-                    setTool(item)
-
-                    if (!tool.type.isAir && notDurable.contains(tool.type)) {
-                        return
-                    }
-
-                    if (!item.type.isAir && (item.itemMeta as? Damageable
-                            ?: return).damage + 1 > item.type.maxDurability
-                    ) {
-                        return
-                    }
-                } else {
-                    setTool(ItemStack(Material.AIR))
-                    return
-                }
-            } else {
-                if (Config.PULL_FROM_CHEST()) {
-                    val item = pullFromChest()
-                    linkedInventory?.addItem(tool)
-                    setTool(item)
-
-                    if (!tool.type.isAir && notDurable.contains(tool.type)) {
-                        return
-                    }
-
-                    if (!item.type.isAir && (item.itemMeta as? Damageable
-                            ?: return).damage + 1 > item.type.maxDurability
-                    ) {
-                        return
-                    }
-                }
-
+            if (Config.PULL_FROM_CHEST() && swapToolFromChest(tool)) {
                 return
+            }
+
+            if (Config.CAN_BREAK_TOOLS()) {
+                setTool(ItemStack(Material.AIR))
             }
         }
     }
@@ -855,49 +824,50 @@ class Minion(
         if (remaining > 1) {
             // We can damage the tool
             return true
-        } else {
-            // Tool is breaking
-            if (Config.CAN_BREAK_TOOLS()) {
-                if (Config.PULL_FROM_CHEST()) {
-                    val item = pullFromChest()
-                    linkedInventory?.addItem(tool)
-                    setTool(item)
+        }
 
-                    if (!tool.type.isAir && notDurable.contains(tool.type)) {
-                        return true
-                    }
+        // Tool is worn out
+        if (Config.PULL_FROM_CHEST() && swapToolFromChest(tool)) {
+            return true
+        }
 
-                    if (!item.type.isAir && (item.itemMeta as? Damageable
-                            ?: return false).damage + 1 > item.type.maxDurability
-                    ) {
-                        return canUseTool()
-                    }
-                } else {
-                    setTool(ItemStack(Material.AIR))
-                    return false
-                }
-            } else {
-                if (Config.PULL_FROM_CHEST()) {
-                    val item = pullFromChest()
-                    linkedInventory?.addItem(tool)
-                    setTool(item)
-
-                    if (!tool.type.isAir && notDurable.contains(tool.type)) {
-                        return true
-                    }
-
-                    if (!item.type.isAir && (item.itemMeta as? Damageable
-                            ?: return false).damage + 1 > item.type.maxDurability
-                    ) {
-                        return canUseTool()
-                    }
-                }
-
-                return false
-            }
+        if (Config.CAN_BREAK_TOOLS()) {
+            setTool(ItemStack(Material.AIR))
         }
 
         return false
+    }
+
+    /**
+     * Whether the tool has no durability left to be used (it's at 1 durability or below).
+     */
+    private fun isWornOut(stack: ItemStack): Boolean {
+        if (!Config.USE_DURABILITY() || notDurable.contains(stack.type)) return false
+
+        val meta = stack.itemMeta as? Damageable ?: return false
+        if (meta.isUnbreakable) return false
+
+        return stack.type.maxDurability - meta.damage <= 1
+    }
+
+    /**
+     * Replaces the worn out [oldTool] with a usable one from the linked chest and puts the old one into the chest.
+     * Returns false (and changes nothing) if the chest has no usable replacement.
+     */
+    private fun swapToolFromChest(oldTool: ItemStack): Boolean {
+        val inventory = linkedInventory ?: return false
+
+        val item = pullFromChest()
+        if (item.type.isAir) return false
+
+        if (inventory.addItem(oldTool.clone()).isNotEmpty()) {
+            // No room for the old tool, put the replacement back
+            inventory.addItem(item)
+            return false
+        }
+
+        setTool(item)
+        return true
     }
 
     private fun pullFromChest(): ItemStack {
@@ -911,7 +881,7 @@ class Minion(
         // Take exactly one item from the first matching stack (Inventory#remove would wipe every identical stack)
         for (slot in 0 until inventory.size) {
             val stack = inventory.getItem(slot) ?: continue
-            if (stack.type !in allowedTools) continue
+            if (stack.type !in allowedTools || isWornOut(stack)) continue
 
             val pulled = stack.clone()
             pulled.amount = 1

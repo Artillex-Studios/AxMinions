@@ -7,6 +7,7 @@ import com.artillexstudios.axapi.packetentity.PacketEntity
 import com.artillexstudios.axapi.packetentity.meta.entity.DisplayMeta
 import com.artillexstudios.axapi.packetentity.meta.entity.TextDisplayMeta
 import com.artillexstudios.axapi.utils.Vector3f
+import com.artillexstudios.axminions.api.minions.Direction
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -84,11 +85,23 @@ object HologramStyler {
     }
 
     fun offset(base: Location, section: Section): Location {
-        return base.clone().add(
+        val location = base.clone().add(
             section.getDouble("offset.x", 0.0) ?: 0.0,
             section.getDouble("offset.y", 0.0) ?: 0.0,
             section.getDouble("offset.z", 0.0) ?: 0.0
         )
+
+        // The text's front is the side the entity's yaw points to, so facing NORTH makes it readable from the north
+        parseFacing(section.getString("facing", ""))?.let {
+            location.yaw = it.yaw
+            location.pitch = 0f
+        }
+
+        return location
+    }
+
+    private fun parseFacing(value: String): Direction? {
+        return runCatching { Direction.valueOf(value.trim().uppercase()) }.getOrNull()
     }
 
     private fun parseColor(value: String): Int {

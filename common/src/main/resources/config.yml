@@ -46,7 +46,7 @@ return-minions-on-island-leave: true
 use-durability: true
 
 # If the minion should pull new tools from the chest it's connected to
-pull-tools-from-chest: false
+pull-tools-from-chest: true
 
 # If the minion should work when the owner is offline (only if the chunk is loaded)
 work-when-owner-offline: true
@@ -76,7 +76,7 @@ hooks:
   # Currency ID to use, only applies to the ExcellentEconomy provider ( default: coins )
   economy-currency: "coins"
   # Supported prices providers: ShopGUIPlus, Essentials, EconomyShopGUI, CMI, custom
-  prices: "Essentials"
+  prices: "CMI"
 
 charge:
   enabled: false
@@ -167,6 +167,7 @@ holograms:
       x: 0.0
       y: 1.3
       z: 0.0
+    facing: "NORTH" # NORTH | EAST | SOUTH | WEST: the side the text's front (the readable side, with billboard: FIXED) points to
     billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
     alignment: "CENTER" # LEFT, CENTER, RIGHT
     # The distance, in blocks, from which players can see this hologram
@@ -180,6 +181,7 @@ holograms:
       x: 0.0
       y: 1.7
       z: 0.0
+    facing: "NORTH" # NORTH | EAST | SOUTH | WEST: the side the text's front (the readable side, with billboard: FIXED) points to
     billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
     alignment: "CENTER" # LEFT, CENTER, RIGHT
     # The distance, in blocks, from which players can see this hologram
@@ -190,4 +192,4 @@ holograms:
 debug: false
 
 # Do not change!
-config-version: 12
+config-version: 13

@@ -58,5 +58,8 @@ class LinkingListener : Listener {
 
         event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LINK_SUCCESS()))
         minion.setLinkedChest(event.clickedBlock!!.location)
+
+        // The menu was closed to start linking, bring it back so the player doesn't have to click the minion again
+        minion.openInventory(event.player)
     }
 }
