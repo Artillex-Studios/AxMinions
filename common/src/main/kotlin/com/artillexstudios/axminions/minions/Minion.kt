@@ -906,11 +906,24 @@ class Minion(
             allowedTools.add(Material.matchMaterial(it) ?: return@fastFor)
         }
 
-        linkedInventory?.contents?.fastFor {
-            if (it == null || it.type !in allowedTools) return@fastFor
+        val inventory = linkedInventory ?: return ItemStack(Material.AIR)
 
-            linkedInventory?.remove(it)
-            return it
+        // Take exactly one item from the first matching stack (Inventory#remove would wipe every identical stack)
+        for (slot in 0 until inventory.size) {
+            val stack = inventory.getItem(slot) ?: continue
+            if (stack.type !in allowedTools) continue
+
+            val pulled = stack.clone()
+            pulled.amount = 1
+
+            if (stack.amount > 1) {
+                stack.amount -= 1
+                inventory.setItem(slot, stack)
+            } else {
+                inventory.setItem(slot, null)
+            }
+
+            return pulled
         }
 
         return ItemStack(Material.AIR)

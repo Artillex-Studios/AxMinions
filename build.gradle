@@ -135,6 +135,9 @@ allprojects {
 
         maven {
             url = uri("https://repo.artillex-studios.com/releases")
+            content {
+                includeGroupByRegex("com\\.artillexstudios.*")
+            }
         }
 
         maven {
