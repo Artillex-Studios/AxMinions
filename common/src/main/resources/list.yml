@@ -1,0 +1,88 @@
+# The menu opened with /minions list (permission: axminions.command.list)
+# It shows the minions of the player. Click the sorting item to cycle through the sorting options.
+# Admins can see the minions of another player with /axminions list <player> (permission: axminions.command.list.others)
+
+title: "<#5555FF>Your Minions"
+
+# The title when an admin looks at the minions of another player. Placeholders: <player>
+title-other: "<#5555FF><player>'s Minions"
+
+# Has to be a multiple of 9, between 18 and 54
+size: 27
+
+filler:
+  type: "black_stained_glass_pane"
+  name: ""
+
+# The slots where the minions are shown (the first page is filled first).
+# Every entry is either a slot, or a range of slots (for example "9-17"). 0 is the top left.
+minion-slots:
+  - "9-17"
+
+# The item that cycles through the sorting options
+sort:
+  slot: 4
+  item:
+    type: "hopper"
+    name: "<#00FF99><b>SORTING"
+  # How a sorting option is shown in the lore, <option> is its name below.
+  selected: " <#00FF99>‣ <option>"
+  unselected: " <gray><option>"
+  # Added under the sorting options
+  footer:
+    - ""
+    - "<gray>Click to cycle sort"
+  options:
+    type: "Type"
+    level: "Level"
+    fuel: "Fuel"
+    world: "World"
+
+# Goes to the previous page, or closes the menu on the first page
+# Placeholders: <page>, <pages>
+back:
+  slot: 18
+  item:
+    type: "arrow"
+    name: "<white>Back"
+
+# Goes to the next page, only shown if there is a next page
+# Placeholders: <page>, <pages>
+next:
+  slot: 26
+  item:
+    type: "arrow"
+    name: "<white>Next"
+    lore:
+      - "<gray>Page <page>/<pages>"
+
+# How every minion is shown. The icon is the minion's own item, with the name and lore below.
+# Placeholders: <minion> (the name of the minion item), <type>, <level>, <level_color>, <world>, <x>, <y>, <z>, <fuel>, <status>
+minion:
+  name: "<minion> <level_color>Lv.<level>"
+  lore:
+    - ""
+    - " <#00AAFF>• <white>Location: <#FFEEAA><world> <gray>| <#FFEEAA><x>, <y>, <z>"
+    - " <#00AAFF>• <white>Fuel: <#FFEEAA><fuel>"
+    - " <#00AAFF>• <white>Status: <status>"
+
+# What <fuel> shows if the minions don't need fuel (charge.enabled: false in the config.yml)
+fuel-unlimited: "Unlimited"
+
+# What <status> shows
+status:
+  active: "<#33FF33>Active"
+  # The chunk of the minion is not loaded
+  inactive: "<#AAAAAA>Inactive"
+  # The type of the minion is disabled in the config.yml
+  disabled: "<#FF3333>Disabled"
+  # Whatever stops the minion from working
+  warnings:
+    no_charge: "<#FF3333>Out of fuel"
+    no_tool: "<#FF3333>No tool"
+    no_container: "<#FF3333>No container"
+    container_full: "<#FF3333>Container full"
+    no_water_nearby: "<#FF3333>No water nearby"
+
+# Do not change!
+config-version: 2

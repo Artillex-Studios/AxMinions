@@ -88,5 +88,9 @@ shop:
   not-enough-money: "<red>You don't have enough money to buy this minion! It costs <white><price> <currency></white>."
   currency-unavailable: "<red>This minion can't be bought right now, because its currency isn't available!"
 
+list:
+  no-minions: "<red>You don't have any minions!"
+  no-minions-other: "<red><player> doesn't have any minions!"
+
 # Do not change!
-config-version: 11
+config-version: 13

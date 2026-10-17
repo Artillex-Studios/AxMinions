@@ -95,6 +95,10 @@ class Messages(file: File, stream: InputStream) {
         fun SHOP_NOT_ENOUGH_MONEY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("shop.not-enough-money")
         @JvmStatic
         fun SHOP_CURRENCY_UNAVAILABLE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("shop.currency-unavailable")
+        @JvmStatic
+        fun LIST_NO_MINIONS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.no-minions")
+        @JvmStatic
+        fun LIST_NO_MINIONS_OTHER() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.no-minions-other")
     }
 
     private val config = Config(

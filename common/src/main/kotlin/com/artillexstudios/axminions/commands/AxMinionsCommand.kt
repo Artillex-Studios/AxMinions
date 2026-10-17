@@ -25,7 +25,10 @@ import revxrsal.commands.annotation.*
 import revxrsal.commands.bukkit.annotation.CommandPermission
 import java.util.concurrent.CompletableFuture
 
-@Command("axminions", "minion", "minions")
+/**
+ * The commands for admins, the ones for players are in [MinionsCommand].
+ */
+@Command("axminions")
 class AxMinionsCommand {
 
     @Subcommand("give")
@@ -55,11 +58,11 @@ class AxMinionsCommand {
         receiver.inventory.addItem(item)
     }
 
-    @Subcommand("shop")
-    @CommandPermission("axminions.command.shop")
-    @Description("Open the shop, where you can buy minions")
-    fun shop(player: Player) {
-        AxMinionsPlugin.shop.open(player)
+    @Subcommand("list")
+    @CommandPermission("axminions.command.list.others")
+    @Description("See the minions of a player")
+    fun list(player: Player, target: OfflinePlayer) {
+        AxMinionsPlugin.minionList.open(player, target)
     }
 
     @Subcommand("fuel give")
@@ -97,6 +100,7 @@ class AxMinionsCommand {
 
         AxMinionsPlugin.integrations.reload()
         AxMinionsPlugin.shop.reload()
+        AxMinionsPlugin.minionList.reload()
 
         sender.sendMessage(
             StringUtils.formatToString(

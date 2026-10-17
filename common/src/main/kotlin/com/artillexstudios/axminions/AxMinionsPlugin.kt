@@ -14,6 +14,7 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionType
 import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.commands.AxMinionsCommand
+import com.artillexstudios.axminions.commands.MinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
 import com.artillexstudios.axminions.data.SQLiteDataHandler
 import com.artillexstudios.axminions.data.YamlDataHandler
@@ -22,7 +23,9 @@ import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionDamageListener
 import com.artillexstudios.axminions.listeners.MinionDropListener
+import com.artillexstudios.axminions.list.MinionList
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
+import com.artillexstudios.axminions.listeners.MinionListListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
 import com.artillexstudios.axminions.listeners.PlayerListener
 import com.artillexstudios.axminions.listeners.ShopListener
@@ -54,6 +57,7 @@ class AxMinionsPlugin : AxPlugin() {
         lateinit var dataQueue: ThreadedQueue<Runnable>
         lateinit var integrations: Integrations
         lateinit var shop: MinionShop
+        lateinit var minionList: MinionList
     }
 
     override fun dependencies(manager: DependencyManagerWrapper) {
@@ -98,6 +102,7 @@ class AxMinionsPlugin : AxPlugin() {
         }
 
         shop = MinionShop(File(dataFolder, "shop.yml"), getResource("shop.yml")!!)
+        minionList = MinionList(File(dataFolder, "list.yml"), getResource("list.yml")!!)
 
         val handler = BukkitCommandHandler.create(this)
 
@@ -115,6 +120,7 @@ class AxMinionsPlugin : AxPlugin() {
         }
 
         handler.register(AxMinionsCommand())
+        handler.register(MinionsCommand())
 
         if (handler.isBrigadierSupported) {
             handler.registerBrigadier()
@@ -130,6 +136,7 @@ class AxMinionsPlugin : AxPlugin() {
             it.registerEvents(MinionDropListener(), this)
             it.registerEvents(PlayerListener(), this)
             it.registerEvents(ShopListener(), this)
+            it.registerEvents(MinionListListener(), this)
         }
 
         // Retroactively load minions for the already loaded worlds
@@ -174,7 +181,8 @@ class AxMinionsPlugin : AxPlugin() {
         }
 
         Bukkit.getOnlinePlayers().forEach { player ->
-            if (player.openInventory.topInventory.holder is MinionShop.Holder) {
+            val holder = player.openInventory.topInventory.holder
+            if (holder is MinionShop.Holder || holder is MinionList.Holder) {
                 player.closeInventory()
             }
         }
