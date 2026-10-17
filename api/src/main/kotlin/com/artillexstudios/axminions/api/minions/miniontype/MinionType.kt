@@ -54,6 +54,14 @@ abstract class MinionType(private val name: String, private val defaults: InputS
         return this.name
     }
 
+    /**
+     * Whether this type is enabled in the 'minion-types' section of the config.yml.
+     * Disabled types don't work and can't be placed, bought or given, their minions can only be picked up.
+     */
+    fun isEnabled(): Boolean {
+        return com.artillexstudios.axminions.api.config.Config.MINION_TYPE_ENABLED(name)
+    }
+
     open fun onToolDirty(minion: Minion) {
 
     }

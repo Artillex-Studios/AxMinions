@@ -87,6 +87,14 @@ class Messages(file: File, stream: InputStream) {
         fun SLOT_RECEIVE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("slot-receive")
         @JvmStatic
         fun LOCATION_FORMAT() = AxMinionsAPI.INSTANCE.getMessages().get<String>("location-format")
+        @JvmStatic
+        fun MINION_TYPE_DISABLED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("minion-type-disabled")
+        @JvmStatic
+        fun SHOP_BOUGHT() = AxMinionsAPI.INSTANCE.getMessages().get<String>("shop.bought")
+        @JvmStatic
+        fun SHOP_NOT_ENOUGH_MONEY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("shop.not-enough-money")
+        @JvmStatic
+        fun SHOP_CURRENCY_UNAVAILABLE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("shop.currency-unavailable")
     }
 
     private val config = Config(

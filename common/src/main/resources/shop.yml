@@ -1,0 +1,72 @@
+# The menu opened with /minions shop (permission: axminions.command.shop)
+# Clicking a minion buys it (level 1). The icon is the minion's own item with the 'lore' below added to its lore.
+
+title: "<#00AAFF><b>Minion Shop"
+
+# Has to be a multiple of 9, between 9 and 54
+size: 36
+
+filler:
+  type: "black_stained_glass_pane"
+  name: ""
+
+# Added to the end of every minion's lore.
+# Placeholders: <price>, <currency>, <balance> (the balance of the player in that currency)
+lore:
+  - ""
+  - "<#00AAFF>Shop"
+  - " <#00AAFF>❙ <white>Price: <#33FF33><price> <currency>"
+  - " <#00AAFF>❙ <white>Your balance: <#FFEEAA><balance> <currency>"
+  - ""
+  - "<#33FF33><b>(!)</b> Click here to buy this minion!"
+
+# How the currencies are shown as <currency>, can be overwritten per minion with 'currency-name'
+currency-names:
+  vault: "$"
+  playerpoints: "Points"
+  excellenteconomy: "Coins"
+
+# Every minion type that should be sold, with the following options:
+#   slot:          where it is in the menu (0 is the top left)
+#   price:         how much it costs
+#   currency:      what to pay with, can be: vault, playerpoints, excellenteconomy
+#                  (every minion can use a different one, the plugin of the currency has to be installed)
+#   currency-id:   only for excellenteconomy, the ID of the currency to use ( default: hooks.economy-currency in the config.yml )
+#   currency-name: optional, overwrites the name from 'currency-names'
+# Remove a minion from this list to not sell it.
+minions:
+  collector:
+    slot: 10
+    price: 10000
+    currency: vault
+  farmer:
+    slot: 12
+    price: 25000
+    currency: vault
+  lumber:
+    slot: 14
+    price: 25000
+    currency: vault
+  miner:
+    slot: 16
+    price: 50000
+    currency: vault
+  fisher:
+    slot: 19
+    price: 50000
+    currency: vault
+  slayer:
+    slot: 21
+    price: 75000
+    currency: vault
+  seller:
+    slot: 23
+    price: 100000
+    currency: vault
+  crafter:
+    slot: 25
+    price: 100000
+    currency: vault
+
+# Do not change!
+config-version: 1

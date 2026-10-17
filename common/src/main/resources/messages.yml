@@ -81,5 +81,12 @@ slot-receive: "<green>You were given <amount> new island minion slots! (<from> -
 
 location-format: "<world>;<x>;<y>;<z>"
 
+minion-type-disabled: "<red>The <white><type></white> minion is disabled! Existing ones can only be picked up (Shift + Right Click)."
+
+shop:
+  bought: "<green>You bought a <minion><green> for <white><price> <currency></white>!"
+  not-enough-money: "<red>You don't have enough money to buy this minion! It costs <white><price> <currency></white>."
+  currency-unavailable: "<red>This minion can't be bought right now, because its currency isn't available!"
+
 # Do not change!
-config-version: 9
+config-version: 11

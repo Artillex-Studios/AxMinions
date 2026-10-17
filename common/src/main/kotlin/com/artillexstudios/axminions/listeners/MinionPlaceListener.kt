@@ -36,6 +36,16 @@ class MinionPlaceListener : Listener {
         val minionType = MinionTypes.valueOf(type) ?: return
         event.isCancelled = true
 
+        if (!minionType.isEnabled()) {
+            event.player.sendMessage(
+                StringUtils.formatToString(
+                    Messages.PREFIX() + Messages.MINION_TYPE_DISABLED(),
+                    Placeholder.unparsed("type", minionType.getName())
+                )
+            )
+            return
+        }
+
         if (!AxMinionsPlugin.integrations.getProtectionIntegration()
                 .canBuildAt(event.player, event.clickedBlock!!.location)
         ) {

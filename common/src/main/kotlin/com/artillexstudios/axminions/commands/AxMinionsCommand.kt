@@ -39,10 +39,27 @@ class AxMinionsCommand {
         @Default("1") level: Int,
         @Default("1") @Range(min = 1.0, max = 64.0) amount: Int
     ) {
+        if (!minionType.isEnabled()) {
+            sender.sendMessage(
+                StringUtils.formatToString(
+                    Messages.PREFIX() + Messages.MINION_TYPE_DISABLED(),
+                    Placeholder.unparsed("type", minionType.getName())
+                )
+            )
+            return
+        }
+
         val item = minionType.getItem(level)
         item.amount = amount
 
         receiver.inventory.addItem(item)
+    }
+
+    @Subcommand("shop")
+    @CommandPermission("axminions.command.shop")
+    @Description("Open the shop, where you can buy minions")
+    fun shop(player: Player) {
+        AxMinionsPlugin.shop.open(player)
     }
 
     @Subcommand("fuel give")
@@ -79,6 +96,7 @@ class AxMinionsCommand {
         }
 
         AxMinionsPlugin.integrations.reload()
+        AxMinionsPlugin.shop.reload()
 
         sender.sendMessage(
             StringUtils.formatToString(

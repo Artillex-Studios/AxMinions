@@ -87,6 +87,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun UPGRADE_SOUND() = AxMinionsAPI.INSTANCE.getConfig().get("upgrade-sound", "ENTITY_PLAYER_LEVELUP")
         @JvmStatic
+        fun MINION_TYPE_ENABLED(type: String) = AxMinionsAPI.INSTANCE.getConfig().get("minion-types.$type", true)
+        @JvmStatic
         fun DEBUG(): Boolean {
             if (debug === null) {
                 debug = AxMinionsAPI.INSTANCE.getConfig().get("debug", false)

@@ -167,6 +167,13 @@ class Minion(
                             broken.set(false)
                         }
                     }
+                } else if (!type.isEnabled()) {
+                    event.player.sendMessage(
+                        StringUtils.formatToString(
+                            Messages.PREFIX() + Messages.MINION_TYPE_DISABLED(),
+                            Placeholder.unparsed("type", type.getName())
+                        )
+                    )
                 } else {
                     if (ownerUUID == event.player.uniqueId) {
                         openInventory(event.player)
@@ -255,6 +262,12 @@ class Minion(
 
         if (MinionTicker.getTick() % 20L == 0L) {
             updateHologramVisibility()
+        }
+
+        // Disabled types don't work, their minions can only be picked up
+        if (!type.isEnabled()) {
+            warning?.let { Warnings.remove(this, it) }
+            return
         }
 
         if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {

@@ -46,6 +46,12 @@ class MinionInventoryListener : Listener {
         event.isCancelled = true
         val player = event.whoClicked as Player
 
+        // The type got disabled while the GUI was open
+        if (!minion.getType().isEnabled()) {
+            player.closeInventory()
+            return
+        }
+
         if (coolDown.contains(player)) {
             return
         }
