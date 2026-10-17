@@ -6,6 +6,7 @@ import com.artillexstudios.axminions.AxMinionsPlugin;
 import com.artillexstudios.axminions.config.Config;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -18,14 +19,16 @@ public final class MinionSaver {
             return;
         }
 
-        this.future = AsyncUtils.scheduleAtFixedRate(() -> {
-            ObjectArrayList<Minion> copy = MinionWorldCache.copy();
-            AxMinionsPlugin.instance().handler().saveMinions(copy).thenAccept(pair -> {
-                if (Config.debug) {
-                    LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
-                }
-            });
-        }, 0, Config.autosaveSeconds, TimeUnit.SECONDS);
+        this.future = AsyncUtils.scheduleAtFixedRate(this::runSave, 0, Config.autosaveSeconds, TimeUnit.SECONDS);
+    }
+
+    public CompletableFuture<?> runSave() {
+        ObjectArrayList<Minion> copy = MinionWorldCache.copy();
+        return AxMinionsPlugin.instance().handler().saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
+            if (Config.debug) {
+                LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
+            }
+        });
     }
 
     public void stop() {
@@ -33,12 +36,7 @@ public final class MinionSaver {
             this.future.cancel(false);
             this.future = null;
 
-            ObjectArrayList<Minion> copy = MinionWorldCache.copy();
-            AxMinionsPlugin.instance().handler().saveMinions(copy).toCompletableFuture().thenAccept(pair -> {
-                if (Config.debug) {
-                    LogUtils.debug("Saved {} minions in {} ms!", pair.firstLong(), pair.secondLong() / 1_000_000L);
-                }
-            }).join();
+            this.runSave().join();
         }
     }
 }

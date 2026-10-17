@@ -1,1 +1,1 @@
-UPDATE axminions_minions SET `level` = ?, charge = ?, facing = ?, tool = ?, extra_data = ? WHERE axminions_minions.id = ?;
+UPDATE axminions_minions SET `level` = ?, charge = ?, facing = ?, tool = ?, extra_data = ?, chest_location_id = ? WHERE axminions_minions.id = ?;

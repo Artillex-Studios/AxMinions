@@ -140,6 +140,10 @@ public final class AxMinionsPlugin extends AxPlugin {
         AsyncUtils.stop();
     }
 
+    public MinionSaver minionSaver() {
+        return this.minionSaver;
+    }
+
     public DataHandler handler() {
         return this.handler;
     }

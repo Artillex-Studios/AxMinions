@@ -18,8 +18,8 @@ public record PlacedMinionData(Integer id, Integer ownerId, MinionType type, Dir
                                Location linkedChest, Level level,
                                Long charge, ItemStack tool, Skin skin, HashMap<String, String> extraData) {
 
-    public PlacedMinionData(Integer id, UUID worldUUID, Integer typeId, Integer locationX, Integer locationY, Integer locationZ, Integer ownerId, Integer level, Long charge, Integer facing, Blob tool, Blob extraData) throws SQLException, IOException {
-        this(id, ownerId, MinionTypes.parse(typeId.shortValue()), Direction.values()[facing], new Location(Bukkit.getWorld(worldUUID), locationX + 0.5, locationY, locationZ + 0.5), null, MinionTypes.parse(typeId.shortValue()).level(level), charge, tool == null ? null : WrapperRegistry.ITEM_STACK.map(tool.getBinaryStream().readAllBytes()).toBukkit(), null, MinionData.deserialize(new String(extraData.getBinaryStream().readAllBytes(), StandardCharsets.UTF_8)));
+    public PlacedMinionData(Integer id, UUID worldUUID, Integer typeId, Integer locationX, Integer locationY, Integer locationZ, Integer chestLocationX, Integer chestLocationY, Integer chestLocationZ, Integer ownerId, Integer level, Long charge, Integer facing, Blob tool, Blob extraData) throws SQLException, IOException {
+        this(id, ownerId, MinionTypes.parse(typeId.shortValue()), Direction.values()[facing], new Location(Bukkit.getWorld(worldUUID), locationX + 0.5, locationY, locationZ + 0.5), chestLocationX == null ? null : new Location(Bukkit.getWorld(worldUUID), chestLocationX + 0.5, chestLocationY, chestLocationZ + 0.5), MinionTypes.parse(typeId.shortValue()).level(level), charge, tool == null ? null : WrapperRegistry.ITEM_STACK.map(tool.getBinaryStream().readAllBytes()).toBukkit(), null, MinionData.deserialize(new String(extraData.getBinaryStream().readAllBytes(), StandardCharsets.UTF_8)));
     }
 
     public Minion create() {

@@ -67,7 +67,7 @@ public final class BreakEffect extends Effect<Location, ItemCollection> {
                 return Material.AIR;
             };
         } else {
-            this.mapper = m -> Material.AIR;
+            this.mapper = _ -> Material.AIR;
         }
     }
 

@@ -3,8 +3,8 @@ package com.artillexstudios.axminions.minions;
 import com.artillexstudios.axapi.context.HashMapContext;
 import com.artillexstudios.axapi.gui.inventory.Gui;
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
 import com.artillexstudios.axapi.items.component.type.ProfileProperties;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.NMSHandlers;
 import com.artillexstudios.axapi.packetentity.PacketEntity;
@@ -32,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+;
 
 // TODO: Maybe add a ticket to the chunk the container is in?
 public final class Minion {
@@ -132,7 +134,7 @@ public final class Minion {
 
         for (Map.Entry<EquipmentSlot, WrappedItemStack> entry : skin.items().entrySet()) {
             WrappedItemStack wrappedItemStack = entry.getValue();
-            CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
+            CompoundTag tag = wrappedItemStack.get(DataComponents.CUSTOM_DATA);
             if (tag.contains("axminions_ownerskin") && this.extraData().containsKey("owner_texture")) {
                 ProfileProperties properties = new ProfileProperties(PROFILE_UUID, "axminions");
                 if (Config.debug) {
@@ -140,7 +142,7 @@ public final class Minion {
                 }
                 properties.put("textures", new ProfileProperties.Property("textures", this.extraData().get("owner_texture"), this.extraData().get("owner_signature")));
                 wrappedItemStack = wrappedItemStack.copy();
-                wrappedItemStack.set(DataComponents.profile(), properties);
+//                wrappedItemStack.set(DataComponents.PROFILE, properties);
             }
 
             this.entity.setItem(entry.getKey(), wrappedItemStack);

@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:2.1.1:all")
+    implementation("com.artillexstudios.axapi:axapi:2.2.0-DEV-NEW-VERSION-8:all")
     implementation("com.h2database:h2:2.3.232")
 //    compileOnly("me.kryniowesegryderiusz:kgenerators-core:7.3") {
 //        exclude("com.github.WaterArchery", "LitMinionsAPI")

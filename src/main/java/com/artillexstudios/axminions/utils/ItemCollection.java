@@ -61,7 +61,7 @@ public class ItemCollection {
 
     public ItemCollection(Collection<ItemStack> collection) {
         if (Config.debug) {
-            LogUtils.debug("ItemCollection with class: {}", collection.getClass());
+            LogUtils.debug("ItemCollection with class: {}. Contents: {}", collection.getClass(), collection);
         }
         this.items = collection instanceof List<ItemStack> list ? list : new ArrayList<>(collection);
     }

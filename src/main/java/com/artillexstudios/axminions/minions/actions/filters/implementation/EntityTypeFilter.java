@@ -73,6 +73,10 @@ public final class EntityTypeFilter extends Filter<EntityType> {
 
         List<String> blacklist = configuration.getStringList("blacklist");
         if (blacklist != null) {
+            if (whitelist == null || whitelist.isEmpty()) {
+                this.allowed.addAll(List.of(EntityType.values()));
+            }
+
             for (String s : blacklist) {
                 if (s.equals("*")) {
                     List.of(EntityType.values()).forEach(this.allowed::remove);

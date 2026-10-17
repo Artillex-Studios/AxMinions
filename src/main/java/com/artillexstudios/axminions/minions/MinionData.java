@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axminions.minions.skins.Skin;
 import com.artillexstudios.axminions.minions.skins.SkinRegistry;
@@ -54,7 +54,7 @@ public record MinionData(int ownerId, MinionType type, Direction direction, Loca
     }
 
     public static MinionData fromItem(User user, WrappedItemStack wrappedItemStack) {
-        CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
+        CompoundTag tag = wrappedItemStack.get(DataComponents.CUSTOM_DATA);
         String type = tag.getString("axminions_minion_type");
         int level = tag.getInt("axminions_minion_level");
         HashMap<String, String> extraData = MinionData.deserialize(tag.getString("axminions_minion_statistics"));

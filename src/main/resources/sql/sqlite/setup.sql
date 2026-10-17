@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS axminions_types (id INTEGER AUTOINCREMENT PRIMARY KEY, name VARCHAR(64));
 
-CREATE TABLE IF NOT EXISTS axminions_minions (id INTEGER AUTOINCREMENT PRIMARY KEY, location_id INTEGER, owner_id INTEGER, type_id SMALLINT, `level` SMALLINT, charge BIGINT, facing TINYINT, tool BLOB, extra_data BLOB);
+CREATE TABLE IF NOT EXISTS axminions_minions (id INTEGER AUTOINCREMENT PRIMARY KEY, location_id INTEGER, chest_location_id INTEGER, owner_id INTEGER, type_id SMALLINT, `level` SMALLINT, charge BIGINT, facing TINYINT, tool BLOB, extra_data BLOB);
 
 CREATE TABLE IF NOT EXISTS axminions_locations (id INTEGER AUTOINCREMENT PRIMARY KEY, world_id INTEGER, x INTEGER, y INTEGER, z INTEGER);
 

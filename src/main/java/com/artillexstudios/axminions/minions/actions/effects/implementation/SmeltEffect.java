@@ -2,7 +2,7 @@ package com.artillexstudios.axminions.minions.actions.effects.implementation;
 
 import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
 import com.artillexstudios.axminions.api.events.MinionSmeltEffectEvent;
 import com.artillexstudios.axminions.minions.Minion;
@@ -51,7 +51,7 @@ public final class SmeltEffect extends Effect<ItemCollection, ItemCollection> {
                 newItem = itemStack.clone();
 
                 WrappedItemStack.edit(newItem, item -> {
-                    item.set(DataComponents.material(), to);
+                    item.set(DataComponents.MATERIAL, to);
                     return null;
                 });
             }

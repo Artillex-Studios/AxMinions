@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.minions.skins;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.EquipmentSlot;
 import com.artillexstudios.axapi.utils.ItemBuilder;
@@ -60,9 +60,9 @@ public record Skin(String id, Map<EquipmentSlot, WrappedItemStack> items) {
             });
 
             WrappedItemStack wrapped = ItemBuilder.create(section).wrapped();
-            CompoundTag tag = wrapped.get(DataComponents.customData());
+            CompoundTag tag = wrapped.get(DataComponents.CUSTOM_DATA);
             tag.putBoolean("axminions_ownerskin", ownerSkin.get());
-            wrapped.set(DataComponents.customData(), tag);
+            wrapped.set(DataComponents.CUSTOM_DATA, tag);
 
             equipment.put(equipmentSlot, wrapped);
         }

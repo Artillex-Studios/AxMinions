@@ -3,7 +3,7 @@ package com.artillexstudios.axminions.minions;
 import com.artillexstudios.axapi.config.YamlConfiguration;
 import com.artillexstudios.axapi.config.adapters.MapConfigurationGetter;
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axapi.utils.logging.LogUtils;
@@ -113,7 +113,7 @@ public final class MinionType {
 
     public ItemStack item(MinionData data) {
         WrappedItemStack wrappedItemStack = ItemBuilder.create(this.config.getSection("item")).wrapped();
-        CompoundTag tag = wrappedItemStack.get(DataComponents.customData());
+        CompoundTag tag = wrappedItemStack.get(DataComponents.CUSTOM_DATA);
         tag.putString("axminions_minion_type", this.name);
         tag.putInt("axminions_minion_level", data.level().id());
         if (com.artillexstudios.axminions.config.Config.saveStatistics) {
@@ -122,7 +122,7 @@ public final class MinionType {
         tag.putString("axminions_minion_skin", data.skin() == null ? "" : data.skin().id());
         tag.putLong("axminions_minion_charge", data.charge());
 
-        wrappedItemStack.set(DataComponents.customData(), tag);
+        wrappedItemStack.set(DataComponents.CUSTOM_DATA, tag);
         wrappedItemStack.finishEdit();
         return wrappedItemStack.toBukkit();
     }

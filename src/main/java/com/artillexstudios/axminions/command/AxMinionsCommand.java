@@ -64,6 +64,7 @@ public final class AxMinionsCommand {
         long start = System.nanoTime();
         List<File> failed = new ArrayList<>();
 
+        AxMinionsPlugin.instance().minionSaver().runSave().join();
         for (World world : Bukkit.getWorlds()) {
             MinionWorldCache.clear(world);
         }

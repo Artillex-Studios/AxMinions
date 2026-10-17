@@ -13,6 +13,7 @@ import com.artillexstudios.axminions.minions.Minion;
 import com.artillexstudios.axminions.minions.actions.effects.Effect;
 import com.artillexstudios.axminions.utils.ItemCollection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
     private static final ServerPlayerWrapper dummyPlayer = NMSHandlers.getNmsHandler().dummyPlayer();
@@ -38,6 +39,9 @@ public final class DamageEntityEffect extends Effect<Entity, ItemCollection> {
                     .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, dummyPlayer.wrapped())
                     .build(LootContextParamSets.ENTITY);
 
+            if (argument instanceof LivingEntity livingEntity) {
+                livingEntity.remove();
+            }
             return new ItemCollection(LootTables.entityLootTable(argument.getType())
                     .randomItems(params));
         }

@@ -89,6 +89,10 @@ public final class MaterialFilter extends Filter<Material> {
 
         List<String> blacklist = configuration.getStringList("blacklist");
         if (blacklist != null) {
+            if (whitelist == null || whitelist.isEmpty()) {
+                this.allowed.addAll(List.of(Material.values()));
+            }
+
             for (String s : blacklist) {
                 if (s.equals("*")) {
                     List.of(Material.values()).forEach(this.allowed::remove);

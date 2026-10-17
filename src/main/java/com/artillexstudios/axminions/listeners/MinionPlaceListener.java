@@ -1,7 +1,7 @@
 package com.artillexstudios.axminions.listeners;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
-import com.artillexstudios.axapi.items.component.DataComponents;
+import com.artillexstudios.axapi.items.components.DataComponents;
 import com.artillexstudios.axapi.items.nbt.CompoundTag;
 import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.scheduler.Scheduler;
@@ -66,7 +66,7 @@ public final class MinionPlaceListener implements Listener {
         }
 
         WrappedItemStack wrappedItemStack = WrappedItemStack.wrap(itemStack);
-        CompoundTag compoundTag = wrappedItemStack.get(DataComponents.customData());
+        CompoundTag compoundTag = wrappedItemStack.get(DataComponents.CUSTOM_DATA);
         if (!compoundTag.contains("axminions_minion_type")) {
             if (Config.debug) {
                 LogUtils.debug("Does not contain miniontype");

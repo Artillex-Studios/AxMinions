@@ -24,6 +24,7 @@ import it.unimi.dsi.fastutil.longs.LongLongPair;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -159,22 +160,7 @@ public final class DataHandler {
 
     public CompletionStage<Minion> insertMinion(Location location, MinionData data) {
         return CompletableFuture.supplyAsync(() -> {
-            World world = location.getWorld();
-            if (world == null) {
-                return null;
-            }
-
-            short worldId = this.worldId(world);
-            if (worldId == (short) FAILED_QUERY) {
-                LogUtils.error("Failed worldId fetching!");
-                return null;
-            }
-
-            int locationId = this.locationId(worldId, location);
-            if (locationId == FAILED_QUERY) {
-                LogUtils.error("Failed locationId fetching!");
-                return null;
-            }
+            Integer locationId = this.getOrCreateLocationId(location);
 
             Integer id = this.minionInsertQuery.create()
                     .execute(locationId,
@@ -192,6 +178,32 @@ public final class DataHandler {
             LogUtils.error("An unexpected error occurred while inserting minion!", throwable);
             return null;
         }, AsyncUtils.executor());
+    }
+
+    @Nullable
+    public Integer getOrCreateLocationId(@Nullable Location location) {
+        if (location == null) {
+            return null;
+        }
+
+        World world = location.getWorld();
+        if (world == null) {
+            return null;
+        }
+
+        short worldId = this.worldId(world);
+        if (worldId == (short) FAILED_QUERY) {
+            LogUtils.error("Failed worldId fetching!");
+            return null;
+        }
+
+        int locationId = this.locationId(worldId, location);
+        if (locationId == FAILED_QUERY) {
+            LogUtils.error("Failed locationId fetching!");
+            return null;
+        }
+
+        return locationId;
     }
 
     public CompletionStage<IntLongPair> loadMinions(World world) {
@@ -254,7 +266,7 @@ public final class DataHandler {
                 }
 
                 minion.save();
-                queries.add(new Object[]{minion.level().id(), minion.charge(), minion.facing().ordinal(), minion.tool() == null || minion.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(minion.tool()).serialize(), MinionData.serialize(minion.extraData()).getBytes(StandardCharsets.UTF_8), minion.id()});
+                queries.add(new Object[]{minion.level().id(), minion.charge(), minion.facing().ordinal(), minion.tool() == null || minion.tool().getType().isAir() || !Config.requireTool ? null : WrappedItemStack.wrap(minion.tool()).serialize(), MinionData.serialize(minion.extraData()).getBytes(StandardCharsets.UTF_8), this.getOrCreateLocationId(minion.linkedChest()), minion.id()});
             }
 
             this.saveMinionsQuery.create()
