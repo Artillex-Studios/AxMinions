@@ -65,7 +65,7 @@ upgrade-fail: "chat"
 upgrade-sound: "ENTITY_PLAYER_LEVELUP"
 
 database:
-  # Can be H2 (SqLite support is planned)
+  # Can be H2 (SqLite, File support is planned)
   type: "H2"
 
 hooks:
