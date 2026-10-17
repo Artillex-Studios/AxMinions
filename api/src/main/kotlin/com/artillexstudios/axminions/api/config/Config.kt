@@ -63,6 +63,8 @@ class Config(file: File, stream: InputStream) {
         @JvmStatic
         fun HOLOGRAM_WARNINGS_SECTION() = AxMinionsAPI.INSTANCE.getConfig().get<Section>("holograms.warnings")
         @JvmStatic
+        fun HOLOGRAM_STATUS_SECTION() = AxMinionsAPI.INSTANCE.getConfig().get<Section?>("holograms.status") ?: HOLOGRAM_NAME_SECTION()
+        @JvmStatic
         fun TIMER_FORMAT() = AxMinionsAPI.INSTANCE.getConfig().get("timer-format", 1)
         @JvmStatic
         fun NUMBER_FORMATTING_MODE() = AxMinionsAPI.INSTANCE.getConfig().get("number-formatting.mode", 1)

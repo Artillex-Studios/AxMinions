@@ -6,19 +6,23 @@ import com.artillexstudios.axapi.libs.boostedyaml.settings.dumper.DumperSettings
 import com.artillexstudios.axapi.libs.boostedyaml.settings.general.GeneralSettings
 import com.artillexstudios.axapi.libs.boostedyaml.settings.loader.LoaderSettings
 import com.artillexstudios.axapi.libs.boostedyaml.settings.updater.UpdaterSettings
+import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axminions.AxMinionsPlugin
 import com.artillexstudios.axminions.api.AxMinionsAPI
 import com.artillexstudios.axminions.api.config.Messages
 import com.artillexstudios.axminions.api.minions.Minion
+import com.artillexstudios.axminions.api.utils.NumberFormatUtils
 import com.artillexstudios.axminions.api.utils.TimeUtils
 import com.artillexstudios.axminions.api.warnings.Warnings
+import com.artillexstudios.axminions.shop.ShopCurrencies
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
@@ -45,6 +49,9 @@ class MinionList(file: File, stream: InputStream) {
     class Holder(val owner: UUID, val ownerName: String) : InventoryHolder {
         var sort = Sort.TYPE
         var page = 0
+
+        // The minion in every slot of the menu right now, so a click always hits the minion that was shown
+        internal val shown = hashMapOf<Int, Minion>()
         private lateinit var inventory: Inventory
 
         internal fun setInventory(inventory: Inventory) {
@@ -71,6 +78,12 @@ class MinionList(file: File, stream: InputStream) {
     private var backSlot = 18
     private var nextSlot = 26
 
+    private var teleportEnabled = true
+    private var teleportPrice = 0.0
+    private var teleportCurrency = "vault"
+    private var teleportCurrencyId = ""
+    private var teleportCurrencyName = "$"
+
     init {
         load()
     }
@@ -85,6 +98,7 @@ class MinionList(file: File, stream: InputStream) {
         sortSlot = config.getInt("sort.slot", 4)
         backSlot = config.getInt("back.slot", 18)
         nextSlot = config.getInt("next.slot", 26)
+        loadTeleport()
 
         val slots = linkedSetOf<Int>()
         for (entry in config.getStringList("minion-slots", listOf("9-17"))) {
@@ -112,6 +126,20 @@ class MinionList(file: File, stream: InputStream) {
         }
 
         minionSlots = slots.toList()
+    }
+
+    private fun loadTeleport() {
+        teleportEnabled = config.getBoolean("teleport.enabled", true)
+        teleportPrice = if (config.getBoolean("teleport.cost.enabled", false)) config.getDouble("teleport.cost.price", 0.0) else 0.0
+        teleportCurrency = config.getString("teleport.cost.currency", "vault").lowercase()
+        teleportCurrencyId = config.getString("teleport.cost.currency-id", MinionsConfig.ECONOMY_CURRENCY())
+        teleportCurrencyName = config.getString("teleport.cost.currency-name", "$")
+
+        // Better no teleporting than a free one, because of a typo
+        if (teleportEnabled && teleportPrice > 0 && !ShopCurrencies.isKnown(teleportCurrency)) {
+            AxMinionsPlugin.INSTANCE.logger.warning("list.yml: unknown currency '$teleportCurrency' for the teleport cost, teleporting is disabled! (vault, playerpoints, excellenteconomy)")
+            teleportEnabled = false
+        }
     }
 
     fun open(player: Player) {
@@ -157,7 +185,7 @@ class MinionList(file: File, stream: InputStream) {
         }
     }
 
-    fun click(player: Player, holder: Holder, slot: Int) {
+    fun click(player: Player, holder: Holder, slot: Int, click: ClickType) {
         when (slot) {
             sortSlot -> {
                 holder.sort = holder.sort.next()
@@ -174,10 +202,82 @@ class MinionList(file: File, stream: InputStream) {
             }
 
             nextSlot -> holder.page++
-            else -> return
+
+            else -> {
+                if (click == ClickType.SHIFT_RIGHT) {
+                    holder.shown[slot]?.let { teleport(player, holder, it) }
+                }
+                return
+            }
         }
 
         render(player, holder)
+    }
+
+    /**
+     * Whether teleporting costs something for [player], admins looking at the minions of someone else never pay.
+     */
+    private fun teleportCosts(player: Player, holder: Holder): Boolean {
+        return teleportPrice > 0 && player.uniqueId == holder.owner
+    }
+
+    private fun teleport(player: Player, holder: Holder, minion: Minion) {
+        if (!teleportEnabled) return
+
+        // The minion got picked up while the menu was open
+        if (minion !in AxMinionsAPI.INSTANCE.getMinions()) {
+            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LIST_TELEPORT_MINION_GONE()))
+            render(player, holder)
+            return
+        }
+
+        // The location of the minion is the one it stores, so only ever hand out copies of it
+        val target = minion.getLocation().clone()
+        if (target.world == null) {
+            player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LIST_TELEPORT_WORLD_UNAVAILABLE()))
+            return
+        }
+
+        val resolvers = arrayOf<TagResolver>(
+            Placeholder.parsed("minion", minion.getType().getConfig().getString("item.name")),
+            Placeholder.unparsed("price", NumberFormatUtils.format(teleportPrice)),
+            Placeholder.parsed("currency", teleportCurrencyName)
+        )
+
+        val costs = teleportCosts(player, holder)
+        val currency = if (costs) ShopCurrencies.get(teleportCurrency) else null
+        if (costs) {
+            if (currency == null || !currency.isAvailable(teleportCurrencyId)) {
+                player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LIST_TELEPORT_CURRENCY_UNAVAILABLE(), *resolvers))
+                return
+            }
+
+            if (currency.getBalance(player, teleportCurrencyId) < teleportPrice) {
+                player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LIST_TELEPORT_NOT_ENOUGH_MONEY(), *resolvers))
+                return
+            }
+        }
+
+        // The blocks next to the minion can only be looked at from the thread that owns them
+        Scheduler.get().executeAt(target) {
+            val spot = MinionTeleport.findSpot(target)
+            if (spot == null) {
+                player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.LIST_TELEPORT_NO_SAFE_LOCATION(), *resolvers))
+                return@executeAt
+            }
+
+            // The player pays after they got teleported, another plugin can cancel the teleport.
+            // The balance got checked above, so the withdrawal only fails if they spent it in the meantime.
+            MinionTeleport.teleport(player, spot) {
+                val paid = currency != null && currency.withdraw(player, teleportCurrencyId, teleportPrice)
+                val message = if (paid) Messages.LIST_TELEPORT_SUCCESS_PAID() else Messages.LIST_TELEPORT_SUCCESS()
+
+                Scheduler.get().run(player, {
+                    player.closeInventory()
+                    player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + message, *resolvers))
+                }, {})
+            }
+        }
     }
 
     /**
@@ -203,8 +303,11 @@ class MinionList(file: File, stream: InputStream) {
             inventory.setItem(i, filler)
         }
 
+        val costs = teleportCosts(player, holder)
+        holder.shown.clear()
         sorted.drop(holder.page * perPage).take(perPage).forEachIndexed { index, minion ->
-            place(inventory, minionSlots[index], createItem(minion, now))
+            holder.shown[minionSlots[index]] = minion
+            place(inventory, minionSlots[index], createItem(minion, now, costs))
         }
 
         val resolvers = arrayOf<TagResolver>(
@@ -263,6 +366,7 @@ class MinionList(file: File, stream: InputStream) {
     private fun status(minion: Minion, now: Long): String {
         val warning = when {
             !minion.getType().isEnabled() -> return config.getString("status.disabled", "<#FF3333>Disabled")
+            !minion.isWorking() -> return config.getString("status.stopped", "<#FF9900>Stopped")
             remainingFuel(minion, now) == 0L -> Warnings.NO_CHARGE
             else -> minion.getWarning()
         }
@@ -278,7 +382,7 @@ class MinionList(file: File, stream: InputStream) {
         return config.getString("status.active", "<#33FF33>Active")
     }
 
-    private fun createItem(minion: Minion, now: Long): ItemStack {
+    private fun createItem(minion: Minion, now: Long, teleportCosts: Boolean): ItemStack {
         val location = minion.getLocation()
         val fuel = remainingFuel(minion, now)?.let { TimeUtils.format(it) } ?: config.getString("fuel-unlimited", "Unlimited")
 
@@ -292,12 +396,20 @@ class MinionList(file: File, stream: InputStream) {
             Placeholder.unparsed("y", location.blockY.toString()),
             Placeholder.unparsed("z", location.blockZ.toString()),
             Placeholder.unparsed("fuel", fuel),
-            Placeholder.parsed("status", status(minion, now))
+            Placeholder.parsed("status", status(minion, now)),
+            Placeholder.unparsed("price", NumberFormatUtils.format(teleportPrice)),
+            Placeholder.parsed("currency", teleportCurrencyName)
         )
+
+        val lore = arrayListOf<String>()
+        lore.addAll(config.getStringList("minion.lore", emptyList()))
+        if (teleportEnabled) {
+            lore.addAll(config.getStringList(if (teleportCosts) "teleport.lore-paid" else "teleport.lore", emptyList()))
+        }
 
         return ItemBuilder.create(minion.getType().getConfig().getSection("item"), *resolvers)
             .setName(config.getString("minion.name", "<minion> Lv.<level>"), *resolvers)
-            .setLore(config.getStringList("minion.lore", emptyList()), *resolvers)
+            .setLore(lore, *resolvers)
             .clonedGet()
     }
 

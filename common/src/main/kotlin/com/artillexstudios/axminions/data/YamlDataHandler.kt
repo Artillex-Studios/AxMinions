@@ -43,7 +43,8 @@ class YamlDataHandler : DataHandler {
         val storage: Double,
         val actions: Long,
         val tool: String?,
-        val charge: Long
+        val charge: Long,
+        val working: Boolean
     )
 
     private class StoredUser(var name: String, var islandSlots: Int)
@@ -56,6 +57,7 @@ class YamlDataHandler : DataHandler {
     private val minions = HashMap<Int, StoredMinion>()
     private val users = HashMap<UUID, StoredUser>()
     private val islands = HashMap<String, Int>()
+    private val trusted = HashMap<UUID, MutableSet<UUID>>()
     // World ids are not persisted, they only exist to back getWorld(worldId)
     private val worlds = ArrayList<String>()
     private var nextLocationId = 1
@@ -113,7 +115,8 @@ class YamlDataHandler : DataHandler {
                             section.getDouble("$key.storage"),
                             section.getLong("$key.actions"),
                             section.getString("$key.tool"),
-                            section.getLong("$key.charge")
+                            section.getLong("$key.charge"),
+                            section.getBoolean("$key.working", true)
                         )
                     }
                 }
@@ -121,6 +124,16 @@ class YamlDataHandler : DataHandler {
                 for (map in yaml.getMapList("islands")) {
                     val island = map["island"]?.toString() ?: continue
                     islands[island] = (map["placed"] as? Number)?.toInt() ?: 0
+                }
+
+                yaml.getConfigurationSection("trusted")?.let { section ->
+                    for (key in section.getKeys(false)) {
+                        val owner = runCatching { UUID.fromString(key) }.getOrNull() ?: continue
+                        for (entry in section.getStringList(key)) {
+                            val user = runCatching { UUID.fromString(entry) }.getOrNull() ?: continue
+                            trusted.getOrPut(owner) { HashSet() }.add(user)
+                        }
+                    }
                 }
 
                 nextLocationId = maxOf(nextLocationId, yaml.getInt("next-location-id", 1))
@@ -173,7 +186,8 @@ class YamlDataHandler : DataHandler {
                         stored.storage,
                         locationId,
                         if (chestLocation == null) 0 else stored.chestLocationId,
-                        stored.charge
+                        stored.charge,
+                        stored.working
                     )
                 }
             }
@@ -222,7 +236,8 @@ class YamlDataHandler : DataHandler {
                 minion.getStorage(),
                 minion.getActionAmount(),
                 tool,
-                minion.getCharge()
+                minion.getCharge(),
+                minion.isWorking()
             )
             markDirty()
         }
@@ -311,6 +326,34 @@ class YamlDataHandler : DataHandler {
         }
     }
 
+    override fun loadTrustedUsers(): Map<UUID, Set<UUID>> {
+        synchronized(lock) {
+            return trusted.mapValues { it.value.toSet() }
+        }
+    }
+
+    override fun addTrustedUser(owner: UUID, trusted: UUID) {
+        synchronized(lock) {
+            if (this.trusted.getOrPut(owner) { HashSet() }.add(trusted)) {
+                markDirty()
+            }
+        }
+    }
+
+    override fun removeTrustedUser(owner: UUID, trusted: UUID) {
+        synchronized(lock) {
+            val users = this.trusted[owner] ?: return
+            if (!users.remove(trusted)) {
+                return
+            }
+
+            if (users.isEmpty()) {
+                this.trusted.remove(owner)
+            }
+            markDirty()
+        }
+    }
+
     override fun disable() {
         saveExecutor.shutdown()
         try {
@@ -390,6 +433,7 @@ class YamlDataHandler : DataHandler {
                 section.set("storage", minion.storage)
                 section.set("actions", minion.actions)
                 section.set("charge", minion.charge)
+                section.set("working", minion.working)
                 if (minion.tool != null) {
                     section.set("tool", minion.tool)
                 }
@@ -397,6 +441,10 @@ class YamlDataHandler : DataHandler {
 
             // Island ids can contain dots, so they can not be used as yaml keys
             yaml.set("islands", islands.map { (island, placed) -> mapOf("island" to island, "placed" to placed) })
+
+            for ((owner, users) in trusted) {
+                yaml.set("trusted.$owner", users.map { it.toString() })
+            }
         }
 
         synchronized(fileLock) {

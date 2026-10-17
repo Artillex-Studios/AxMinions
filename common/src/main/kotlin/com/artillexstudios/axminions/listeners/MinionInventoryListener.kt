@@ -30,6 +30,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 class MinionInventoryListener : Listener {
+    private companion object {
+        // Players who can open the menu only because the owner trusts them can't do these, nor take the tool out
+        val OWNER_ACTIONS = setOf("rotate", "link", "statistics")
+    }
+
     private val coolDown = CoolDown<Player>()
 
     @EventHandler
@@ -76,6 +81,9 @@ class MinionInventoryListener : Listener {
                 return
             }
 
+            // Trusted players can only fill an empty tool slot, they can't take the tool of the owner by swapping it
+            if (minion.getTool()?.type != Material.AIR && ownerOnly(player, minion)) return
+
             val minionToolEvent = MinionToolEvent(minion, player, event.currentItem!!.clone(), minion.getTool()!!.clone())
             Bukkit.getPluginManager().callEvent(minionToolEvent)
             if (minionToolEvent.isCancelled) return
@@ -98,6 +106,7 @@ class MinionInventoryListener : Listener {
 
         if (event.slot == AxMinionsAPI.INSTANCE.getConfig().get("gui.items.item.slot")) {
             if (minion.getTool()?.type == Material.AIR) return
+            if (ownerOnly(player, minion)) return
             if (player.inventory.firstEmpty() == -1) {
                 player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.ERROR_INVENTORY_FULL()))
                 return
@@ -127,6 +136,8 @@ class MinionInventoryListener : Listener {
         if (!meta.persistentDataContainer.has(Keys.GUI, PersistentDataType.STRING)) return
         val type = meta.persistentDataContainer.get(Keys.GUI, PersistentDataType.STRING)
 
+        if (type != null && type in OWNER_ACTIONS && ownerOnly(player, minion)) return
+
         when (type) {
             "rotate" -> {
                 when (minion.getDirection()) {
@@ -135,6 +146,10 @@ class MinionInventoryListener : Listener {
                     Direction.SOUTH -> minion.setDirection(Direction.EAST)
                     Direction.WEST -> minion.setDirection(Direction.SOUTH)
                 }
+            }
+
+            "toggle" -> {
+                minion.setWorking(!minion.isWorking())
             }
 
             "link" -> {
@@ -249,11 +264,8 @@ class MinionInventoryListener : Listener {
                                 return
                             }
 
-                            AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
-                                minion.getOwner()?.let { player ->
-                                    it.takeBalance(player, Config.CHARGE_PRICE())
-                                }
-                            }
+                            // The player who charges pays, which is not the owner when the player is trusted
+                            AxMinionsPlugin.integrations.getEconomyIntegration()?.takeBalance(player, Config.CHARGE_PRICE())
                         }
 
                         if (chargeSeconds + chargeAmount > Config.MAX_CHARGE() * 60L) {
@@ -306,11 +318,8 @@ class MinionInventoryListener : Listener {
                             return
                         }
 
-                        AxMinionsPlugin.integrations.getEconomyIntegration()?.let {
-                            minion.getOwner()?.let { player ->
-                                it.takeBalance(player, Config.CHARGE_PRICE())
-                            }
-                        }
+                        // The player who charges pays, which is not the owner when the player is trusted
+                        AxMinionsPlugin.integrations.getEconomyIntegration()?.takeBalance(player, Config.CHARGE_PRICE())
                     }
 
                     if (chargeSeconds + chargeAmount > Config.MAX_CHARGE() * 60L) {
@@ -339,6 +348,15 @@ class MinionInventoryListener : Listener {
         val holder = event.inventory.holder as? Minion ?: return
 
         holder.removeOpenInventory(event.inventory)
+    }
+
+    private fun ownerOnly(player: Player, minion: Minion): Boolean {
+        if (minion.hasFullAccess(player)) {
+            return false
+        }
+
+        player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.USERS_OWNER_ONLY()))
+        return true
     }
 
     private fun sendFail(player: Player) {

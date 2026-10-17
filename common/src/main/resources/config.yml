@@ -161,6 +161,27 @@ gui:
         - ""
         - "<#FB8E08><b>(!)</b> Click here to charge your minion for <white>30 minutes</white>!"
       slot: 9
+    # The Start/Stop button. A stopped minion does nothing until it is started again.
+    # "stop" is shown while the minion works (a click stops it), "start" while it is stopped (a click starts it).
+    # Placeholders: <status>
+    toggle:
+      slot: 22
+      stop:
+        type: "red_dye"
+        name: "<#FF3333><b>Stop"
+        lore:
+          - ""
+          - " <gray>- <white>Status: <status>"
+          - ""
+          - "<#FF3333><b>(!)</b> Click here to stop your minion!"
+      start:
+        type: "lime_dye"
+        name: "<#33FF33><b>Start"
+        lore:
+          - ""
+          - " <gray>- <white>Status: <status>"
+          - ""
+          - "<#33FF33><b>(!)</b> Click here to start your minion!"
 
     # These settings are minion-specific, you can edit them in each minion's file!
     upgrade:
@@ -170,6 +191,7 @@ gui:
 
 # Hologram appearance settings.
 # "name" controls the hologram showing the minion's name above its head.
+# "status" controls the hologram below the name, showing if the minion works or is stopped (messages.yml: status)
 # "warnings" controls the hologram shown when a minion has an issue (no fuel, container full, etc.)
 holograms:
   name:
@@ -181,6 +203,20 @@ holograms:
     offset:
       x: 0.0
       y: 1.3
+      z: 0.0
+    facing: "NORTH" # NORTH | EAST | SOUTH | WEST: the side the text's front (the readable side, with billboard: FIXED) points to
+    billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
+    alignment: "CENTER" # LEFT, CENTER, RIGHT
+    # The distance, in blocks, from which players can see this hologram
+    visibility-distance: 10
+  status:
+    background: "transparent"
+    shadow: true
+    see-through: false
+    scale: 1.0
+    offset:
+      x: 0.0
+      y: 1.0
       z: 0.0
     facing: "NORTH" # NORTH | EAST | SOUTH | WEST: the side the text's front (the readable side, with billboard: FIXED) points to
     billboard-type: "CENTER" # FIXED, CENTER, HORIZONTAL, VERTICAL
@@ -207,4 +243,4 @@ holograms:
 debug: false
 
 # Do not change!
-config-version: 14
+config-version: 15

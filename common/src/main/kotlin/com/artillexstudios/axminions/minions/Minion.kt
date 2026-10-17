@@ -66,7 +66,9 @@ class Minion(
     private var storage: Double,
     private val locationID: Int,
     private var chestLocationId: Int,
-    private var charge: Long
+    private var charge: Long,
+    // A stopped minion does nothing, the owner can start it again in the menu
+    @Volatile private var working: Boolean = true
 ) : Minion {
     companion object {
         private val equipmentSlots: Array<EquipmentSlot> = arrayOf(
@@ -98,7 +100,9 @@ class Minion(
     private var warning: Warning? = null
     private var hologram: Hologram? = null
     private var nameHologram: Hologram? = null
+    private var statusHologram: Hologram? = null
     private val nameHologramViewers = HashSet<UUID>()
+    private val statusHologramViewers = HashSet<UUID>()
     private val warningHologramViewers = HashSet<UUID>()
     private val extraData = hashMapOf<String, String>()
     private var linkedInventory: Inventory? = null
@@ -179,6 +183,10 @@ class Minion(
                         openInventory(event.player)
                     } else if ((canBuildAt && !Config.ONLY_OWNER_GUI()) || event.player.hasPermission("axminions.*")) {
                         openInventory(event.player)
+                    } else if (AxMinionsPlugin.users.isTrusted(ownerUUID, event.player.uniqueId)) {
+                        openInventory(event.player)
+                    } else {
+                        event.player.sendMessage(StringUtils.formatToString(Messages.PREFIX() + Messages.USERS_NO_ACCESS()))
                     }
                 }
             }
@@ -216,6 +224,21 @@ class Minion(
             Placeholder.parsed("level_color", Messages.LEVEL_COLOR(level))
         )
         namePage.spawn()
+
+        // The status is its own hologram below the name, so the name and the warnings keep their place
+        val statusSection = Config.HOLOGRAM_STATUS_SECTION()
+        statusHologram = Hologram(HologramStyler.offset(location, statusSection))
+        val statusPage = statusHologram!!.createPage(HologramTypes.TEXT)
+        statusPage.setEntityMetaHandler { meta ->
+            HologramStyler.apply(meta as TextDisplayMeta, statusSection)
+        }
+        HologramStyler.applyViewDistance(statusPage, statusSection)
+        statusPage.content = statusText()
+        statusPage.spawn()
+    }
+
+    private fun statusText(): String {
+        return StringUtils.formatToString(if (working) Messages.STATUS_WORKING() else Messages.STATUS_STOPPED())
     }
 
     private fun breakMinion(event: PacketEntityInteractEvent) {
@@ -270,6 +293,14 @@ class Minion(
             return
         }
 
+        // Stopped minions don't work, so they have nothing to complain about either
+        if (!working) {
+            warning?.let { Warnings.remove(this, it) }
+            // Let a swing that is already going finish, so the arm doesn't freeze halfway
+            animate()
+            return
+        }
+
         if (Config.CHARGE_ENABLED() && getCharge() < System.currentTimeMillis()) {
             Warnings.NO_CHARGE.display(this)
             return
@@ -286,11 +317,13 @@ class Minion(
     private fun updateHologramVisibility() {
         val world = location.world ?: return
         val nameDistance = Config.HOLOGRAM_NAME_SECTION().getDouble("visibility-distance", 10.0) ?: 10.0
+        val statusDistance = Config.HOLOGRAM_STATUS_SECTION().getDouble("visibility-distance", 10.0) ?: 10.0
         val warningsDistance = Config.HOLOGRAM_WARNINGS_SECTION().getDouble("visibility-distance", 10.0) ?: 10.0
         Bukkit.getOnlinePlayers().forEach { player ->
             if (player.world != world) return@forEach
             val distance = player.location.distance(location)
             nameHologram?.page(0)?.let { updateViewer(it, player, distance <= nameDistance, nameHologramViewers) }
+            statusHologram?.page(0)?.let { updateViewer(it, player, distance <= statusDistance, statusHologramViewers) }
             hologram?.page(0)?.let { updateViewer(it, player, distance <= warningsDistance, warningHologramViewers) }
         }
     }
@@ -428,6 +461,18 @@ class Minion(
                 item.itemMeta = meta
             } else if (it.equals("item")) {
                 item = tool?.clone() ?: ItemStack(Material.AIR)
+            } else if (it.equals("toggle")) {
+                // The button shows what a click does: "stop" while the minion works, "start" while it is stopped
+                val button = AxMinionsAPI.INSTANCE.getConfig().getConfig()
+                    .getSection("gui.items.toggle.${if (working) "stop" else "start"}")
+                item = ItemBuilder.create(
+                    button,
+                    Placeholder.parsed("status", if (working) Messages.STATUS_WORKING() else Messages.STATUS_STOPPED())
+                ).get()
+
+                val meta = item.itemMeta!!
+                meta.persistentDataContainer.set(Keys.GUI, PersistentDataType.STRING, it)
+                item.itemMeta = meta
             } else if (it.equals("charge")) {
                 if (Config.CHARGE_ENABLED()) {
                     val charge = Placeholder.parsed("charge", TimeUtils.format(charge - System.currentTimeMillis()))
@@ -530,6 +575,14 @@ class Minion(
 
     override fun getOwnerUUID(): UUID {
         return this.ownerUUID
+    }
+
+    override fun hasFullAccess(player: Player): Boolean {
+        if (ownerUUID == player.uniqueId || player.hasPermission("axminions.*")) {
+            return true
+        }
+
+        return !Config.ONLY_OWNER_GUI() && AxMinionsPlugin.integrations.getProtectionIntegration().canBuildAt(player, location)
     }
 
     override fun setTool(tool: ItemStack, save: Boolean) {
@@ -661,6 +714,7 @@ class Minion(
     override fun remove() {
         Warnings.remove(this, warning ?: Warnings.NO_CONTAINER)
         nameHologram?.remove()
+        statusHologram?.remove()
         Minions.remove(this)
         entity.remove()
 
@@ -910,6 +964,26 @@ class Minion(
         }
 
         return ItemStack(Material.AIR)
+    }
+
+    override fun isWorking(): Boolean {
+        return working
+    }
+
+    override fun setWorking(working: Boolean) {
+        if (this.working == working) return
+        this.working = working
+
+        if (!working) {
+            warning?.let { Warnings.remove(this, it) }
+        }
+
+        statusHologram?.setContent(0, statusText())
+        updateInventories()
+
+        AxMinionsPlugin.dataQueue.submit {
+            AxMinionsPlugin.dataHandler.saveMinion(this)
+        }
     }
 
     override fun isOwnerOnline(): Boolean {

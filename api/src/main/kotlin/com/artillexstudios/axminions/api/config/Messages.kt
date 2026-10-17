@@ -27,6 +27,10 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun CONTAINER_FULL_WARNING() = AxMinionsAPI.INSTANCE.getMessages().get<String>("warnings.container-full")
         @JvmStatic
+        fun STATUS_WORKING() = AxMinionsAPI.INSTANCE.getMessages().get("status.working", "<#33FF33>● Working")
+        @JvmStatic
+        fun STATUS_STOPPED() = AxMinionsAPI.INSTANCE.getMessages().get("status.stopped", "<#FF3333>● Stopped")
+        @JvmStatic
         fun TIME_DAY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.day")
         @JvmStatic
         fun TIME_HOUR() = AxMinionsAPI.INSTANCE.getMessages().get<String>("time.hour")
@@ -76,6 +80,8 @@ class Messages(file: File, stream: InputStream) {
         @JvmStatic
         fun LINK_START() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.start")
         @JvmStatic
+        fun LINK_CHEST_PROTECTED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("link.chest-protected")
+        @JvmStatic
         fun UPGRADE_FAIL() = AxMinionsAPI.INSTANCE.getMessages().get<String>("upgrades.fail")
         @JvmStatic
         fun RESET() = AxMinionsAPI.INSTANCE.getMessages().get<String>("reset")
@@ -99,6 +105,38 @@ class Messages(file: File, stream: InputStream) {
         fun LIST_NO_MINIONS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.no-minions")
         @JvmStatic
         fun LIST_NO_MINIONS_OTHER() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.no-minions-other")
+        @JvmStatic
+        fun LIST_TELEPORT_SUCCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.success")
+        @JvmStatic
+        fun LIST_TELEPORT_SUCCESS_PAID() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.success-paid")
+        @JvmStatic
+        fun LIST_TELEPORT_NOT_ENOUGH_MONEY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.not-enough-money")
+        @JvmStatic
+        fun LIST_TELEPORT_CURRENCY_UNAVAILABLE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.currency-unavailable")
+        @JvmStatic
+        fun LIST_TELEPORT_NO_SAFE_LOCATION() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.no-safe-location")
+        @JvmStatic
+        fun LIST_TELEPORT_WORLD_UNAVAILABLE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.world-unavailable")
+        @JvmStatic
+        fun LIST_TELEPORT_MINION_GONE() = AxMinionsAPI.INSTANCE.getMessages().get<String>("list.teleport.minion-gone")
+        @JvmStatic
+        fun USERS_PROMPT() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.prompt")
+        @JvmStatic
+        fun USERS_CANCELLED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.cancelled")
+        @JvmStatic
+        fun USERS_ADDED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.added")
+        @JvmStatic
+        fun USERS_REMOVED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.removed")
+        @JvmStatic
+        fun USERS_ALREADY_TRUSTED() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.already-trusted")
+        @JvmStatic
+        fun USERS_SELF() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.self")
+        @JvmStatic
+        fun USERS_NOT_FOUND() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.not-found")
+        @JvmStatic
+        fun USERS_OWNER_ONLY() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.owner-only")
+        @JvmStatic
+        fun USERS_NO_ACCESS() = AxMinionsAPI.INSTANCE.getMessages().get<String>("users.no-access")
     }
 
     private val config = Config(

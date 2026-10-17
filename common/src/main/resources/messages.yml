@@ -26,6 +26,11 @@ warnings:
   container-full: "<#FF3333>⚠ <#FFAAAA>The container of this minion is full </#FFAAAA>⚠"
   no-charge: "<#FF3333>⚠ <#FFAAAA>The minion ran out of charge! Refuel it!</#FFAAAA>⚠"
 
+# Shown in the Start/Stop button and in the hologram below the name of the minion
+status:
+  working: "<#33FF33>● Working"
+  stopped: "<#FF3333>● Stopped"
+
 time:
   day: "d"
   hour: "h"
@@ -47,6 +52,7 @@ link:
   unlink: "<green>You have unliked the minion."
   fail: "<red>You can't link to that block! It's either too far away, or not a container!"
   start: "<green>Started linking! Click on a container!"
+  chest-protected: "<red>You can't break this container, because a minion is linked to it! Unlink the minion first."
 
 levels:
   1: "<#33FF33>"
@@ -91,6 +97,27 @@ shop:
 list:
   no-minions: "<red>You don't have any minions!"
   no-minions-other: "<red><player> doesn't have any minions!"
+  # Shift + Right Click on a minion in the list. Placeholders: <minion>, <price>, <currency>
+  teleport:
+    success: "<green>You were teleported to the <minion><green>!"
+    success-paid: "<green>You were teleported to the <minion><green> for <white><price> <currency></white>!"
+    not-enough-money: "<red>You don't have enough money to teleport to this minion! It costs <white><price> <currency></white>."
+    currency-unavailable: "<red>You can't teleport to this minion right now, because its currency isn't available!"
+    no-safe-location: "<red>There is no safe place to teleport to next to this minion!"
+    world-unavailable: "<red>The world of this minion isn't loaded!"
+    minion-gone: "<red>This minion doesn't exist anymore!"
+
+# The trusted players, they can use all of your minions (/minions users)
+users:
+  prompt: "<green>Type the name of the player you want to trust in the chat, or <white>cancel</white> to abort. <gray>(<seconds>s)"
+  cancelled: "<red>Cancelled, nobody was added."
+  added: "<green><white><player></white> can now use your minions!"
+  removed: "<green><white><player></white> can no longer use your minions."
+  already-trusted: "<red><player> is already trusted!"
+  self: "<red>You can't add yourself, your minions are already yours!"
+  not-found: "<red>Could not find a player called <white><player></white>! They have to join the server first."
+  owner-only: "<red>Only the owner can do this! Trusted players can open the menu, change the tool, charge and upgrade the minion."
+  no-access: "<red>You can't open the menu of this minion, because you are not its owner or one of the trusted players!"
 
 # Do not change!
-config-version: 13
+config-version: 18

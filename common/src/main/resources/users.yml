@@ -1,0 +1,72 @@
+# The menu opened with /minions users (permission: axminions.command.users)
+# It shows the players you trust. A trusted player can use all of your minions: open their menu,
+# change the tool, charge (when charge.enabled is true in the config.yml) and upgrade them.
+# Everything else (rotating, linking, collecting the storage, picking them up) stays reserved for you.
+# Click the head of a player to remove them from the list.
+
+title: "<#5555FF>Trusted Players"
+
+# Has to be a multiple of 9, between 18 and 54
+size: 27
+
+filler:
+  type: "black_stained_glass_pane"
+  name: ""
+
+# The slots where the trusted players are shown (the first page is filled first).
+# Every entry is either a slot, or a range of slots (for example "9-17"). 0 is the top left.
+user-slots:
+  - "9-17"
+
+# Adds a new player. After clicking it the menu closes and you have to type the name of the player in the chat.
+# The message is only used for that, nobody else sees it. Typing "cancel" aborts it.
+add:
+  slot: 4
+  # How long you have to type the name, in seconds
+  timeout: 30
+  item:
+    type: "player_head"
+    # The texture of the head, it works on every item of this menu if its type is "player_head".
+    # Either the url of the texture (http://textures.minecraft.net/texture/...), or the base64 value.
+    texture: "http://textures.minecraft.net/texture/b056bc1244fcff99344f12aba42ac23fee6ef6e3351d27d273c1572531f"
+    name: "<#00FF99><b>ADD PLAYER"
+    lore:
+      - "<gray>Trusted players can use your minions."
+      - ""
+      - "<gray>Click to add a player"
+
+# Goes to the previous page, or closes the menu on the first page
+# Placeholders: <page>, <pages>
+back:
+  slot: 18
+  item:
+    type: "arrow"
+    name: "<white>Back"
+
+# Goes to the next page, only shown if there is a next page
+# Placeholders: <page>, <pages>
+next:
+  slot: 26
+  item:
+    type: "arrow"
+    name: "<white>Next"
+    lore:
+      - "<gray>Page <page>/<pages>"
+
+# How every trusted player is shown. The icon is always the head of the player.
+# Placeholders: <player>, <status>
+user:
+  name: "<#00FF99><player>"
+  lore:
+    - ""
+    - " <#00AAFF>• <white>Status: <status>"
+    - ""
+    - "<red>Click to remove"
+
+# What <status> shows
+status:
+  online: "<#33FF33>Online"
+  offline: "<#AAAAAA>Offline"
+
+# Do not change!
+config-version: 2

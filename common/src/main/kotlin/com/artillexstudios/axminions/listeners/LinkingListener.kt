@@ -20,7 +20,7 @@ import kotlin.math.min
 class LinkingListener : Listener {
     companion object {
         val linking = WeakHashMap<Player, Minion>()
-        private val CONTAINERS = listOf(Material.BARREL, Material.CHEST, Material.TRAPPED_CHEST)
+        val CONTAINERS =listOf(Material.BARREL, Material.CHEST, Material.TRAPPED_CHEST)
     }
 
     @EventHandler

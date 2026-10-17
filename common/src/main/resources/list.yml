@@ -66,6 +66,30 @@ minion:
     - " <#00AAFF>• <white>Fuel: <#FFEEAA><fuel>"
     - " <#00AAFF>• <white>Status: <status>"
 
+# Shift + Right Click on a minion teleports the player next to it
+teleport:
+  enabled: true
+  # The fee for teleporting, set 'enabled' to false to make it free.
+  # Admins looking at the minions of another player (/axminions list <player>) never pay.
+  cost:
+    enabled: true
+    price: 100
+    # What to pay with, can be: vault, playerpoints, excellenteconomy
+    # (the plugin of the currency has to be installed)
+    currency: vault
+    # Only for excellenteconomy, the ID of the currency to use ( default: hooks.economy-currency in the config.yml )
+    # currency-id: "coins"
+    # How the currency is shown as <currency>
+    currency-name: "$"
+  # Added to the lore of every minion if teleporting is enabled.
+  # 'lore-paid' is used instead of 'lore' if the player has to pay. Placeholders: <price>, <currency>
+  lore:
+    - ""
+    - " <#00AAFF>• <white>Shift + Right Click to teleport"
+  lore-paid:
+    - ""
+    - " <#00AAFF>• <white>Shift + Right Click to teleport <gray>(<#33FF33><price> <currency><gray>)"
+
 # What <fuel> shows if the minions don't need fuel (charge.enabled: false in the config.yml)
 fuel-unlimited: "Unlimited"
 
@@ -76,6 +100,8 @@ status:
   inactive: "<#AAAAAA>Inactive"
   # The type of the minion is disabled in the config.yml
   disabled: "<#FF3333>Disabled"
+  # The minion was stopped with the Start/Stop button in its menu
+  stopped: "<#FF9900>Stopped"
   # Whatever stops the minion from working
   warnings:
     no_charge: "<#FF3333>Out of fuel"
@@ -85,4 +111,4 @@ status:
     no_water_nearby: "<#FF3333>No water nearby"
 
 # Do not change!
-config-version: 2
+config-version: 4

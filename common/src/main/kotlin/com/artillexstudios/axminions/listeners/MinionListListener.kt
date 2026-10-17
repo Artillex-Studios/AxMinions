@@ -34,6 +34,6 @@ class MinionListListener : Listener {
 
         coolDown.add(player, 250)
 
-        AxMinionsPlugin.minionList.click(player, holder, event.slot)
+        AxMinionsPlugin.minionList.click(player, holder, event.slot, event.click)
     }
 }

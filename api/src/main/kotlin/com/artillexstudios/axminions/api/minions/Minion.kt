@@ -46,6 +46,12 @@ interface Minion : InventoryHolder {
 
     fun getOwnerUUID(): UUID
 
+    /**
+     * Whether the player can do everything with the minion, which is not the case for a player who only got
+     * access to the menu because the owner trusts them.
+     */
+    fun hasFullAccess(player: Player): Boolean
+
     fun setTool(tool: ItemStack, save: Boolean = true)
 
     fun getTool(): ItemStack?
@@ -109,6 +115,14 @@ interface Minion : InventoryHolder {
     fun damageTool(amount: Int = 1)
 
     fun canUseTool(): Boolean
+
+    /**
+     * Whether the minion is allowed to work. A stopped minion (Start/Stop button in its menu) does nothing,
+     * and keeps being stopped after a restart.
+     */
+    fun isWorking(): Boolean
+
+    fun setWorking(working: Boolean)
 
     fun isOwnerOnline(): Boolean
 

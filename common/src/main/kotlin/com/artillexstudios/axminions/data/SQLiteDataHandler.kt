@@ -43,10 +43,21 @@ class SQLiteDataHandler : DataHandler {
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_users`(`uuid` VARCHAR(36) PRIMARY KEY, `name` VARCHAR(16), `island_slots` INT DEFAULT 0);")
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_worlds`(`id` INTEGER PRIMARY KEY, `name` VARCHAR(64) UNIQUE);")
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_locations`(`id` INTEGER PRIMARY KEY AUTOINCREMENT, `x` INT, `y` INT, `z` INT, `world_id` INT, UNIQUE(`x`, `y`, `z`, `world_id`), FOREIGN KEY(`world_id`) REFERENCES `axminions_worlds`(`id`));")
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_minions`(`id` INTEGER PRIMARY KEY, `location_id` INT UNIQUE, `chest_location_id` INT, `owner_id` VARCHAR(36), `type_id` INT, `direction` TINYINT, `level` SMALLINT, `storage` DOUBLE, `actions` BIGINT, `tool` TEXT, `charge` BIGINT DEFAULT 0, FOREIGN KEY(`location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`chest_location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`owner_id`) REFERENCES `axminions_users`(`uuid`), FOREIGN KEY(`type_id`) REFERENCES `axminions_types`(`id`));")
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_minions`(`id` INTEGER PRIMARY KEY, `location_id` INT UNIQUE, `chest_location_id` INT, `owner_id` VARCHAR(36), `type_id` INT, `direction` TINYINT, `level` SMALLINT, `storage` DOUBLE, `actions` BIGINT, `tool` TEXT, `charge` BIGINT DEFAULT 0, `working` TINYINT DEFAULT 1, FOREIGN KEY(`location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`chest_location_id`) REFERENCES `axminions_locations`(`id`), FOREIGN KEY(`owner_id`) REFERENCES `axminions_users`(`uuid`), FOREIGN KEY(`type_id`) REFERENCES `axminions_types`(`id`));")
+                // SQLite can't add a column conditionally, so check what the table already has
+                val columns = HashSet<String>()
+                statement.executeQuery("PRAGMA table_info(`axminions_minions`);").use { resultSet ->
+                    while (resultSet.next()) {
+                        columns.add(resultSet.getString("name"))
+                    }
+                }
+                if ("working" !in columns) {
+                    statement.executeUpdate("ALTER TABLE `axminions_minions` ADD COLUMN `working` TINYINT DEFAULT 1;")
+                }
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS `axminions_minions_owner` ON `axminions_minions`(`owner_id`);")
                 statement.executeUpdate("CREATE INDEX IF NOT EXISTS `axminions_minions_chest` ON `axminions_minions`(`chest_location_id`);")
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_island_counter`(`island` VARCHAR(256) PRIMARY KEY, `placed` INT);")
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS `axminions_trusted`(`owner_id` VARCHAR(36), `trusted_id` VARCHAR(36), PRIMARY KEY(`owner_id`, `trusted_id`));")
             }
         }
     }
@@ -79,6 +90,9 @@ class SQLiteDataHandler : DataHandler {
                         val actions = resultSet.getLong("actions")
                         val tool = resultSet.getString("tool")
                         val charge = resultSet.getLong("charge")
+                        val workingValue = resultSet.getInt("working")
+                        // Minions saved before the Start/Stop button existed have no value, they work
+                        val working = resultSet.wasNull() || workingValue != 0
 
                         val location = Location(
                             world,
@@ -117,7 +131,8 @@ class SQLiteDataHandler : DataHandler {
                                 storage,
                                 locationId,
                                 chestLocationId,
-                                charge
+                                charge,
+                                working
                             )
                         }
                     }
@@ -215,7 +230,7 @@ class SQLiteDataHandler : DataHandler {
                 statement.executeUpdate()
             }
 
-            connection.prepareStatement("INSERT INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`, `charge`) VALUES(?, ?, ?, (SELECT `id` FROM `axminions_types` WHERE `name` = ?), ?, ?, ?, ?, ?, ?) ON CONFLICT(`location_id`) DO UPDATE SET `chest_location_id` = excluded.`chest_location_id`, `owner_id` = excluded.`owner_id`, `type_id` = excluded.`type_id`, `direction` = excluded.`direction`, `level` = excluded.`level`, `storage` = excluded.`storage`, `actions` = excluded.`actions`, `tool` = excluded.`tool`, `charge` = excluded.`charge`;")
+            connection.prepareStatement("INSERT INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`, `charge`, `working`) VALUES(?, ?, ?, (SELECT `id` FROM `axminions_types` WHERE `name` = ?), ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(`location_id`) DO UPDATE SET `chest_location_id` = excluded.`chest_location_id`, `owner_id` = excluded.`owner_id`, `type_id` = excluded.`type_id`, `direction` = excluded.`direction`, `level` = excluded.`level`, `storage` = excluded.`storage`, `actions` = excluded.`actions`, `tool` = excluded.`tool`, `charge` = excluded.`charge`, `working` = excluded.`working`;")
                 .use { statement ->
                     statement.setInt(1, locationId)
                     if (linkedChestId == null) {
@@ -235,6 +250,7 @@ class SQLiteDataHandler : DataHandler {
                         statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
                     }
                     statement.setLong(10, minion.getCharge())
+                    statement.setInt(11, if (minion.isWorking()) 1 else 0)
                     statement.executeUpdate()
                 }
         }
@@ -375,6 +391,44 @@ class SQLiteDataHandler : DataHandler {
 
                     return 0
                 }
+            }
+        }
+    }
+
+    override fun loadTrustedUsers(): Map<UUID, Set<UUID>> {
+        val trusted = HashMap<UUID, MutableSet<UUID>>()
+
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("SELECT `owner_id`, `trusted_id` FROM `axminions_trusted`;").use { statement ->
+                statement.executeQuery().use { resultSet ->
+                    while (resultSet.next()) {
+                        val owner = runCatching { UUID.fromString(resultSet.getString("owner_id")) }.getOrNull() ?: continue
+                        val user = runCatching { UUID.fromString(resultSet.getString("trusted_id")) }.getOrNull() ?: continue
+                        trusted.getOrPut(owner) { HashSet() }.add(user)
+                    }
+                }
+            }
+        }
+
+        return trusted
+    }
+
+    override fun addTrustedUser(owner: UUID, trusted: UUID) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("INSERT OR IGNORE INTO `axminions_trusted`(`owner_id`, `trusted_id`) VALUES(?, ?);").use { statement ->
+                statement.setString(1, owner.toString())
+                statement.setString(2, trusted.toString())
+                statement.executeUpdate()
+            }
+        }
+    }
+
+    override fun removeTrustedUser(owner: UUID, trusted: UUID) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("DELETE FROM `axminions_trusted` WHERE `owner_id` = ? AND `trusted_id` = ?;").use { statement ->
+                statement.setString(1, owner.toString())
+                statement.setString(2, trusted.toString())
+                statement.executeUpdate()
             }
         }
     }

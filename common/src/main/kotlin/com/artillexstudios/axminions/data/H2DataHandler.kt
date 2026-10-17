@@ -76,6 +76,12 @@ class H2DataHandler : DataHandler {
         }
 
         dataSource.connection.use { connection ->
+            connection.prepareStatement("ALTER TABLE `axminions_minions` ADD COLUMN IF NOT EXISTS `working` BOOLEAN DEFAULT(TRUE);").use {
+                it.executeUpdate()
+            }
+        }
+
+        dataSource.connection.use { connection ->
             connection.prepareStatement("ALTER TABLE `axminions_users` ADD COLUMN IF NOT EXISTS `island_slots` INT DEFAULT(0);").use {
                 it.executeUpdate()
             }
@@ -88,6 +94,13 @@ class H2DataHandler : DataHandler {
                         it.executeUpdate()
                     }
             }
+        }
+
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("CREATE TABLE IF NOT EXISTS `axminions_trusted`(`owner_id` UUID, `trusted_id` UUID, PRIMARY KEY(`owner_id`, `trusted_id`));")
+                .use {
+                    it.executeUpdate()
+                }
         }
     }
 
@@ -128,6 +141,9 @@ class H2DataHandler : DataHandler {
                         val actions = resultSet.getLong("actions")
                         val tool = resultSet.getString("tool")
                         val charge = resultSet.getLong("charge")
+                        val workingValue = resultSet.getBoolean("working")
+                        // Minions saved before the Start/Stop button existed have no value, they work
+                        val working = resultSet.wasNull() || workingValue
 
                         val location = getLocation(locationId)
                         var chestLocation: Location? = null
@@ -153,7 +169,8 @@ class H2DataHandler : DataHandler {
                             storage,
                             locationId,
                             chestLocationId,
-                            charge
+                            charge,
+                            working
                         )
                     }
                 }
@@ -282,7 +299,7 @@ class H2DataHandler : DataHandler {
         }
 
         dataSource.connection.use { connection ->
-            connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`, `charge`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?,?)")
+            connection.prepareStatement("MERGE INTO `axminions_minions`(`location_id`, `chest_location_id`, `owner_id`, `type_id`, `direction`, `level`, `storage`, `actions`, `tool`, `charge`, `working`) KEY(`location_id`) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
                 .use { statement ->
                     statement.setInt(1, locationId)
                     if (linkedChestId == null) {
@@ -302,6 +319,7 @@ class H2DataHandler : DataHandler {
                         statement.setString(9, Serializers.ITEM_STACK.serialize(minion.getTool()))
                     }
                     statement.setLong(10, minion.getCharge())
+                    statement.setBoolean(11, minion.isWorking())
                     statement.executeUpdate()
                 }
         }
@@ -463,6 +481,44 @@ class H2DataHandler : DataHandler {
 
                     return 0
                 }
+            }
+        }
+    }
+
+    override fun loadTrustedUsers(): Map<UUID, Set<UUID>> {
+        val trusted = HashMap<UUID, MutableSet<UUID>>()
+
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("SELECT `owner_id`, `trusted_id` FROM `axminions_trusted`;").use { statement ->
+                statement.executeQuery().use { resultSet ->
+                    while (resultSet.next()) {
+                        val owner = resultSet.getObject("owner_id") as UUID
+                        val user = resultSet.getObject("trusted_id") as UUID
+                        trusted.getOrPut(owner) { HashSet() }.add(user)
+                    }
+                }
+            }
+        }
+
+        return trusted
+    }
+
+    override fun addTrustedUser(owner: UUID, trusted: UUID) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("MERGE INTO `axminions_trusted`(`owner_id`, `trusted_id`) KEY(`owner_id`, `trusted_id`) VALUES(?, ?);").use { statement ->
+                statement.setObject(1, owner)
+                statement.setObject(2, trusted)
+                statement.executeUpdate()
+            }
+        }
+    }
+
+    override fun removeTrustedUser(owner: UUID, trusted: UUID) {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("DELETE FROM `axminions_trusted` WHERE `owner_id` = ? AND `trusted_id` = ?;").use { statement ->
+                statement.setObject(1, owner)
+                statement.setObject(2, trusted)
+                statement.executeUpdate()
             }
         }
     }

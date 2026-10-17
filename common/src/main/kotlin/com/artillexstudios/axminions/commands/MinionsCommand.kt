@@ -26,4 +26,11 @@ class MinionsCommand {
     fun shop(player: Player) {
         AxMinionsPlugin.shop.open(player)
     }
+
+    @Subcommand("users")
+    @CommandPermission("axminions.command.users")
+    @Description("Open the list of the players who can use your minions")
+    fun users(player: Player) {
+        AxMinionsPlugin.users.open(player)
+    }
 }

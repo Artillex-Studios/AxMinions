@@ -101,6 +101,7 @@ class AxMinionsCommand {
         AxMinionsPlugin.integrations.reload()
         AxMinionsPlugin.shop.reload()
         AxMinionsPlugin.minionList.reload()
+        AxMinionsPlugin.users.reload()
 
         sender.sendMessage(
             StringUtils.formatToString(

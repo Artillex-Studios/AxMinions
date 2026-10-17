@@ -20,6 +20,7 @@ import com.artillexstudios.axminions.data.SQLiteDataHandler
 import com.artillexstudios.axminions.data.YamlDataHandler
 import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.listeners.ChunkListener
+import com.artillexstudios.axminions.listeners.LinkedChestListener
 import com.artillexstudios.axminions.listeners.LinkingListener
 import com.artillexstudios.axminions.listeners.MinionDamageListener
 import com.artillexstudios.axminions.listeners.MinionDropListener
@@ -27,6 +28,7 @@ import com.artillexstudios.axminions.list.MinionList
 import com.artillexstudios.axminions.listeners.MinionInventoryListener
 import com.artillexstudios.axminions.listeners.MinionListListener
 import com.artillexstudios.axminions.listeners.MinionPlaceListener
+import com.artillexstudios.axminions.listeners.MinionUsersListener
 import com.artillexstudios.axminions.listeners.PlayerListener
 import com.artillexstudios.axminions.listeners.ShopListener
 import com.artillexstudios.axminions.listeners.WorldListener
@@ -41,6 +43,7 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import com.artillexstudios.axminions.shop.MinionShop
+import com.artillexstudios.axminions.users.MinionUsers
 import java.io.File
 import java.util.Locale
 import com.artillexstudios.axminions.minions.miniontype.CrafterMinionType
@@ -58,6 +61,7 @@ class AxMinionsPlugin : AxPlugin() {
         lateinit var integrations: Integrations
         lateinit var shop: MinionShop
         lateinit var minionList: MinionList
+        lateinit var users: MinionUsers
     }
 
     override fun dependencies(manager: DependencyManagerWrapper) {
@@ -103,6 +107,7 @@ class AxMinionsPlugin : AxPlugin() {
 
         shop = MinionShop(File(dataFolder, "shop.yml"), getResource("shop.yml")!!)
         minionList = MinionList(File(dataFolder, "list.yml"), getResource("list.yml")!!)
+        users = MinionUsers(File(dataFolder, "users.yml"), getResource("users.yml")!!)
 
         val handler = BukkitCommandHandler.create(this)
 
@@ -129,6 +134,7 @@ class AxMinionsPlugin : AxPlugin() {
         Bukkit.getPluginManager().also {
             it.registerEvents(MinionPlaceListener(), this)
             it.registerEvents(LinkingListener(), this)
+            it.registerEvents(LinkedChestListener(), this)
             it.registerEvents(MinionInventoryListener(), this)
             it.registerEvents(ChunkListener(), this)
             it.registerEvents(MinionDamageListener(), this)
@@ -137,6 +143,7 @@ class AxMinionsPlugin : AxPlugin() {
             it.registerEvents(PlayerListener(), this)
             it.registerEvents(ShopListener(), this)
             it.registerEvents(MinionListListener(), this)
+            it.registerEvents(MinionUsersListener(), this)
         }
 
         // Retroactively load minions for the already loaded worlds
@@ -182,7 +189,7 @@ class AxMinionsPlugin : AxPlugin() {
 
         Bukkit.getOnlinePlayers().forEach { player ->
             val holder = player.openInventory.topInventory.holder
-            if (holder is MinionShop.Holder || holder is MinionList.Holder) {
+            if (holder is MinionShop.Holder || holder is MinionList.Holder || holder is MinionUsers.Holder) {
                 player.closeInventory()
             }
         }
