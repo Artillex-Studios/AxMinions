@@ -15,6 +15,8 @@ import com.artillexstudios.axminions.api.minions.miniontype.MinionTypes
 import com.artillexstudios.axminions.api.utils.fastFor
 import com.artillexstudios.axminions.commands.AxMinionsCommand
 import com.artillexstudios.axminions.data.H2DataHandler
+import com.artillexstudios.axminions.data.SQLiteDataHandler
+import com.artillexstudios.axminions.data.YamlDataHandler
 import com.artillexstudios.axminions.integrations.Integrations
 import com.artillexstudios.axminions.listeners.ChunkListener
 import com.artillexstudios.axminions.listeners.LinkingListener
@@ -35,6 +37,7 @@ import com.artillexstudios.axminions.minions.miniontype.MinerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SellerMinionType
 import com.artillexstudios.axminions.minions.miniontype.SlayerMinionType
 import java.io.File
+import java.util.Locale
 import com.artillexstudios.axminions.minions.miniontype.CrafterMinionType
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
@@ -168,9 +171,15 @@ class AxMinionsPlugin : AxPlugin() {
     }
 
     private fun loadDataHandler() {
-        if (Config.DATABASE_TYPE().equals("H2", true)) {
-            dataHandler = H2DataHandler()
-            dataHandler.setup()
+        dataHandler = when (Config.DATABASE_TYPE().uppercase(Locale.ENGLISH)) {
+            "H2" -> H2DataHandler()
+            "SQLITE" -> SQLiteDataHandler()
+            "YAML", "YML" -> YamlDataHandler()
+            else -> {
+                logger.warning("Unknown database type ${Config.DATABASE_TYPE()}, falling back to H2!")
+                H2DataHandler()
+            }
         }
+        dataHandler.setup()
     }
 }

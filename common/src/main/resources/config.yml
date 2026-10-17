@@ -65,8 +65,9 @@ upgrade-fail: "chat"
 upgrade-sound: "ENTITY_PLAYER_LEVELUP"
 
 database:
-  # Can be H2 (SqLite, File support is planned)
-  type: "H2"
+  # Can be H2, SQLite or YAML
+  # Data is not migrated when you change the type!
+  type: "SQLite"
 
 hooks:
   # Supported stacker plugins: WildStacker, RoseStacker, none
